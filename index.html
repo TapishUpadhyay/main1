@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="engineer">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tapish — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════
+   COLOR PALETTES
+   [engineer] = VS Code Dark+ exact hex palette
+   [artist]   = FL Studio 21 UI exact hex palette
+   [personal] = warm amber / handwritten vibe
+════════════════════════════════════════════════════ */
+[data-mode="engineer"] {
+  --bg:         #1e1e1e;
+  --bg2:        #252526;
+  --surface:    #2d2d2d;
+  --surface2:   #3c3c3c;
+  --border:     #404040;
+  --border2:    #569cd6;
+  --accent:     #569cd6;
+  --accent2:    #4ec9b0;
+  --accent3:    #ce9178;
+  --accent4:    #dcdcaa;
+  --accent5:    #c586c0;
+  --text:       #d4d4d4;
+  --text-muted: #808080;
+  --text-dim:   #454545;
+  --green:      #6a9955;
+  --red:        #f44747;
+  --nav-bg:     rgba(30,30,30,0.94);
+  --glow1:      rgba(86,156,214,0.13);
+  --glow2:      rgba(78,201,176,0.08);
+  --skill-grad: linear-gradient(90deg,#4ec9b0,#569cd6);
+  --tag-bg:     #2a2a2a;
+  --scrollbar:  #569cd6;
+}
+[data-mode="artist"] {
+  --bg:         #0e0e16;
+  --bg2:        #14141f;
+  --surface:    #1c1c2e;
+  --surface2:   #252540;
+  --border:     #2e2e52;
+  --border2:    #ff6b35;
+  --accent:     #ff6b35;
+  --accent2:    #ff3d7f;
+  --accent3:    #ffd23f;
+  --accent4:    #a855f7;
+  --accent5:    #06d6a0;
+  --text:       #f0f0ff;
+  --text-muted: #8888bb;
+  --text-dim:   #44446a;
+  --green:      #06d6a0;
+  --red:        #ff3d7f;
+  --nav-bg:     rgba(14,14,22,0.94);
+  --glow1:      rgba(255,107,53,0.15);
+  --glow2:      rgba(168,85,247,0.1);
+  --skill-grad: linear-gradient(90deg,#ff3d7f,#ff6b35);
+  --tag-bg:     #1c1c2e;
+  --scrollbar:  #ff6b35;
+}
+[data-mode="personal"] {
+  --bg:         #141210;
+  --bg2:        #1d1916;
+  --surface:    #26211c;
+  --surface2:   #312b24;
+  --border:     #3e3730;
+  --border2:    #e8975a;
+  --accent:     #e8975a;
+  --accent2:    #c4a882;
+  --accent3:    #8fc4a6;
+  --accent4:    #d4a5c9;
+  --accent5:    #7bafd4;
+  --text:       #f0ebe4;
+  --text-muted: #9a8f82;
+  --text-dim:   #5a5048;
+  --green:      #8fc4a6;
+  --red:        #c4614a;
+  --nav-bg:     rgba(20,18,16,0.94);
+  --glow1:      rgba(232,151,90,0.12);
+  --glow2:      rgba(143,196,166,0.08);
+  --skill-grad: linear-gradient(90deg,#c4a882,#e8975a);
+  --tag-bg:     #26211c;
+  --scrollbar:  #e8975a;
+}
+
+/* ════════ BASE ════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:2px}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;
+  overflow-x:hidden;transition:background 0.5s,color 0.5s;
+}
+
+/* ════════ CURSOR ════════ */
+.cursor{width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:background 0.4s}
+.cursor-ring{width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;opacity:0.4;transition:border-color 0.4s}
+
+/* ════════ SCROLL BAR ════════ */
+.progress-bar{position:fixed;top:0;left:0;right:0;height:2px;background:var(--border);z-index:101}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width 0.08s linear,background 0.5s}
+
+/* ════════ VS CODE DECORATION ════════ */
+.vsc-sidebar{display:none;position:fixed;top:68px;left:0;width:44px;bottom:0;background:var(--bg2);border-right:1px solid var(--border);z-index:50;flex-direction:column;padding-top:1rem;overflow:hidden;align-items:flex-end}
+[data-mode="engineer"] .vsc-sidebar{display:flex}
+[data-mode="engineer"] body{padding-left:44px}
+.ln{font-family:'Fira Code',monospace;font-size:0.58rem;color:var(--text-dim);padding-right:8px;line-height:1.9;user-select:none}
+
+/* ════════ FL WAVEFORM ════════ */
+.fl-wave{display:none;position:fixed;bottom:0;left:0;right:0;height:44px;z-index:50;pointer-events:none}
+[data-mode="artist"] .fl-wave{display:block}
+
+/* ════════ MODE SWITCHER ════════ */
+.mode-sw{position:fixed;bottom:2rem;right:2rem;z-index:500;display:flex;flex-direction:column;gap:0.45rem;align-items:flex-end}
+.mode-lbl{font-family:'Fira Code',monospace;font-size:0.58rem;color:var(--text-dim);letter-spacing:0.08em;margin-bottom:0.2rem}
+.mbtn{font-family:'Fira Code',monospace;font-size:0.62rem;letter-spacing:0.05em;padding:0.45rem 0.85rem;border:1px solid var(--border2);background:var(--surface);color:var(--text-muted);cursor:pointer;transition:all 0.22s;outline:none}
+.mbtn:hover{color:var(--accent);border-color:var(--accent)}
+.mbtn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:700}
+
+/* ════════ NAV ════════ */
+nav{position:fixed;top:0;left:0;right:0;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:100;transition:background 0.5s,border-color 0.5s}
+[data-mode="engineer"] nav::before{content:'● ○ ○';font-family:'Fira Code',monospace;font-size:0.5rem;color:var(--text-dim);letter-spacing:0.3em;position:absolute;left:52px;top:9px}
+.nav-logo{font-size:1.25rem;font-weight:900;color:var(--accent);text-decoration:none;transition:color 0.4s;letter-spacing:-0.02em}
+[data-mode="engineer"] .nav-logo{font-family:'Fira Code',monospace}
+[data-mode="artist"]   .nav-logo{font-family:'Playfair Display',serif}
+[data-mode="personal"] .nav-logo{font-family:'Playfair Display',serif}
+.nav-links{display:flex;gap:1.8rem;list-style:none}
+.nav-links a{font-family:'Fira Code',monospace;font-size:0.68rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color 0.2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s}
+.nav-links a:hover{color:var(--accent)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-cta{font-family:'Fira Code',monospace;font-size:0.66rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--bg);background:var(--accent);padding:0.5rem 1.2rem;text-decoration:none;transition:all 0.22s;font-weight:700}
+.nav-cta:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{width:22px;height:1.5px;background:var(--text);transition:all 0.3s}
+
+/* ════════ SECTIONS ════════ */
+section{padding:90px 5vw;transition:background 0.5s}
+
+/* ════════ HERO ════════ */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:4rem;padding-top:calc(68px + 55px);position:relative;overflow:hidden}
+#hero::before{content:'';position:absolute;top:-200px;right:-150px;width:650px;height:650px;background:radial-gradient(circle,var(--glow1) 0%,transparent 70%);pointer-events:none;transition:background 0.6s}
+#hero::after{content:'';position:absolute;bottom:-100px;left:-80px;width:450px;height:450px;background:radial-gradient(circle,var(--glow2) 0%,transparent 70%);pointer-events:none;transition:background 0.6s}
+
+.hero-filetab{display:none;font-family:'Fira Code',monospace;font-size:0.62rem;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-bottom:2px solid var(--accent);padding:0.3rem 0.8rem;margin-bottom:1.1rem;width:fit-content}
+[data-mode="engineer"] .hero-filetab{display:block}
+
+.hero-label{font-family:'Fira Code',monospace;font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.7rem;transition:color 0.4s}
+.hero-label::before{content:'';width:28px;height:1px;background:var(--accent);transition:background 0.4s}
+
+.hero-title{font-size:clamp(2.4rem,5vw,4.8rem);font-weight:900;line-height:1.08;letter-spacing:-0.03em;margin-bottom:1.3rem}
+[data-mode="engineer"] .hero-title{font-family:'Fira Code',monospace;font-size:clamp(1.6rem,3.2vw,2.8rem);letter-spacing:-0.01em}
+[data-mode="artist"]   .hero-title{font-family:'Playfair Display',serif}
+[data-mode="personal"] .hero-title{font-family:'Playfair Display',serif}
+.hero-title em{font-style:italic;color:var(--accent);transition:color 0.4s}
+[data-mode="engineer"] .hero-title em{font-style:normal;color:var(--accent3)}
+
+.hero-sub{font-size:1rem;color:var(--text-muted);line-height:1.78;max-width:450px;margin-bottom:2.2rem;transition:color 0.4s}
+.hero-sub .kw{color:var(--accent5)}
+.hero-sub .str{color:var(--accent3)}
+.hero-sub .fn{color:var(--accent4)}
+
+.hero-btns{display:flex;gap:0.9rem;flex-wrap:wrap}
+.btn-primary{font-family:'Fira Code',monospace;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;background:var(--accent);color:var(--bg);padding:0.82rem 1.7rem;text-decoration:none;transition:all 0.23s;font-weight:700}
+.btn-primary:hover{filter:brightness(1.18);transform:translateY(-2px)}
+.btn-ghost{font-family:'Fira Code',monospace;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border2);color:var(--text-muted);padding:0.82rem 1.7rem;text-decoration:none;transition:all 0.23s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+
+.hero-visual{position:relative;display:flex;justify-content:center;align-items:center}
+.hero-av-wrap{position:relative;width:310px;height:390px}
+.hero-av-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);transform:rotate(3deg);transition:transform 0.5s,background 0.5s,border-color 0.5s}
+.hero-av-wrap:hover .hero-av-bg{transform:rotate(5.5deg) scale(1.02)}
+.hero-av{position:relative;width:100%;height:100%;background:var(--surface2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:background 0.5s,border-color 0.5s}
+.hero-emoji{font-size:5.5rem;transition:all 0.4s;line-height:1}
+.hero-av-sublabel{font-family:'Fira Code',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-top:1.4rem}
+.hero-badge{position:absolute;bottom:-14px;right:-14px;background:var(--accent);color:var(--bg);font-family:'Fira Code',monospace;font-size:0.58rem;font-weight:700;letter-spacing:0.04em;padding:0.5rem 0.9rem;transition:background 0.5s,color 0.5s}
+.hero-stats{position:absolute;left:-52px;bottom:52px;background:var(--surface);border:1px solid var(--border);padding:0.85rem 1.1rem;display:flex;flex-direction:column;gap:0.3rem;transition:background 0.5s,border-color 0.5s}
+.stat-num{font-size:1.6rem;font-weight:900;color:var(--accent);line-height:1;transition:color 0.4s}
+[data-mode="engineer"] .stat-num{font-family:'Fira Code',monospace}
+[data-mode="artist"]   .stat-num{font-family:'Playfair Display',serif}
+[data-mode="personal"] .stat-num{font-family:'Playfair Display',serif}
+.stat-lbl{font-family:'Fira Code',monospace;font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+
+/* ════════ SECTION HEADERS ════════ */
+.sec-hd{margin-bottom:3.5rem}
+.sec-tag{font-family:'Fira Code',monospace;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.6rem;transition:color 0.4s}
+[data-mode="engineer"] .sec-tag::before{content:'/* ';color:var(--green)}
+[data-mode="engineer"] .sec-tag::after{content:' */';color:var(--green)}
+[data-mode="artist"]   .sec-tag::before{content:'♩ ';color:var(--accent3)}
+[data-mode="personal"] .sec-tag::before{content:'';gap:0}
+.sec-title{font-weight:900;letter-spacing:-0.03em;line-height:1.1;font-size:clamp(1.9rem,3.5vw,2.9rem)}
+[data-mode="engineer"] .sec-title{font-family:'Fira Code',monospace;font-size:clamp(1.3rem,2.3vw,1.9rem);letter-spacing:-0.01em}
+[data-mode="artist"]   .sec-title{font-family:'Playfair Display',serif}
+[data-mode="personal"] .sec-title{font-family:'Playfair Display',serif}
+.sec-title span{color:var(--accent);font-style:italic;transition:color 0.4s}
+[data-mode="engineer"] .sec-title span{font-style:normal;color:var(--accent3)}
+[data-mode="personal"] .sec-title span{font-family:'Caveat',cursive;font-size:1.15em}
+.sec-line{width:48px;height:2px;background:var(--accent);margin-top:1.1rem;transition:background 0.4s}
+
+/* ════════ ABOUT ════════ */
+#about{background:var(--bg2)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.about-text p{color:var(--text-muted);line-height:1.8;margin-bottom:1rem;font-size:0.98rem}
+.about-text strong{color:var(--text);font-weight:500}
+.about-bio-engineer,.about-bio-artist,.about-bio-personal{display:none}
+[data-mode="engineer"] .about-bio-engineer{display:block}
+[data-mode="artist"]   .about-bio-artist{display:block}
+[data-mode="personal"] .about-bio-personal{display:block}
+.passion-list{display:flex;flex-wrap:wrap;gap:0.45rem;margin-top:1.7rem}
+.passion-tag{font-family:'Fira Code',monospace;font-size:0.62rem;letter-spacing:0.04em;padding:0.32rem 0.75rem;border:1px solid var(--border);background:var(--tag-bg);color:var(--text-muted);transition:all 0.2s;cursor:default}
+.passion-tag:hover{border-color:var(--accent);color:var(--accent)}
+[data-mode="engineer"] .passion-tag::before{content:'#';color:var(--accent4);margin-right:2px}
+[data-mode="artist"]   .passion-tag::before{content:'♩ ';color:var(--accent3)}
+.skill-group{margin-bottom:1.7rem}
+.sg-name{font-family:'Fira Code',monospace;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.65rem}
+[data-mode="engineer"] .sg-name::before{content:'> ';color:var(--accent2)}
+.sb-wrap{margin-bottom:0.75rem}
+.sb-info{display:flex;justify-content:space-between;margin-bottom:0.28rem}
+.sb-name{font-size:0.86rem;color:var(--text-muted)}
+.sb-pct{font-family:'Fira Code',monospace;font-size:0.6rem;color:var(--text-dim)}
+.sb-track{height:3px;background:var(--border);overflow:hidden}
+.sb-fill{height:100%;background:var(--skill-grad);width:0;transition:width 1.2s cubic-bezier(.23,1,.32,1),background 0.5s}
+
+/* ════════ PROJECTS ════════ */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:1.5px}
+.proj-card{background:var(--surface);border:1px solid var(--border);padding:2.1rem;position:relative;overflow:hidden;cursor:pointer;transition:transform 0.3s,border-color 0.3s,background 0.5s}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),var(--accent));transform:scaleX(0);transform-origin:left;transition:transform 0.4s,background 0.5s}
+.proj-card:hover{transform:translateY(-4px);border-color:var(--accent2)}
+.proj-card:hover::before{transform:scaleX(1)}
+.proj-num{font-family:'Fira Code',monospace;font-size:0.56rem;letter-spacing:0.14em;color:var(--text-dim);margin-bottom:0.9rem}
+[data-mode="engineer"] .proj-num::before{content:'file_';color:var(--accent4)}
+[data-mode="artist"]   .proj-num::before{content:'track_';color:var(--accent3)}
+.proj-title{font-weight:700;font-size:1.2rem;margin-bottom:0.65rem;color:var(--text)}
+[data-mode="engineer"] .proj-title{font-family:'Fira Code',monospace;font-size:1rem}
+[data-mode="artist"]   .proj-title{font-family:'Playfair Display',serif}
+[data-mode="personal"] .proj-title{font-family:'Playfair Display',serif}
+.proj-desc{font-size:0.86rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.2rem}
+.proj-tags{display:flex;flex-wrap:wrap;gap:0.38rem;margin-bottom:1.1rem}
+.ptag{font-family:'Fira Code',monospace;font-size:0.56rem;letter-spacing:0.04em;padding:0.18rem 0.52rem;background:var(--tag-bg);color:var(--text-dim);border:1px solid var(--border);transition:all 0.5s}
+[data-mode="engineer"] .ptag{color:var(--accent4)}
+[data-mode="artist"]   .ptag{color:var(--accent2)}
+.proj-status{font-family:'Fira Code',monospace;font-size:0.56rem;letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:0.42rem}
+.sdot{width:6px;height:6px;border-radius:50%}
+.s-live .sdot{background:var(--green);box-shadow:0 0 6px var(--green)}
+.s-wip  .sdot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.s-plan .sdot{background:var(--text-dim)}
+.s-live{color:var(--green)}
+.s-wip {color:var(--accent)}
+.s-plan{color:var(--text-dim)}
+
+/* ════════ TIMELINE ════════ */
+#future{background:var(--bg2)}
+.tl{position:relative;max-width:660px}
+.tl::before{content:'';position:absolute;left:17px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--accent),transparent);transition:background 0.5s}
+.tl-item{position:relative;padding-left:52px;margin-bottom:2.6rem;opacity:0;transform:translateX(-14px);transition:all 0.6s ease}
+.tl-item.visible{opacity:1;transform:translateX(0)}
+.tl-dot{position:absolute;left:9px;top:5px;width:18px;height:18px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);display:flex;align-items:center;justify-content:center;transition:border-color 0.4s}
+.tl-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);transition:background 0.4s}
+.tl-period{font-family:'Fira Code',monospace;font-size:0.6rem;letter-spacing:0.1em;color:var(--accent);margin-bottom:0.32rem;transition:color 0.4s}
+.tl-title{font-weight:700;font-size:1.05rem;margin-bottom:0.32rem}
+[data-mode="engineer"] .tl-title{font-family:'Fira Code',monospace;font-size:0.9rem}
+[data-mode="artist"]   .tl-title{font-family:'Playfair Display',serif}
+[data-mode="personal"] .tl-title{font-family:'Playfair Display',serif}
+.tl-desc{font-size:0.86rem;color:var(--text-muted);line-height:1.6}
+
+/* ════════ BLOG ════════ */
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:2px}
+.blog-card{background:var(--surface);border:1px solid var(--border);padding:1.75rem;transition:border-color 0.3s,transform 0.3s,background 0.5s;text-decoration:none;color:inherit;display:block}
+.blog-card:hover{border-color:var(--accent3);transform:translateY(-3px)}
+.blog-date{font-family:'Fira Code',monospace;font-size:0.58rem;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.65rem}
+.blog-title{font-weight:700;font-size:1rem;line-height:1.3;margin-bottom:0.48rem;color:var(--text)}
+[data-mode="artist"]   .blog-title{font-family:'Playfair Display',serif}
+[data-mode="personal"] .blog-title{font-family:'Playfair Display',serif}
+.blog-exc{font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1rem}
+.blog-rm{font-family:'Fira Code',monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent3);display:flex;align-items:center;gap:0.4rem;transition:color 0.4s}
+.blog-rm::after{content:'→';transition:transform 0.2s}
+.blog-card:hover .blog-rm::after{transform:translateX(4px)}
+
+/* ════════ TOOLS ════════ */
+#tools{background:var(--bg2)}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:1px}
+.tool-item{background:var(--bg);border:1px solid var(--border);padding:1.35rem 0.75rem;text-align:center;transition:all 0.2s;cursor:default}
+.tool-item:hover{background:var(--surface2);border-color:var(--accent)}
+.tool-icon{font-size:1.65rem;margin-bottom:0.42rem}
+.tool-name{font-family:'Fira Code',monospace;font-size:0.58rem;letter-spacing:0.04em;color:var(--text-muted);text-transform:uppercase}
+
+/* ════════ NOW ════════ */
+.now-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.now-card{background:var(--surface);border:1px solid var(--border);padding:1.7rem;transition:background 0.5s,border-color 0.5s}
+.nc-icon{font-size:1.35rem;margin-bottom:0.75rem}
+.nc-lbl{font-family:'Fira Code',monospace;font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.38rem}
+.nc-val{font-size:0.93rem;color:var(--text);line-height:1.4}
+[data-mode="artist"]   .nc-val{font-family:'DM Sans',sans-serif}
+[data-mode="personal"] .nc-val{font-family:'Caveat',cursive;font-size:1.1rem}
+
+/* ════════ CONTACT ════════ */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.contact-left p{color:var(--text-muted);line-height:1.8;margin-bottom:1.7rem;font-size:0.98rem}
+.soc-links{display:flex;flex-direction:column;gap:0.65rem}
+.soc-link{display:flex;align-items:center;gap:0.85rem;text-decoration:none;color:var(--text-muted);font-family:'Fira Code',monospace;font-size:0.76rem;letter-spacing:0.03em;padding:0.68rem;border:1px solid var(--border);transition:all 0.2s,border-color 0.5s}
+.soc-link:hover{border-color:var(--accent);color:var(--accent);transform:translateX(4px)}
+.soc-icon{font-size:0.95rem}
+.c-form{display:flex;flex-direction:column;gap:1rem}
+.f-grp{display:flex;flex-direction:column;gap:0.32rem}
+.f-lbl{font-family:'Fira Code',monospace;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim)}
+[data-mode="engineer"] .f-lbl::before{content:'$ ';color:var(--accent2)}
+.f-input,.f-textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.82rem 0.95rem;font-family:'DM Sans',sans-serif;font-size:0.92rem;resize:none;outline:none;transition:border-color 0.2s,background 0.5s}
+.f-input:focus,.f-textarea:focus{border-color:var(--accent)}
+.f-input::placeholder,.f-textarea::placeholder{color:var(--text-dim)}
+.f-textarea{min-height:105px}
+.f-submit{font-family:'Fira Code',monospace;font-size:0.72rem;letter-spacing:0.07em;text-transform:uppercase;font-weight:700;background:var(--accent);color:var(--bg);border:none;padding:0.88rem 1.7rem;cursor:pointer;transition:all 0.2s;align-self:flex-start}
+.f-submit:hover{filter:brightness(1.15);transform:translateY(-2px)}
+
+/* ════════ MODAL ════════ */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;padding:2rem}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border2);max-width:510px;width:100%;padding:2.1rem;position:relative;transform:translateY(16px);transition:transform 0.3s,background 0.5s}
+.modal-ov.open .modal{transform:translateY(0)}
+.modal-x{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-muted);font-size:1.05rem;cursor:pointer;font-family:'Fira Code',monospace}
+.modal-tag{font-family:'Fira Code',monospace;font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.45rem}
+.modal-title{font-weight:900;font-size:1.45rem;margin-bottom:0.85rem}
+[data-mode="artist"]   .modal-title{font-family:'Playfair Display',serif}
+[data-mode="personal"] .modal-title{font-family:'Playfair Display',serif}
+[data-mode="engineer"] .modal-title{font-family:'Fira Code',monospace;font-size:1.1rem}
+.modal-desc{color:var(--text-muted);line-height:1.7;margin-bottom:1.3rem;font-size:0.93rem}
+.modal-links{display:flex;gap:0.85rem}
+.modal-links a{font-family:'Fira Code',monospace;font-size:0.62rem;letter-spacing:0.07em;text-transform:uppercase;text-decoration:none;padding:0.52rem 1.05rem;transition:all 0.2s}
+.ml-p{background:var(--accent);color:var(--bg)}
+.ml-g{border:1px solid var(--border);color:var(--text-muted)}
+.modal-links a:hover{transform:translateY(-2px);filter:brightness(1.15)}
+
+/* ════════ FOOTER ════════ */
+footer{padding:2.2rem 5vw;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;transition:border-color 0.5s}
+.f-logo{font-size:1.1rem;font-weight:900;color:var(--accent);text-decoration:none;transition:color 0.4s}
+[data-mode="engineer"] .f-logo{font-family:'Fira Code',monospace}
+[data-mode="artist"]   .f-logo{font-family:'Playfair Display',serif}
+[data-mode="personal"] .f-logo{font-family:'Playfair Display',serif}
+.f-txt{font-family:'Fira Code',monospace;font-size:0.6rem;letter-spacing:0.07em;color:var(--text-dim)}
+
+/* ════════ REVEAL ════════ */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 0.7s,transform 0.7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ════════ ARTIST SECTION DIVIDER ════════ */
+[data-mode="artist"] section+section{border-top:1px solid rgba(255,107,53,0.15)}
+
+/* ════════ RESPONSIVE ════════ */
+@media(max-width:900px){
+  #hero,.about-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem}
+  .hero-visual{order:-1}
+  .hero-av-wrap{width:240px;height:300px}
+  .hero-stats{left:-6px;bottom:18px}
+  .now-grid{grid-template-columns:1fr 1fr}
+  .hamburger{display:flex}
+  .nav-links,.nav-cta{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:var(--bg);padding:1.1rem 5vw;border-bottom:1px solid var(--border)}
+  .nav-cta.open{display:block;margin:0 5vw 1rem}
+  [data-mode="engineer"] body{padding-left:0}
+  .vsc-sidebar{display:none!important}
+  .mode-sw{bottom:1rem;right:1rem}
+}
+@media(max-width:560px){
+  section{padding:62px 5vw}
+  .now-grid,.proj-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+<div class="vsc-sidebar" id="vscSidebar"></div>
+<div class="fl-wave"><canvas id="waveCanvas" style="width:100%;height:44px;opacity:0.35"></canvas></div>
+
+<!-- PERSONALITY SWITCHER -->
+<div class="mode-sw">
+  <div class="mode-lbl" id="modeLbl">&lt; Engineer /&gt;</div>
+  <button class="mbtn active" data-m="engineer" onclick="setMode('engineer')">⌨ Engineer</button>
+  <button class="mbtn"        data-m="artist"   onclick="setMode('artist')">🎹 Artist</button>
+  <button class="mbtn"        data-m="personal" onclick="setMode('personal')">☕ Personal</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo" id="navLogo">tapish</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#future">Roadmap</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#tools">Stack</a></li>
+    <li><a href="#now">Now</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:tapish@example.com" class="nav-cta" id="navCta">Hire Me</a>
+  <div class="hamburger" id="hbg"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div>
+    <div class="hero-filetab">tapish/portfolio.js — editor</div>
+    <div class="hero-label" id="heroLbl">Developer &amp; Creator</div>
+    <h1 class="hero-title" id="heroTitle">Building things<br>that <em>matter.</em></h1>
+    <p class="hero-sub" id="heroSub">I'm a developer, tinkerer, and lifelong learner. I craft digital products with intention — from the first line of code to the last pixel.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-primary">View My Work</a>
+      <a href="#contact"  class="btn-ghost">Let's Talk</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-av-wrap">
+      <div class="hero-av-bg"></div>
+      <div class="hero-av">
+        <div class="hero-emoji" id="heroEmoji">👨‍💻</div>
+        <div class="hero-av-sublabel" id="heroSubLbl">engineer mode</div>
+        <div class="hero-badge" id="heroBadge">Open to Work</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-num" id="heroStat">0</div>
+      <div class="stat-lbl">Projects Built</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Who I Am</div>
+    <h2 class="sec-title">Passion meets <span>purpose.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="about-bio-engineer">
+        <p>I'm <strong>Tapish</strong> — a self-taught developer who thinks in <strong>functions, loops, and systems</strong>. Every project is a codebase: versioned, refactored, always improving.</p>
+        <p>Currently deep in full-stack development, obsessing over clean code, performance, and building tools that actually <em>work</em>.</p>
+        <p>When I'm not pushing commits, I'm debugging my thinking with coffee and docs.</p>
+      </div>
+      <div class="about-bio-artist">
+        <p>I'm <strong>Tapish</strong> — a music producer and sonic explorer. I build sounds from silence, layer emotions into beats, and find patterns in noise.</p>
+        <p>FL Studio is my canvas. Every project is a new experiment — from lo-fi bedroom beats to layered electronic compositions.</p>
+        <p>Music is where I stop solving problems and start <em>feeling</em> them.</p>
+      </div>
+      <div class="about-bio-personal">
+        <p>Hey, I'm <strong>Tapish</strong>. Outside the screens, I'm someone who loves long walks, bad jokes, and overthinking everything — then building it anyway.</p>
+        <p>I journal, make playlists for moods, and collect half-finished ideas in notebooks. Slow mornings, honest conversations, something new every week.</p>
+        <p>This is my quiet corner of the internet. Welcome.</p>
+      </div>
+      <div class="passion-list" id="passionList"></div>
+    </div>
+    <div class="reveal">
+      <div class="skill-group">
+        <div class="sg-name" id="sg1"></div>
+        <div id="sb1"></div>
+      </div>
+      <div class="skill-group">
+        <div class="sg-name" id="sg2"></div>
+        <div id="sb2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Portfolio</div>
+    <h2 class="sec-title">Things I've <span>built.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="proj-grid" id="projGrid"></div>
+</section>
+
+<!-- ROADMAP -->
+<section id="future">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Roadmap</div>
+    <h2 class="sec-title">What's <span>next.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="tl" id="tl"></div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Writing</div>
+    <h2 class="sec-title">Thoughts &amp; <span>learnings.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="blog-grid" id="blogGrid"></div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Tech Stack</div>
+    <h2 class="sec-title">My <span>toolkit.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="tools-grid" id="toolsGrid"></div>
+</section>
+
+<!-- NOW -->
+<section id="now">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Status</div>
+    <h2 class="sec-title">Right <span>now.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="now-grid" id="nowGrid"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">Let's Connect</div>
+    <h2 class="sec-title">Say <span>hello.</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-left reveal">
+      <p id="contactP">Have a project? Need a collaborator? My inbox is open.</p>
+      <div class="soc-links">
+        <a href="#" class="soc-link"><span class="soc-icon">📧</span>tapish@example.com</a>
+        <a href="#" class="soc-link"><span class="soc-icon">🐙</span>github.com/tapish</a>
+        <a href="#" class="soc-link"><span class="soc-icon">🐦</span>twitter.com/tapish</a>
+        <a href="#" class="soc-link"><span class="soc-icon">💼</span>linkedin.com/in/tapish</a>
+      </div>
+    </div>
+    <form class="c-form reveal" onsubmit="handleForm(event)">
+      <div class="f-grp"><label class="f-lbl">Name</label><input class="f-input" type="text" placeholder="Your name" required></div>
+      <div class="f-grp"><label class="f-lbl">Email</label><input class="f-input" type="email" placeholder="your@email.com" required></div>
+      <div class="f-grp"><label class="f-lbl">Message</label><textarea class="f-textarea" placeholder="What's on your mind?"></textarea></div>
+      <button type="submit" class="f-submit">Send Message →</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <a href="#hero" class="f-logo" id="fLogo">tapish.</a>
+  <p class="f-txt">© 2025 Tapish — Built with intent.</p>
+  <p class="f-txt" id="fStatus">open to work ✦</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modalOv" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModalD()">✕</button>
+    <div class="modal-tag" id="mTag"></div>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-desc" id="mDesc"></div>
+    <div class="modal-links" id="mLinks"></div>
+  </div>
+</div>
+
+<script>
+/* ══ DATA ══════════════════════════════════════════════ */
+const MODES = {
+  engineer:{
+    lbl:'< Developer />',title:'Building things<br>that <em>work.</em>',
+    sub:`<span class="kw">// self-taught engineer.</span><br>I write <span class="str">clean code</span>, break things, fix them, and <span class="fn">ship.</span> Obsessing over full-stack patterns and making ideas real.`,
+    emoji:'👨‍💻',badge:'Open to Work',sublbl:'engineer mode',
+    passions:['JavaScript','React','Node.js','Open Source','System Design','CLI Tools','Clean Code','Debugging'],
+    sg1:'Frontend',sg2:'Backend & Tools',
+    s1:[{n:'HTML / CSS',w:90},{n:'JavaScript',w:75},{n:'React',w:60}],
+    s2:[{n:'Node.js',w:55},{n:'Git / GitHub',w:80},{n:'Databases',w:45}],
+    cta:'Hire Me',contact:'Have a project? Need a collaborator? Open to freelance work and interesting builds.',
+    footer:'open to work ✦',ml:'< Engineer />'
+  },
+  artist:{
+    lbl:'♪ Music Producer',title:'Making sounds<br>that <em>feel.</em>',
+    sub:'FL Studio is my canvas. I layer emotions into beats, find tension in silence, and build worlds one sample at a time.',
+    emoji:'🎹',badge:'Accepting Collabs',sublbl:'artist mode',
+    passions:['FL Studio','Beat Making','Sound Design','Lo-Fi','Electronic','Sampling','Mixing','Production'],
+    sg1:'Production',sg2:'Sound & Mix',
+    s1:[{n:'Beat Production',w:85},{n:'Sound Design',w:72},{n:'Arrangement',w:68}],
+    s2:[{n:'Mixing',w:60},{n:'Sample Flipping',w:78},{n:'Mastering',w:45}],
+    cta:'Collab →',contact:'Open to creative collaborations, beat commissions, and music conversations. Let\'s make something.',
+    footer:'accepting collabs ♪',ml:'♪ Artist'
+  },
+  personal:{
+    lbl:'Just a human 🌿',title:'Living, learning,<br><em>writing it down.</em>',
+    sub:'Unfiltered Tapish. I journal, make playlists, drink too much tea, and build things between thoughts. Nice to meet you.',
+    emoji:'☕',badge:'Always Curious',sublbl:'personal mode',
+    passions:['Journaling','Tea','Long Walks','Photography','Reading','Playlists','Overthinking','Making Things'],
+    sg1:'Life Skills',sg2:'Personal Growth',
+    s1:[{n:'Curiosity',w:99},{n:'Empathy',w:88},{n:'Patience',w:70}],
+    s2:[{n:'Journaling',w:82},{n:'Deep Listening',w:75},{n:'Getting Lost',w:65}],
+    cta:'Say Hi →',contact:'No agenda needed. Say hello, share something interesting, or just leave a note.',
+    footer:'always curious ✦',ml:'Tapish ♡'
+  }
+};
+
+const PROJECTS=[
+  {n:'01',t:'Dev Tracker',d:'Track learning goals and celebrate milestones. Vanilla JS + localStorage.',tags:['JavaScript','CSS','LocalStorage'],s:'live',fd:'A clean accountability tool. Daily check-ins, streak tracking, and milestone celebrations. Built to scratch my own itch.',demo:'#',code:'#'},
+  {n:'02',t:'Portfolio v1',d:'My first portfolio — humble HTML/CSS. Embarrassingly simple now, deeply meaningful then.',tags:['HTML','CSS'],s:'live',fd:'Two pages, zero frameworks, infinite motivation. Still online as a monument to beginnings.',demo:'#',code:'#'},
+  {n:'03',t:'Weather Dashboard',d:'React app pulling live weather data. My first real API integration.',tags:['React','API','CSS Modules'],s:'wip',fd:'5-day forecasts, city search. Learning React by building something real. Dark/light mode in progress.',demo:'#',code:'#'},
+  {n:'04',t:'CLI Task Manager',d:'Command-line productivity tool in Node.js — tasks, priorities, terminal.',tags:['Node.js','CLI','JSON'],s:'live',fd:'Because the best UI is sometimes no UI. Lightweight, fast, with priorities and due dates.',demo:'#',code:'#'},
+  {n:'05',t:'Static Blog Engine',d:'Markdown-to-HTML blog generator. No frameworks, no dependencies. Just clean output.',tags:['Node.js','Markdown'],s:'planned',fd:'Inspired by frustration with over-engineered solutions. Write markdown, get a beautiful site.',demo:null,code:null},
+  {n:'06',t:'AI Writing Companion',d:'Experimental AI-assisted writing and ideation workflows.',tags:['AI/LLM','React','API'],s:'wip',fd:'An experiment using AI APIs to help brainstorm, draft outlines, and break creative blocks.',demo:null,code:'#'}
+];
+
+const TIMELINE=[
+  {p:'Q1 2025',t:'Master React & State Management',d:'Deep dive into advanced React patterns, custom hooks, Context API. Ship two production apps.'},
+  {p:'Q2 2025',t:'Launch Static Blog Engine',d:'Ship the generator, open-source it, build an audience around the tool.'},
+  {p:'Q3 2025',t:'Learn Backend & Databases',d:'Express, PostgreSQL, RESTful APIs. Ship a full-stack project from scratch.'},
+  {p:'Q4 2025',t:'First Freelance Client',d:'Take one paying project to validate skills in a real-world context.'},
+  {p:'2026',   t:'Build a SaaS Product',d:'Identify a niche problem, validate, and ship a small SaaS with real users.'}
+];
+
+const POSTS=[
+  {dt:'Mar 12, 2025',t:'What I learned building my first React app',e:'Mistakes, breakthroughs, and the moment useEffect finally clicked.',h:'#'},
+  {dt:'Feb 28, 2025',t:'Why I chose to learn in public',e:'The uncomfortable truth about building your portfolio in front of everyone.',h:'#'},
+  {dt:'Feb 10, 2025',t:'5 CSS tricks I wish I knew earlier',e:'Small techniques that changed how I think about layout.',h:'#'},
+  {dt:'Jan 22, 2025',t:'My dev setup in 2025',e:'Tools, extensions, and workflows that make me productive.',h:'#'}
+];
+
+const TOOLS=[
+  {i:'⚡',n:'VS Code'},{i:'🎹',n:'FL Studio'},{i:'🌐',n:'HTML5'},{i:'🎨',n:'CSS3'},
+  {i:'📜',n:'JavaScript'},{i:'⚛️',n:'React'},{i:'🟢',n:'Node.js'},{i:'🐙',n:'Git'},
+  {i:'🗄️',n:'PostgreSQL'},{i:'🔵',n:'TypeScript'},{i:'🏗️',n:'Figma'},{i:'☁️',n:'Vercel'}
+];
+
+const NOW=[
+  {i:'📚',l:'Learning',v:'Advanced React & TypeScript'},
+  {i:'🛠️',l:'Building',v:'Weather Dashboard + Blog Engine'},
+  {i:'🎹',l:'In FL Studio',v:'Lo-fi EP — 3 tracks done'},
+  {i:'📖',l:'Reading',v:'The Pragmatic Programmer'},
+  {i:'📍',l:'Location',v:'India 🇮🇳'},
+  {i:'✅',l:'Status',v:'Open to work & collabs'}
+];
+
+/* ══ RENDER ════════════════════════════════════════════ */
+function renderSkills(id,arr){
+  document.getElementById(id).innerHTML=arr.map(s=>`
+    <div class="sb-wrap">
+      <div class="sb-info"><span class="sb-name">${s.n}</span><span class="sb-pct">${s.w}%</span></div>
+      <div class="sb-track"><div class="sb-fill" data-w="${s.w}"></div></div>
+    </div>`).join('');
+}
+function renderAll(){
+  document.getElementById('projGrid').innerHTML=PROJECTS.map((p,i)=>`
+    <div class="proj-card reveal" onclick="openModal(${i})">
+      <div class="proj-num">${p.n}</div>
+      <div class="proj-title">${p.t}</div>
+      <div class="proj-desc">${p.d}</div>
+      <div class="proj-tags">${p.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+      <div class="proj-status s-${p.s}"><span class="sdot"></span>${p.s==='live'?'Live':p.s==='wip'?'In Progress':'Planned'}</div>
+    </div>`).join('');
+  document.getElementById('tl').innerHTML=TIMELINE.map(t=>`
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-period">${t.p}</div>
+      <div class="tl-title">${t.t}</div>
+      <div class="tl-desc">${t.d}</div>
+    </div>`).join('');
+  document.getElementById('blogGrid').innerHTML=POSTS.map(p=>`
+    <a href="${p.h}" class="blog-card reveal">
+      <div class="blog-date">${p.dt}</div>
+      <div class="blog-title">${p.t}</div>
+      <div class="blog-exc">${p.e}</div>
+      <div class="blog-rm">Read more</div>
+    </a>`).join('');
+  document.getElementById('toolsGrid').innerHTML=TOOLS.map(t=>`
+    <div class="tool-item reveal"><div class="tool-icon">${t.i}</div><div class="tool-name">${t.n}</div></div>`).join('');
+  document.getElementById('nowGrid').innerHTML=NOW.map(n=>`
+    <div class="now-card reveal"><div class="nc-icon">${n.i}</div><div class="nc-lbl">${n.l}</div><div class="nc-val">${n.v}</div></div>`).join('');
+}
+
+/* ══ MODE SWITCHER ══════════════════════════════════════ */
+function setMode(m){
+  const d=MODES[m];
+  document.documentElement.setAttribute('data-mode',m);
+  document.querySelectorAll('.mbtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
+  document.getElementById('modeLbl').textContent=d.ml;
+  document.getElementById('heroLbl').textContent=d.lbl;
+  document.getElementById('heroTitle').innerHTML=d.title;
+  document.getElementById('heroSub').innerHTML=d.sub;
+  document.getElementById('heroEmoji').textContent=d.emoji;
+  document.getElementById('heroBadge').textContent=d.badge;
+  document.getElementById('heroSubLbl').textContent=d.sublbl;
+  document.getElementById('passionList').innerHTML=d.passions.map(p=>`<span class="passion-tag">${p}</span>`).join('');
+  document.getElementById('sg1').textContent=d.sg1;
+  document.getElementById('sg2').textContent=d.sg2;
+  renderSkills('sb1',d.s1); renderSkills('sb2',d.s2);
+  document.getElementById('navCta').textContent=d.cta;
+  document.getElementById('contactP').textContent=d.contact;
+  document.getElementById('fStatus').textContent=d.footer;
+  setTimeout(()=>{
+    document.querySelectorAll('.sb-fill').forEach(f=>{f.style.width='0';setTimeout(()=>{f.style.width=f.dataset.w+'%'},60)});
+  },100);
+  buildLineNums();
+  if(m==='artist') drawWave();
+}
+
+/* ══ VS CODE LINE NUMBERS ══════════════════════════════ */
+function buildLineNums(){
+  const el=document.getElementById('vscSidebar');
+  const count=Math.min(Math.ceil(document.documentElement.scrollHeight/21),500);
+  el.innerHTML=Array.from({length:count},(_,i)=>`<div class="ln">${i+1}</div>`).join('');
+}
+
+/* ══ FL WAVEFORM ═══════════════════════════════════════ */
+function drawWave(){
+  const c=document.getElementById('waveCanvas');
+  c.width=window.innerWidth; c.height=44;
+  const x=c.getContext('2d'),W=c.width,H=c.height;
+  x.clearRect(0,0,W,H);
+  const g=x.createLinearGradient(0,0,W,0);
+  g.addColorStop(0,'#ff6b35'); g.addColorStop(0.5,'#a855f7'); g.addColorStop(1,'#ff3d7f');
+  x.strokeStyle=g; x.lineWidth=1.5; x.beginPath();
+  for(let i=0;i<W;i++){
+    const t=i/W;
+    const y=H/2+Math.sin(t*80)*(7+Math.sin(t*13)*5)*Math.sin(t*Math.PI);
+    i===0?x.moveTo(i,y):x.lineTo(i,y);
+  }
+  x.stroke();
+}
+
+/* ══ MODAL ══════════════════════════════════════════════ */
+function openModal(i){
+  const p=PROJECTS[i];
+  document.getElementById('mTag').textContent=p.tags.join(' · ');
+  document.getElementById('mTitle').textContent=p.t;
+  document.getElementById('mDesc').textContent=p.fd;
+  document.getElementById('mLinks').innerHTML=(p.demo?`<a href="${p.demo}" class="ml-p">Live Demo →</a>`:'')+
+    (p.code?`<a href="${p.code}" class="ml-g">View Code</a>`:'');
+  document.getElementById('modalOv').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){if(e.target.id==='modalOv')closeModalD()}
+function closeModalD(){document.getElementById('modalOv').classList.remove('open');document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModalD()});
+
+/* ══ CURSOR ══════════════════════════════════════════════ */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.transform=`translate(${mx-5}px,${my-5}px)`});
+(function a(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.transform=`translate(${rx-16}px,${ry-16}px)`;requestAnimationFrame(a)})();
+
+/* ══ SCROLL ══════════════════════════════════════════════ */
+function reveal(){
+  document.querySelectorAll('.reveal,.tl-item').forEach(el=>{
+    if(el.getBoundingClientRect().top<window.innerHeight-65){
+      el.classList.add('visible');
+      el.querySelectorAll('.sb-fill').forEach(f=>{f.style.width=f.dataset.w+'%'});
+    }
+  });
+}
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progFill').style.width=(window.scrollY/h*100)+'%';
+  reveal();
+});
+
+/* ══ NAV HAMBURGER ══════════════════════════════════════ */
+document.getElementById('hbg').addEventListener('click',()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('navCta').classList.toggle('open');
+});
+
+/* ══ FORM ════════════════════════════════════════════════ */
+function handleForm(e){
+  e.preventDefault();
+  const b=e.target.querySelector('.f-submit');
+  b.textContent='Sent! ✓'; b.style.background='var(--green)';
+  setTimeout(()=>{b.textContent='Send Message →'; b.style.background=''},3000);
+}
+
+/* ══ COUNTER ═════════════════════════════════════════════ */
+function animCount(el,target,dur){
+  let s=0;
+  const step=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/dur,1);el.textContent=Math.floor(p*target);if(p<1)requestAnimationFrame(step)};
+  requestAnimationFrame(step);
+}
+
+/* ══ INIT ════════════════════════════════════════════════ */
+renderAll();
+setMode('engineer');
+setTimeout(reveal,350);
+setTimeout(()=>animCount(document.getElementById('heroStat'),12,1400),600);
+setTimeout(buildLineNums,600);
+</script>
+</body>
+</html>
