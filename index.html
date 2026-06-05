@@ -1,1886 +1,1554 @@
 <!DOCTYPE html>
 <html lang="en" data-mode="engineer">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tapish</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    :root {
-      --spotify: #1db954;
-      --youtube: #ff3333;
-    }
-
-    [data-mode="engineer"] {
-      --bg: #080b12;
-      --bg2: #0d1117;
-      --card: #111827;
-      --card2: #1a2233;
-      --border: #1e293b;
-      --a: #60a5fa;
-      --b: #34d399;
-      --c: #f472b6;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --dim: #334155;
-      --nav: rgba(8, 11, 18, 0.92);
-      --radius: 12px;
-    }
-
-    [data-mode="artist"] {
-      --bg: #0f0a0a;
-      --bg2: #150f0d;
-      --card: #1e1209;
-      --card2: #2a1a0f;
-      --border: #3d2210;
-      --a: #fb923c;
-      --b: #fbbf24;
-      --c: #ef4444;
-      --text: #fef3c7;
-      --muted: #d97706;
-      --dim: #78350f;
-      --nav: rgba(15, 10, 10, 0.92);
-      --radius: 4px;
-    }
-
-    [data-mode="personal"] {
-      --bg: #061209;
-      --bg2: #081a0c;
-      --card: #0d2413;
-      --card2: #15331d;
-      --border: #1a4228;
-      --a: #4ade80;
-      --b: #86efac;
-      --c: #d9f99d;
-      --text: #ecfdf5;
-      --muted: #6ee7b7;
-      --dim: #15532d;
-      --nav: rgba(6, 18, 9, 0.92);
-      --radius: 18px;
-    }
-
-    body {
-      font-family: "Space Grotesk", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      line-height: 1.6;
-      transition: background 0.5s ease, color 0.5s ease;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.035;
-      background-image:
-        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 80px 80px;
-      mask-image: radial-gradient(circle at center, black, transparent 75%);
-    }
-
-    a {
-      color: inherit;
-    }
-
-    ::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--a);
-      border-radius: 10px;
-    }
-
-    .progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 2px;
-      width: 0%;
-      background: linear-gradient(90deg, var(--b), var(--a), var(--c));
-      z-index: 999;
-      box-shadow: 0 0 14px var(--a);
-    }
-
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 64px;
-      padding: 0 5vw;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--nav);
-      backdrop-filter: blur(24px);
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      z-index: 100;
-      transition: transform 0.3s ease, background 0.5s ease;
-    }
-
-    nav.hide {
-      transform: translateY(-100%);
-    }
-
-    .logo {
-      font-family: "Syne", sans-serif;
-      font-size: 1.3rem;
-      font-weight: 800;
-      text-decoration: none;
-      letter-spacing: -0.04em;
-    }
-
-    .logo span {
-      color: var(--a);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 1.6rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-family: "Fira Code", monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--muted);
-      transition: color 0.25s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--a);
-    }
-
-    .live-nav-item {
-      display: none;
-    }
-
-    [data-mode="personal"] .live-nav-item {
-      display: list-item;
-    }
-
-    .nav-cta {
-      font-family: "Fira Code", monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: var(--a);
-      color: var(--bg);
-      padding: 0.48rem 1rem;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 700;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .nav-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 24px color-mix(in srgb, var(--a), transparent 40%);
-    }
-
-    .hamburger {
-      display: none;
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255,255,255,.03);
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-    }
-
-    .hamburger span {
-      width: 18px;
-      height: 1.5px;
-      background: var(--text);
-      transition: 0.3s ease;
-    }
-
-    .hamburger.active span:nth-child(1) {
-      transform: translateY(6.5px) rotate(45deg);
-    }
-
-    .hamburger.active span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .hamburger.active span:nth-child(3) {
-      transform: translateY(-6.5px) rotate(-45deg);
-    }
-
-    section {
-      position: relative;
-      z-index: 2;
-      padding: 100px 5vw;
-    }
-
-    .section-head {
-      margin-bottom: 3rem;
-    }
-
-    .section-tag {
-      font-family: "Fira Code", monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--a);
-      margin-bottom: 0.7rem;
-    }
-
-    .section-title {
-      font-family: "Syne", sans-serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.05;
-      letter-spacing: -0.05em;
-      font-weight: 800;
-    }
-
-    [data-mode="engineer"] .section-title {
-      font-family: "Fira Code", monospace;
-      font-size: clamp(1.3rem, 2.4vw, 2rem);
-      letter-spacing: -0.02em;
-      font-weight: 500;
-    }
-
-    [data-mode="personal"] .section-title {
-      font-family: "Nunito", sans-serif;
-      font-weight: 900;
-    }
-
-    .section-title span {
-      color: var(--a);
-    }
-
-    .hero {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      align-items: center;
-      gap: 2rem;
-      padding-top: 90px;
-      overflow: hidden;
-    }
-
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-    }
-
-    .hero::before {
-      width: 520px;
-      height: 520px;
-      top: -160px;
-      left: -140px;
-      background: color-mix(in srgb, var(--a), transparent 82%);
-      animation: float1 12s ease-in-out infinite;
-    }
-
-    .hero::after {
-      width: 420px;
-      height: 420px;
-      bottom: -140px;
-      left: 40%;
-      background: color-mix(in srgb, var(--b), transparent 88%);
-      animation: float2 14s ease-in-out infinite;
-    }
-
-    @keyframes float1 {
-      0%, 100% { transform: translate(0,0) scale(1); }
-      50% { transform: translate(50px, -30px) scale(1.1); }
-    }
-
-    @keyframes float2 {
-      0%, 100% { transform: translate(0,0) scale(1); }
-      50% { transform: translate(-40px, 35px) scale(1.08); }
-    }
-
-    .hero-main {
-      position: relative;
-      z-index: 3;
-    }
-
-    .hero-label {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-family: "Fira Code", monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--a);
-      margin-bottom: 1rem;
-    }
-
-    .hero-label::before {
-      content: "";
-      width: 32px;
-      height: 1px;
-      background: var(--a);
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      margin-left: 0.5rem;
-      padding: 0.22rem 0.65rem;
-      border: 1px solid var(--b);
-      border-radius: 999px;
-      color: var(--b);
-      font-size: 0.52rem;
-      letter-spacing: 0.08em;
-    }
-
-    .hero-badge::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--b);
-      box-shadow: 0 0 14px var(--b);
-      animation: pulse 1.6s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.6); opacity: 0.45; }
-    }
-
-    .hero-title {
-      font-family: "Syne", sans-serif;
-      font-size: clamp(2.8rem, 6vw, 5.5rem);
-      line-height: 0.98;
-      letter-spacing: -0.07em;
-      font-weight: 800;
-      margin-bottom: 1.2rem;
-    }
-
-    [data-mode="engineer"] .hero-title {
-      font-family: "Fira Code", monospace;
-      font-size: clamp(1.5rem, 3.3vw, 3rem);
-      letter-spacing: -0.02em;
-      font-weight: 500;
-      line-height: 1.18;
-    }
-
-    [data-mode="personal"] .hero-title {
-      font-family: "Nunito", sans-serif;
-      font-weight: 900;
-    }
-
-    .hero-title em {
-      font-style: normal;
-      color: var(--a);
-    }
-
-    .hero-sub {
-      max-width: 540px;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.85;
-      margin-bottom: 2rem;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 0.8rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary,
-    .btn-ghost {
-      font-family: "Fira Code", monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.82rem 1.4rem;
-      border-radius: var(--radius);
-      text-decoration: none;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    }
-
-    .btn-primary {
-      background: var(--a);
-      color: var(--bg);
-      font-weight: 700;
-    }
-
-    .btn-ghost {
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-
-    .btn-primary:hover,
-    .btn-ghost:hover {
-      transform: translateY(-3px);
-    }
-
-    .btn-primary:hover {
-      box-shadow: 0 0 28px color-mix(in srgb, var(--a), transparent 55%);
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--a);
-      color: var(--a);
-    }
-
-    .mode-dock {
-      position: relative;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      gap: 0.7rem;
-    }
-
-    .mode-card {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      background: color-mix(in srgb, var(--card), transparent 5%);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem;
-      cursor: pointer;
-      overflow: hidden;
-      transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-    }
-
-    .mode-card::before {
-      content: "";
-      width: 4px;
-      align-self: stretch;
-      border-radius: 999px;
-      background: var(--mode-color);
-    }
-
-    .mode-card[data-m="engineer"] { --mode-color: #60a5fa; }
-    .mode-card[data-m="artist"] { --mode-color: #fb923c; }
-    .mode-card[data-m="personal"] { --mode-color: #4ade80; }
-
-    .mode-card:hover,
-    .mode-card.active {
-      border-color: var(--mode-color);
-      background: var(--card2);
-      transform: translateX(-8px);
-    }
-
-    .mode-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,.05);
-      font-size: 1.25rem;
-    }
-
-    .mode-name {
-      font-family: "Syne", sans-serif;
-      font-weight: 700;
-      color: var(--mode-color);
-    }
-
-    .mode-sub {
-      font-family: "Fira Code", monospace;
-      font-size: 0.5rem;
-      color: var(--dim);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    #personal-live {
-      display: none;
-    }
-
-    [data-mode="personal"] #personal-live {
-      display: block;
-    }
-
-    .personal-live-section {
-      z-index: 8;
-      padding: 0 5vw;
-      margin-top: -80px;
-      margin-bottom: -45px;
-      background: transparent;
-    }
-
-    .personal-live-container {
-      width: 100%;
-      max-width: 1180px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 1.2rem;
-      align-items: stretch;
-    }
-
-    .personal-live-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 28px;
-      padding: 1.45rem;
-      background:
-        radial-gradient(circle at top left, rgba(29, 185, 84, 0.16), transparent 36%),
-        linear-gradient(145deg, rgba(18, 18, 18, 0.96), rgba(5, 12, 8, 0.92));
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow:
-        0 34px 95px rgba(0,0,0,.58),
-        inset 0 1px 0 rgba(255,255,255,.07);
-      backdrop-filter: blur(22px) saturate(1.25);
-    }
-
-    .personal-live-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.08), transparent 35%),
-        radial-gradient(circle at 20% 0%, rgba(29,185,84,.18), transparent 35%);
-    }
-
-    .youtube-live-card {
-      background:
-        radial-gradient(circle at top left, rgba(255, 0, 0, 0.16), transparent 36%),
-        linear-gradient(145deg, rgba(18, 18, 18, 0.96), rgba(14, 7, 7, 0.92));
-    }
-
-    .youtube-live-card::before {
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.08), transparent 35%),
-        radial-gradient(circle at 25% 0%, rgba(255,0,0,.16), transparent 36%);
-    }
-
-    .live-card-copy,
-    .spotify-card-link,
-    .youtube-status,
-    .youtube-frame-wrap,
-    .youtube-channel-link {
-      position: relative;
-      z-index: 2;
-    }
-
-    .live-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      font-family: "Fira Code", monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .live-label::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .spotify-label {
-      color: var(--spotify);
-    }
-
-    .spotify-label::before {
-      background: var(--spotify);
-      box-shadow: 0 0 16px var(--spotify);
-      animation: pulse 1.6s ease-in-out infinite;
-    }
-
-    .youtube-label {
-      color: var(--youtube);
-    }
-
-    .youtube-label::before {
-      background: var(--youtube);
-      box-shadow: 0 0 16px var(--youtube);
-      animation: pulse 1.6s ease-in-out infinite;
-    }
-
-    .personal-live-card h2 {
-      color: #f5f5f5;
-      font-family: "Nunito", sans-serif;
-      font-size: clamp(1.35rem, 3vw, 2.25rem);
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-      margin-bottom: 0.55rem;
-      font-weight: 900;
-    }
-
-    .personal-live-card p {
-      color: rgba(245,245,245,.64);
-      font-size: 0.88rem;
-      line-height: 1.65;
-      margin-bottom: 1.1rem;
-    }
-
-    .spotify-card-link {
-      display: block;
-      width: 100%;
-      transition: transform 0.35s cubic-bezier(.23,1,.32,1), filter 0.35s ease;
-    }
-
-    .spotify-card-link:hover {
-      transform: translateY(-8px) scale(1.018);
-      filter: brightness(1.08);
-    }
-
-    .spotify-card-img {
-      display: block;
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: #121212;
-      box-shadow:
-        0 24px 70px rgba(0,0,0,.62),
-        0 0 45px rgba(29,185,84,.2);
-    }
-
-    .youtube-status {
-      font-family: "Fira Code", monospace;
-      font-size: 0.66rem;
-      letter-spacing: 0.08em;
-      color: #aaa;
-      margin-bottom: 1rem;
-    }
-
-    .youtube-status.live {
-      color: var(--youtube);
-    }
-
-    .youtube-status.offline {
-      color: #9ca3af;
-    }
-
-    .youtube-frame-wrap {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      border-radius: 20px;
-      background: #0b0b0b;
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow:
-        0 26px 70px rgba(0,0,0,.5),
-        0 0 45px rgba(255,0,0,.12);
-    }
-
-    .youtube-frame-wrap iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-    }
-
-    .youtube-offline-box {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 0.55rem;
-      text-align: center;
-      padding: 1.2rem;
-      background:
-        radial-gradient(circle at center, rgba(255,0,0,.08), transparent 45%),
-        linear-gradient(145deg, #111, #050505);
-    }
-
-    .youtube-offline-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #555;
-      box-shadow: 0 0 18px rgba(255,255,255,.18);
-    }
-
-    .youtube-offline-box h3 {
-      color: #f5f5f5;
-      font-size: 1.1rem;
-    }
-
-    .youtube-offline-box p {
-      color: #aaa;
-      font-size: 0.86rem;
-      max-width: 360px;
-      margin: 0;
-    }
-
-    .youtube-channel-link {
-      display: inline-flex;
-      margin-top: 1rem;
-      color: #ff6b6b;
-      text-decoration: none;
-      font-family: "Fira Code", monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: transform 0.25s ease, color 0.25s ease;
-    }
-
-    .youtube-channel-link:hover {
-      color: #fff;
-      transform: translateX(5px);
-    }
-
-    [data-mode="personal"] #about {
-      padding-top: 160px;
-    }
-
-    #about,
-    #future,
-    #tools {
-      background: var(--bg2);
-    }
-
-    .about-grid,
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3.5rem;
-      align-items: start;
-    }
-
-    .bio-block {
-      display: none;
-    }
-
-    [data-mode="engineer"] .bio-engineer,
-    [data-mode="artist"] .bio-artist,
-    [data-mode="personal"] .bio-personal {
-      display: block;
-    }
-
-    .about-text p,
-    .contact-left p {
-      color: var(--muted);
-      line-height: 1.85;
-      margin-bottom: 1rem;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-top: 1.4rem;
-    }
-
-    .tag {
-      font-family: "Fira Code", monospace;
-      font-size: 0.56rem;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.28rem 0.7rem;
-      background: rgba(255,255,255,.02);
-    }
-
-    .skill-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .skill-title {
-      font-family: "Fira Code", monospace;
-      color: var(--dim);
-      font-size: 0.55rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 0.7rem;
-    }
-
-    .skill {
-      margin-bottom: 0.75rem;
-    }
-
-    .skill-top {
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 0.3rem;
-    }
-
-    .bar {
-      height: 3px;
-      background: rgba(255,255,255,.06);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .bar span {
-      display: block;
-      height: 100%;
-      width: var(--w);
-      background: linear-gradient(90deg, var(--b), var(--a));
-      border-radius: 999px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .card {
-      background: var(--bg);
-      padding: 1.7rem;
-      border: 1px solid transparent;
-      transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
-    }
-
-    .card:hover {
-      background: var(--card);
-      border-color: var(--a);
-      transform: translateY(-4px);
-    }
-
-    .card-num {
-      font-family: "Fira Code", monospace;
-      font-size: 0.55rem;
-      color: var(--dim);
-      margin-bottom: 0.7rem;
-    }
-
-    .card-title {
-      font-family: "Syne", sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 0.55rem;
-    }
-
-    .card-desc {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-    }
-
-    .mini-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem;
-      margin-bottom: 1rem;
-    }
-
-    .mini-tags span {
-      font-family: "Fira Code", monospace;
-      font-size: 0.5rem;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 0.15rem 0.45rem;
-      border-radius: 6px;
-    }
-
-    .status {
-      font-family: "Fira Code", monospace;
-      font-size: 0.55rem;
-      color: var(--b);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .timeline {
-      position: relative;
-      max-width: 720px;
-    }
-
-    .timeline::before {
-      content: "";
-      position: absolute;
-      left: 10px;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(var(--a), transparent);
-    }
-
-    .timeline-item {
-      position: relative;
-      padding-left: 42px;
-      margin-bottom: 2rem;
-    }
-
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      left: 2px;
-      top: 4px;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--a);
-      background: var(--bg);
-      box-shadow: 0 0 16px color-mix(in srgb, var(--a), transparent 40%);
-    }
-
-    .timeline-period {
-      font-family: "Fira Code", monospace;
-      font-size: 0.56rem;
-      color: var(--a);
-      letter-spacing: 0.14em;
-      margin-bottom: 0.25rem;
-    }
-
-    .timeline-title {
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .timeline-desc {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .tool {
-      background: var(--bg);
-      text-align: center;
-      padding: 1.3rem 0.8rem;
-      transition: 0.25s ease;
-    }
-
-    .tool:hover {
-      background: var(--card);
-      transform: translateY(-4px);
-    }
-
-    .tool-icon {
-      font-size: 1.5rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .tool-name {
-      font-family: "Fira Code", monospace;
-      font-size: 0.54rem;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    .contact-links {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .contact-link {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 0.75rem 0.9rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--muted);
-      text-decoration: none;
-      font-family: "Fira Code", monospace;
-      font-size: 0.58rem;
-      transition: 0.25s ease;
-    }
-
-    .contact-link:hover {
-      border-color: var(--a);
-      color: var(--a);
-      transform: translateX(5px);
-    }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-    }
-
-    .field label {
-      display: block;
-      font-family: "Fira Code", monospace;
-      font-size: 0.55rem;
-      color: var(--dim);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 0.35rem;
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.85rem 1rem;
-      border-radius: var(--radius);
-      outline: none;
-      font-family: "Space Grotesk", sans-serif;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: var(--a);
-    }
-
-    button {
-      border: none;
-      cursor: pointer;
-    }
-
-    .submit {
-      align-self: flex-start;
-      padding: 0.9rem 1.5rem;
-      background: var(--a);
-      color: var(--bg);
-      border-radius: var(--radius);
-      font-family: "Fira Code", monospace;
-      font-weight: 700;
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    footer {
-      position: relative;
-      z-index: 2;
-      padding: 2.3rem 5vw;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      background: var(--bg);
-    }
-
-    .footer-logo {
-      font-family: "Syne", sans-serif;
-      font-weight: 800;
-      text-decoration: none;
-      font-size: 1.25rem;
-    }
-
-    .footer-logo span {
-      color: var(--a);
-    }
-
-    .footer-text {
-      font-family: "Fira Code", monospace;
-      font-size: 0.55rem;
-      color: var(--dim);
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (max-width: 980px) {
-      .hero {
-        grid-template-columns: 1fr;
-        padding-bottom: 4rem;
-      }
-
-      .mode-dock {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .mode-card:hover,
-      .mode-card.active {
-        transform: translateY(-4px);
-      }
-
-      .personal-live-container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 820px) {
-      nav {
-        padding: 0 1rem;
-      }
-
-      .hamburger {
-        display: flex;
-      }
-
-      .nav-links,
-      .nav-cta {
-        display: none;
-      }
-
-      .nav-links.open {
-        position: fixed;
-        top: 64px;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.45rem;
-        padding: 1rem;
-        background: var(--nav);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .nav-links.open a {
-        display: block;
-        padding: 0.9rem;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-      }
-
-      .nav-cta.open {
-        position: fixed;
-        left: 1rem;
-        right: 1rem;
-        bottom: 1rem;
-        display: block;
-        text-align: center;
-        padding: 0.9rem;
-      }
-
-      section {
-        padding: 70px 1rem;
-      }
-
-      .hero {
-        min-height: auto;
-        padding-top: 110px;
-      }
-
-      .hero-title {
-        font-size: clamp(2.2rem, 12vw, 3.4rem);
-      }
-
-      [data-mode="engineer"] .hero-title {
-        font-size: clamp(1.25rem, 7vw, 2rem);
-      }
-
-      .hero-buttons {
-        display: grid;
-        grid-template-columns: 1fr;
-      }
-
-      .btn-primary,
-      .btn-ghost {
-        text-align: center;
-      }
-
-      .mode-dock {
-        grid-template-columns: 1fr;
-      }
-
-      .personal-live-section {
-        margin-top: -40px;
-        margin-bottom: 0;
-        padding: 0 1rem 55px;
-      }
-
-      [data-mode="personal"] #about {
-        padding-top: 80px;
-      }
-
-      .personal-live-card {
-        padding: 1.15rem;
-        border-radius: 22px;
-      }
-
-      .spotify-card-img {
-        max-width: 100%;
-      }
-
-      .about-grid,
-      .contact-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-
-      .grid,
-      .tool-grid {
-        gap: 0.75rem;
-        background: transparent;
-      }
-
-      .card,
-      .tool {
-        border: 1px solid var(--border);
-        border-radius: 16px;
-      }
-
-      footer {
-        padding: 2rem 1rem;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .hero-label {
-        flex-wrap: wrap;
-      }
-
-      .hero-badge {
-        margin-left: 0;
-      }
-
-      .personal-live-card h2 {
-        font-size: 1.45rem;
-      }
-
-      .live-label {
-        font-size: 0.5rem;
-        letter-spacing: 0.16em;
-      }
-
-      .personal-live-card p {
-        font-size: 0.8rem;
-      }
-
-      .youtube-status,
-      .youtube-channel-link {
-        font-size: 0.55rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tapish</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--tx);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+  transition:background .7s,color .7s;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg,#0a0a0f)}
+::-webkit-scrollbar-thumb{background:var(--A,#555);border-radius:4px}
+
+[data-mode="engineer"]{
+  --bg:#080b12;--bg2:#0d1117;--surface:#111827;--surf2:#1a2233;
+  --border:#1e293b;--A:#60a5fa;--B:#34d399;--C:#f472b6;
+  --tx:#e2e8f0;--txm:#94a3b8;--txd:#334155;
+  --nav-bg:rgba(8,11,18,.92);--glow1:rgba(96,165,250,.15);
+  --card-br:8px;--skgrad:linear-gradient(90deg,#34d399,#60a5fa);
+}
+[data-mode="artist"]{
+  --bg:#0f0a0a;--bg2:#150f0d;--surface:#1e1209;--surf2:#2a1a0f;
+  --border:#3d2210;--A:#fb923c;--B:#fbbf24;--C:#ef4444;
+  --tx:#fef3c7;--txm:#d97706;--txd:#78350f;
+  --nav-bg:rgba(15,10,10,.92);--glow1:rgba(251,146,60,.18);
+  --card-br:0px;--skgrad:linear-gradient(90deg,#ef4444,#fbbf24);
+}
+[data-mode="personal"]{
+  --bg:#061209;--bg2:#081a0c;--surface:#0d2413;--surf2:#15331d;
+  --border:#1a4228;--A:#4ade80;--B:#86efac;--C:#d9f99d;
+  --tx:#ecfdf5;--txm:#6ee7b7;--txd:#15532d;
+  --nav-bg:rgba(6,18,9,.92);--glow1:rgba(74,222,128,.15);
+  --card-br:16px;--skgrad:linear-gradient(90deg,#22c55e,#4ade80);
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.03;
+  background-image:
+    linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(circle at center,black,transparent 75%);
+}
+
+.prog{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:2px;
+  z-index:500;
+  background:rgba(255,255,255,.03);
+}
+.prog-fill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--B),var(--A),var(--C));
+  box-shadow:0 0 14px var(--A);
+}
+
+nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:64px;
+  z-index:300;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 5vw;
+  background:var(--nav-bg);
+  backdrop-filter:blur(24px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  transition:background .6s,transform .35s;
+}
+nav.hide{transform:translateY(-100%)}
+.nav-logo{
+  font-family:'Syne',sans-serif;
+  font-size:1.35rem;
+  font-weight:800;
+  color:var(--tx);
+  text-decoration:none;
+  letter-spacing:-.03em;
+}
+.nav-logo span{color:var(--A)}
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:1.6rem;
+  list-style:none;
+}
+.nav-links a{
+  font-family:'Fira Code',monospace;
+  font-size:.6rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--txm);
+  text-decoration:none;
+  transition:color .25s;
+}
+.nav-links a:hover{color:var(--A)}
+.live-nav-item{display:none}
+[data-mode="personal"] .live-nav-item{display:list-item}
+.nav-cta{
+  font-family:'Fira Code',monospace;
+  font-size:.6rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--bg);
+  background:var(--A);
+  padding:.5rem 1.05rem;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:700;
+  transition:all .25s;
+}
+.nav-cta:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 24px var(--A);
+}
+.hbg{
+  display:none;
+  flex-direction:column;
+  gap:5px;
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.03);
+}
+.hbg span{
+  width:19px;
+  height:1.5px;
+  background:var(--tx);
+  transition:.3s;
+}
+.hbg.active span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hbg.active span:nth-child(2){opacity:0}
+.hbg.active span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+section{
+  position:relative;
+  z-index:2;
+  padding:100px 5vw;
+}
+#about,#future,#tools{background:var(--bg2)}
+.sh{margin-bottom:3rem}
+.sh-tag{
+  font-family:'Fira Code',monospace;
+  font-size:.58rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--A);
+  margin-bottom:.7rem;
+}
+.sh-title{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  letter-spacing:-.04em;
+  line-height:1.08;
+  font-size:clamp(2rem,4vw,3rem);
+}
+[data-mode="engineer"] .sh-title{
+  font-family:'Fira Code',monospace;
+  font-size:clamp(1.25rem,2.3vw,1.9rem);
+  letter-spacing:-.01em;
+  font-weight:500;
+}
+[data-mode="personal"] .sh-title{
+  font-family:'Nunito',sans-serif;
+  font-weight:900;
+}
+.sh-title span{color:var(--A)}
+
+#hero{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  align-items:center;
+  gap:2rem;
+  padding-top:90px;
+  overflow:hidden;
+}
+#hero::before,#hero::after{
+  content:'';
+  position:absolute;
+  pointer-events:none;
+  border-radius:50%;
+  filter:blur(85px);
+}
+#hero::before{
+  width:520px;height:520px;
+  top:-160px;left:-150px;
+  background:var(--glow1);
+  animation:orb1 12s ease-in-out infinite;
+}
+#hero::after{
+  width:400px;height:400px;
+  bottom:-150px;left:38%;
+  background:rgba(52,211,153,.08);
+  animation:orb2 14s ease-in-out infinite;
+}
+@keyframes orb1{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(50px,-40px) scale(1.08)}
+}
+@keyframes orb2{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(-40px,35px)}
+}
+.hero-main{position:relative;z-index:3}
+.hero-eyebrow{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.75rem;
+  margin-bottom:1.15rem;
+}
+.hero-eyebrow-line{
+  width:32px;height:1px;background:var(--A);
+}
+.hero-eyebrow-text{
+  font-family:'Fira Code',monospace;
+  font-size:.6rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--A);
+}
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  font-family:'Fira Code',monospace;
+  font-size:.52rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--B);
+  border:1px solid currentColor;
+  padding:.22rem .65rem;
+  border-radius:999px;
+}
+.hero-badge::before{
+  content:'';
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--B);
+  box-shadow:0 0 14px var(--B);
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.55);opacity:.45}
+}
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-.06em;
+  margin-bottom:1.15rem;
+  font-size:clamp(2.7rem,6vw,5.4rem);
+}
+[data-mode="engineer"] .hero-title{
+  font-family:'Fira Code',monospace;
+  font-size:clamp(1.55rem,3.3vw,3rem);
+  letter-spacing:-.01em;
+  line-height:1.18;
+  font-weight:500;
+}
+[data-mode="personal"] .hero-title{
+  font-family:'Nunito',sans-serif;
+  font-weight:900;
+}
+.hero-title em{
+  font-style:normal;
+  color:var(--A);
+}
+.hero-sub{
+  max-width:540px;
+  color:var(--txm);
+  line-height:1.85;
+  margin-bottom:2rem;
+}
+.hero-btns{
+  display:flex;
+  gap:.8rem;
+  flex-wrap:wrap;
+}
+.btn-p,.btn-g{
+  font-family:'Fira Code',monospace;
+  font-size:.64rem;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  padding:.85rem 1.45rem;
+  border-radius:var(--card-br);
+  text-decoration:none;
+  transition:all .25s;
+}
+.btn-p{
+  background:var(--A);
+  color:var(--bg);
+  font-weight:700;
+}
+.btn-g{
+  border:1px solid var(--border);
+  color:var(--txm);
+}
+.btn-p:hover,.btn-g:hover{transform:translateY(-3px)}
+.btn-g:hover{color:var(--A);border-color:var(--A)}
+
+.mode-dock{
+  position:relative;
+  z-index:3;
+  display:flex;
+  flex-direction:column;
+  gap:.7rem;
+}
+.mode-card{
+  display:flex;
+  align-items:center;
+  gap:.85rem;
+  padding:1rem;
+  border:1px solid var(--border);
+  background:var(--surface);
+  border-radius:14px;
+  cursor:pointer;
+  transition:all .25s;
+}
+.mode-card[data-m="engineer"]{--pill:#60a5fa}
+.mode-card[data-m="artist"]{--pill:#fb923c}
+.mode-card[data-m="personal"]{--pill:#4ade80}
+.mode-card::before{
+  content:'';
+  width:4px;
+  align-self:stretch;
+  border-radius:99px;
+  background:var(--pill);
+}
+.mode-card:hover,.mode-card.active{
+  border-color:var(--pill);
+  background:var(--surf2);
+  transform:translateX(-8px);
+}
+.pill-icon{
+  width:38px;height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  font-size:1.25rem;
+}
+.pill-name{
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  color:var(--pill);
+}
+.pill-sub{
+  font-family:'Fira Code',monospace;
+  font-size:.5rem;
+  color:var(--txd);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+/* PERSONAL LIVE SECTION */
+#personal-live{display:none}
+[data-mode="personal"] #personal-live{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.personal-live-section{
+  position:relative;
+  z-index:50;
+  padding:0 5vw;
+  margin-top:-80px;
+  margin-bottom:-45px;
+  background:transparent;
+}
+.personal-live-section::before{display:none!important}
+.personal-live-container{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  gap:1.2rem;
+  align-items:stretch;
+}
+.personal-live-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  padding:1.45rem;
+  background:
+    radial-gradient(circle at top left,rgba(29,185,84,.16),transparent 36%),
+    linear-gradient(145deg,rgba(18,18,18,.96),rgba(5,12,8,.92));
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 34px 95px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter:blur(22px) saturate(1.25);
+}
+.personal-live-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.08),transparent 35%),
+    radial-gradient(circle at 20% 0%,rgba(29,185,84,.18),transparent 35%);
+}
+.youtube-live-card{
+  background:
+    radial-gradient(circle at top left,rgba(255,0,0,.16),transparent 36%),
+    linear-gradient(145deg,rgba(18,18,18,.96),rgba(14,7,7,.92));
+}
+.youtube-live-card::before{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.08),transparent 35%),
+    radial-gradient(circle at 25% 0%,rgba(255,0,0,.16),transparent 36%);
+}
+.live-label,
+.personal-live-card h2,
+.live-note,
+.spotify-card-link,
+.youtube-status,
+.youtube-frame-wrap,
+.youtube-channel-link{
+  position:relative;
+  z-index:2;
+}
+.live-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.55rem;
+  font-family:'Fira Code',monospace;
+  font-size:.58rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:.5rem;
+}
+.live-label::before{
+  content:'';
+  width:8px;height:8px;
+  border-radius:50%;
+}
+.spotify-label{color:#1db954}
+.spotify-label::before{
+  background:#1db954;
+  box-shadow:0 0 16px #1db954;
+  animation:livePulse 1.6s ease-in-out infinite;
+}
+.youtube-label{color:#ff4b4b}
+.youtube-label::before{
+  background:#ff4b4b;
+  box-shadow:0 0 16px #ff4b4b;
+  animation:livePulse 1.6s ease-in-out infinite;
+}
+@keyframes livePulse{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.55);opacity:.45}
+}
+.personal-live-card h2{
+  color:#f5f5f5;
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(1.35rem,3vw,2.25rem);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  margin-bottom:.55rem;
+  font-weight:900;
+}
+.live-note{
+  color:rgba(245,245,245,.64);
+  font-size:.88rem;
+  line-height:1.65;
+  margin-bottom:1.1rem;
+}
+.spotify-card-link{
+  display:block;
+  width:100%;
+  transition:transform .35s cubic-bezier(.23,1,.32,1),filter .35s;
+}
+.spotify-card-link:hover{
+  transform:translateY(-8px) scale(1.018);
+  filter:brightness(1.08);
+}
+.spotify-card-img{
+  display:block;
+  width:100%;
+  max-width:480px;
+  margin:0 auto;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#121212;
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.62),
+    0 0 45px rgba(29,185,84,.2);
+}
+.youtube-status{
+  font-family:'Fira Code',monospace;
+  font-size:.66rem;
+  letter-spacing:.08em;
+  color:#ff4b4b;
+  margin-bottom:1rem;
+}
+.youtube-frame-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  border-radius:20px;
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 26px 70px rgba(0,0,0,.5),
+    0 0 45px rgba(255,0,0,.12);
+}
+.youtube-frame-wrap iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+.youtube-channel-link{
+  display:inline-flex;
+  margin-top:1rem;
+  color:#ff6b6b;
+  text-decoration:none;
+  font-family:'Fira Code',monospace;
+  font-size:.65rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:transform .25s,color .25s;
+}
+.youtube-channel-link:hover{
+  color:#fff;
+  transform:translateX(5px);
+}
+[data-mode="personal"] #about{
+  padding-top:160px!important;
+}
+
+/* ABOUT */
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+}
+.about-text p{
+  color:var(--txm);
+  line-height:1.85;
+  margin-bottom:1rem;
+}
+.about-text strong{color:var(--tx)}
+.bio-eng,.bio-art,.bio-per{display:none}
+[data-mode="engineer"] .bio-eng{display:block}
+[data-mode="artist"] .bio-art{display:block}
+[data-mode="personal"] .bio-per{display:block}
+.ptags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.45rem;
+  margin-top:1.4rem;
+}
+.ptag{
+  font-family:'Fira Code',monospace;
+  font-size:.56rem;
+  color:var(--txm);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:.28rem .7rem;
+  background:rgba(255,255,255,.02);
+}
+.sg{margin-bottom:1.5rem}
+.sg-name{
+  font-family:'Fira Code',monospace;
+  font-size:.55rem;
+  letter-spacing:.14em;
+  color:var(--txd);
+  text-transform:uppercase;
+  margin-bottom:.7rem;
+}
+.sbw{margin-bottom:.75rem}
+.sbi{
+  display:flex;
+  justify-content:space-between;
+  color:var(--txm);
+  font-size:.85rem;
+  margin-bottom:.3rem;
+}
+.sbt{
+  height:3px;
+  background:rgba(255,255,255,.06);
+  border-radius:999px;
+  overflow:hidden;
+}
+.sbf{
+  height:100%;
+  width:0;
+  background:var(--skgrad);
+  border-radius:999px;
+  transition:width 1.1s ease;
+}
+
+/* CARDS */
+.pg,.blg,.tg,.ng{
+  display:grid;
+  gap:1px;
+  background:var(--border);
+}
+.pg,.blg{
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+}
+.tg{
+  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+}
+.ng{
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+}
+.pc,.bc,.ti,.nc{
+  background:var(--bg);
+  padding:1.7rem;
+  transition:all .25s;
+}
+.pc:hover,.bc:hover,.ti:hover,.nc:hover{
+  background:var(--surface);
+  transform:translateY(-4px);
+}
+.pc-num,.bc-dt,.nc-l{
+  font-family:'Fira Code',monospace;
+  font-size:.55rem;
+  letter-spacing:.12em;
+  color:var(--txd);
+  text-transform:uppercase;
+  margin-bottom:.65rem;
+}
+.pc-title,.bc-t{
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  font-size:1.1rem;
+  margin-bottom:.5rem;
+}
+.pc-desc,.bc-e,.nc-v{
+  color:var(--txm);
+  font-size:.86rem;
+  line-height:1.65;
+}
+.pc-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.3rem;
+  margin:.9rem 0;
+}
+.pct{
+  font-family:'Fira Code',monospace;
+  font-size:.5rem;
+  border:1px solid var(--border);
+  color:var(--txm);
+  padding:.16rem .45rem;
+  border-radius:6px;
+}
+.pc-s,.bc-rm{
+  font-family:'Fira Code',monospace;
+  color:var(--B);
+  font-size:.55rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.ti{text-align:center}
+.ti-i{font-size:1.6rem;margin-bottom:.45rem}
+.ti-n{
+  font-family:'Fira Code',monospace;
+  font-size:.55rem;
+  color:var(--txm);
+  text-transform:uppercase;
+}
+.nc-i{font-size:1.4rem;margin-bottom:.5rem}
+
+/* TIMELINE */
+.tl{
+  position:relative;
+  max-width:720px;
+}
+.tl::before{
+  content:'';
+  position:absolute;
+  left:10px;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:linear-gradient(var(--A),transparent);
+}
+.tl-item{
+  position:relative;
+  padding-left:42px;
+  margin-bottom:2rem;
+}
+.tl-dot{
+  position:absolute;
+  left:2px;top:4px;
+  width:18px;height:18px;
+  border:2px solid var(--A);
+  background:var(--bg);
+  border-radius:50%;
+  box-shadow:0 0 14px var(--A);
+}
+.tl-p{
+  font-family:'Fira Code',monospace;
+  font-size:.56rem;
+  color:var(--A);
+  letter-spacing:.14em;
+  margin-bottom:.25rem;
+}
+.tl-t{font-weight:700;margin-bottom:.25rem}
+.tl-d{color:var(--txm);font-size:.86rem}
+
+/* ROADMAP IMAGE BG */
+#future{
+  overflow:hidden;
+  min-height:100vh;
+  isolation:isolate;
+  background:#05070a;
+}
+.roadmap-flip-bg{
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  perspective:1400px;
+}
+.roadmap-flip-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+}
+.roadmap-flip-card{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transform:rotateX(0deg) scale(1.13) translateY(-8%);
+  transition:transform .5s cubic-bezier(.4,0,.2,1);
+}
+.roadmap-flip-card.flipped{
+  transform:rotateX(180deg) scale(1.13) translateY(-8%);
+}
+.roadmap-flip-front,.roadmap-flip-back{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+}
+.roadmap-flip-back{transform:rotateX(180deg)}
+.roadmap-flip-front img,.roadmap-flip-back img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 18%;
+  display:block;
+}
+#future>.sh,#future>.tl{
+  position:relative;
+  z-index:2;
+  text-shadow:0 4px 18px #000;
+}
+
+/* CONTACT */
+.cg{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+}
+.cl p{
+  color:var(--txm);
+  line-height:1.85;
+  margin-bottom:1.4rem;
+}
+.sls{
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+}
+.sl{
+  display:flex;
+  gap:.75rem;
+  align-items:center;
+  color:var(--txm);
+  text-decoration:none;
+  font-family:'Fira Code',monospace;
+  font-size:.58rem;
+  border:1px solid var(--border);
+  border-radius:var(--card-br);
+  padding:.75rem .9rem;
+  transition:all .25s;
+}
+.sl:hover{
+  color:var(--A);
+  border-color:var(--A);
+  transform:translateX(5px);
+}
+.cf{
+  display:flex;
+  flex-direction:column;
+  gap:.9rem;
+}
+.fg label{
+  display:block;
+  font-family:'Fira Code',monospace;
+  font-size:.55rem;
+  color:var(--txd);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:.35rem;
+}
+.fi,.fta{
+  width:100%;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  color:var(--tx);
+  padding:.85rem 1rem;
+  border-radius:var(--card-br);
+  outline:none;
+  font-family:'Space Grotesk',sans-serif;
+}
+.fta{min-height:110px;resize:vertical}
+.fi:focus,.fta:focus{border-color:var(--A)}
+.fsub{
+  align-self:flex-start;
+  border:none;
+  background:var(--A);
+  color:var(--bg);
+  padding:.9rem 1.5rem;
+  border-radius:var(--card-br);
+  font-family:'Fira Code',monospace;
+  font-weight:700;
+  font-size:.65rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+
+footer{
+  position:relative;
+  z-index:2;
+  background:var(--bg);
+  padding:2.5rem 5vw;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:1rem;
+}
+.fl2{
+  font-family:'Syne',sans-serif;
+  font-size:1.3rem;
+  font-weight:800;
+  text-decoration:none;
+  color:var(--tx);
+}
+.fl2 span{color:var(--A)}
+.ft{
+  font-family:'Fira Code',monospace;
+  font-size:.55rem;
+  color:var(--txd);
+}
+
+.rev{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .7s,transform .7s;
+}
+.rev.vis{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* MOBILE */
+@media(max-width:1000px){
+  #hero{
+    grid-template-columns:1fr;
+    padding-bottom:4rem;
+  }
+  .mode-dock{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+  }
+  .mode-card:hover,.mode-card.active{
+    transform:translateY(-4px);
+  }
+}
+@media(max-width:820px){
+  body{font-size:15px}
+  nav{
+    height:64px;
+    padding:0 1rem;
+  }
+  .hbg{display:flex}
+  .nav-links,.nav-cta{display:none}
+  .nav-links.open{
+    display:flex;
+    position:fixed;
+    top:64px;
+    left:0;right:0;
+    flex-direction:column;
+    align-items:stretch;
+    gap:.45rem;
+    padding:1rem;
+    background:var(--nav-bg);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(22px);
+  }
+  .nav-links.open a{
+    display:block;
+    padding:.9rem;
+    border:1px solid var(--border);
+    border-radius:12px;
+  }
+  .nav-cta.open{
+    display:block;
+    position:fixed;
+    left:1rem;right:1rem;
+    bottom:1rem;
+    text-align:center;
+    padding:.9rem;
+    z-index:400;
+  }
+  section{padding:70px 1rem}
+  #hero{
+    min-height:auto;
+    padding-top:110px;
+  }
+  .hero-title{
+    font-size:clamp(2.15rem,12vw,3.4rem);
+  }
+  [data-mode="engineer"] .hero-title{
+    font-size:clamp(1.2rem,7vw,2rem);
+  }
+  .hero-btns{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .btn-p,.btn-g{text-align:center}
+  .mode-dock{grid-template-columns:1fr}
+  [data-mode="personal"] #personal-live{
+    display:block!important;
+    margin-top:0!important;
+    margin-bottom:0!important;
+    padding:28px 14px 55px!important;
+    position:relative!important;
+    z-index:50!important;
+  }
+  .personal-live-container{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+    max-width:100%!important;
+    gap:18px!important;
+  }
+  .personal-live-card{
+    width:100%!important;
+    display:block!important;
+    padding:16px!important;
+    border-radius:22px!important;
+  }
+  .spotify-card-img{
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    display:block!important;
+    border-radius:18px!important;
+  }
+  .youtube-frame-wrap{
+    width:100%!important;
+    height:auto!important;
+    aspect-ratio:16/9!important;
+    min-height:190px!important;
+    display:block!important;
+    overflow:hidden!important;
+  }
+  .youtube-frame-wrap iframe{
+    width:100%!important;
+    height:100%!important;
+    min-height:190px!important;
+    display:block!important;
+    border:0!important;
+  }
+  .personal-live-card h2{font-size:1.45rem!important}
+  .live-note{font-size:.82rem!important}
+  [data-mode="personal"] #about{padding-top:70px!important}
+  .about-grid,.cg{
+    grid-template-columns:1fr;
+    gap:2rem;
+  }
+  .pg,.blg,.tg,.ng{
+    gap:.75rem;
+    background:transparent;
+  }
+  .pc,.bc,.ti,.nc{
+    border:1px solid var(--border);
+    border-radius:16px;
+  }
+  .tg{grid-template-columns:repeat(2,1fr)}
+  footer{
+    padding:2rem 1rem;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+@media(max-width:420px){
+  [data-mode="personal"] #personal-live{
+    padding:24px 12px 50px!important;
+  }
+  .personal-live-card{
+    padding:14px!important;
+    border-radius:18px!important;
+  }
+  .live-label{
+    font-size:.5rem!important;
+    letter-spacing:.16em!important;
+  }
+  .youtube-frame-wrap{min-height:180px!important}
+  .youtube-status,.youtube-channel-link{
+    font-size:.54rem!important;
+  }
+  .tg{grid-template-columns:1fr}
+}
+</style>
 </head>
 
 <body>
-  <div class="progress" id="progress"></div>
+<div class="prog"><div class="prog-fill" id="pf"></div></div>
 
-  <nav id="nav">
-    <a href="#hero" class="logo">Tapish<span>.</span></a>
+<nav>
+  <a href="#hero" class="nav-logo" id="navLogo">Tapish<span>.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li class="live-nav-item"><a href="#personal-live">Live</a></li>
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#future">Roadmap</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#tools">Stack</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta" id="navCta">Hire Me</a>
+  <div class="hbg" id="hbg"><span></span><span></span><span></span></div>
+</nav>
 
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#about">About</a></li>
-      <li class="live-nav-item"><a href="#personal-live">Live</a></li>
-      <li><a href="#projects">Work</a></li>
-      <li><a href="#future">Roadmap</a></li>
-      <li><a href="#blog">Blog</a></li>
-      <li><a href="#tools">Stack</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+<section id="hero">
+  <div class="hero-main">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span class="hero-eyebrow-text" id="hLbl">&lt; Developer /&gt;</span>
+      <div class="hero-badge" id="hBadge">Open to Work</div>
+    </div>
 
-    <a href="#contact" class="nav-cta" id="navCta">Hire Me</a>
+    <h1 class="hero-title" id="hTitle">building things<br>that <em>work.</em></h1>
+    <p class="hero-sub" id="hSub">Self-taught and obsessed. I write clean code, break things, fix them, and ship.</p>
 
-    <button class="hamburger" id="hamburger" aria-label="Open menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </nav>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-p">View My Work</a>
+      <a href="#contact" class="btn-g">Let's Talk</a>
+    </div>
+  </div>
 
-  <section id="hero" class="hero">
-    <div class="hero-main">
-      <div class="hero-label">
-        <span id="heroLabel">&lt; Developer /&gt;</span>
-        <span class="hero-badge" id="heroBadge">Open to Work</span>
+  <div class="mode-dock">
+    <div class="mode-card active" data-m="engineer" onclick="switchMode('engineer')">
+      <div class="pill-icon">⌨️</div>
+      <div>
+        <div class="pill-name">Engineer</div>
+        <div class="pill-sub">VS Code · Builder</div>
       </div>
+    </div>
 
-      <h1 class="hero-title" id="heroTitle">
-        building things<br>that <em>work.</em>
-      </h1>
+    <div class="mode-card" data-m="artist" onclick="switchMode('artist')">
+      <div class="pill-icon">🎹</div>
+      <div>
+        <div class="pill-name">Artist</div>
+        <div class="pill-sub">FL Studio · Producer</div>
+      </div>
+    </div>
 
-      <p class="hero-sub" id="heroSub">
-        Self-taught and obsessed. I write clean code, break things, fix them, and ship.
+    <div class="mode-card" data-m="personal" onclick="switchMode('personal')">
+      <div class="pill-icon">🌿</div>
+      <div>
+        <div class="pill-name">Personal</div>
+        <div class="pill-sub">Forest · Human</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="personal-live" class="personal-live-section rev">
+  <div class="personal-live-container">
+
+    <div class="personal-live-card spotify-live-card">
+      <p class="live-label spotify-label">LIVE SPOTIFY</p>
+      <h2>What I’m Listening To</h2>
+      <p class="live-note">
+        A live-updating Spotify Now Playing card. It shows the current track,
+        album cover, or offline status when I’m not listening.
       </p>
 
-      <div class="hero-buttons">
-        <a href="#projects" class="btn-primary">View My Work</a>
-        <a href="#contact" class="btn-ghost">Let's Talk</a>
-      </div>
-    </div>
-
-    <div class="mode-dock">
-      <div class="mode-card active" data-m="engineer" onclick="switchMode('engineer')">
-        <div class="mode-icon">⌨️</div>
-        <div>
-          <div class="mode-name">Engineer</div>
-          <div class="mode-sub">VS Code · Builder</div>
-        </div>
-      </div>
-
-      <div class="mode-card" data-m="artist" onclick="switchMode('artist')">
-        <div class="mode-icon">🎹</div>
-        <div>
-          <div class="mode-name">Artist</div>
-          <div class="mode-sub">FL Studio · Producer</div>
-        </div>
-      </div>
-
-      <div class="mode-card" data-m="personal" onclick="switchMode('personal')">
-        <div class="mode-icon">🌿</div>
-        <div>
-          <div class="mode-name">Personal</div>
-          <div class="mode-sub">Forest · Human</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="personal-live" class="personal-live-section reveal">
-    <div class="personal-live-container">
-      <div class="personal-live-card spotify-live-card">
-        <div class="live-card-copy">
-          <p class="live-label spotify-label">LIVE SPOTIFY</p>
-          <h2>What I’m Listening To</h2>
-          <p>
-            A live-updating Spotify Now Playing card. It shows the current track,
-            album cover, or offline status when I’m not listening.
-          </p>
-        </div>
-
-        <a
-          href="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&redirect=true"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="spotify-card-link"
+      <a
+        href="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&redirect=true"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="spotify-card-link"
+      >
+        <img
+          src="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false"
+          alt="Tapish Spotify Now Playing"
+          class="spotify-card-img"
+          loading="lazy"
+          referrerpolicy="no-referrer"
         >
+      </a>
+    </div>
+
+    <div class="personal-live-card youtube-live-card">
+      <p class="live-label youtube-label">YOUTUBE LIVE</p>
+      <h2>Live Stream</h2>
+      <p class="live-note">When I go live on YouTube, the stream will appear here automatically.</p>
+
+      <div class="youtube-status" id="youtubeLiveStatus">Live player ready</div>
+
+      <div class="youtube-frame-wrap" id="youtubeLiveFrameWrap">
+        <iframe
+          src="https://www.youtube.com/embed/live_stream?channel=UCB7aM4NJoLaXWrZzelOvaJw&rel=0"
+          title="Tapish YouTube Live Stream"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <a
+        href="https://www.youtube.com/@Rugnut1"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="youtube-channel-link"
+      >
+        Open YouTube Channel →
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<section id="about">
+  <div class="sh rev">
+    <div class="sh-tag">Who I Am</div>
+    <h2 class="sh-title">Passion meets <span>purpose.</span></h2>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-text rev">
+      <div class="bio-eng">
+        <p>I'm <strong>Tapish</strong> — a self-taught developer who thinks in functions, loops, and systems. Every project is a codebase: versioned, refactored, always improving.</p>
+        <p>Currently deep in full-stack development, GitHub, Vercel, and tools that actually work.</p>
+      </div>
+
+      <div class="bio-art">
+        <p>I'm <strong>Tapish</strong> — a music producer and sonic explorer. I build sounds from silence and layer emotions into beats.</p>
+        <p>FL Studio is my canvas. Every session is a new experiment.</p>
+      </div>
+
+      <div class="bio-per">
+        <p>Hey, I'm <strong>Tapish</strong>. Outside the screens, I love long walks, playlists, journaling, and overthinking ideas until they become real.</p>
+        <p>This personal mode is where music, live streams, thoughts, and experiments live.</p>
+      </div>
+
+      <div class="ptags" id="ptagList"></div>
+    </div>
+
+    <div class="rev">
+      <div class="sg">
+        <div class="sg-name" id="sg1n"></div>
+        <div id="sb1"></div>
+      </div>
+      <div class="sg">
+        <div class="sg-name" id="sg2n"></div>
+        <div id="sb2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="sh rev">
+    <div class="sh-tag">Portfolio</div>
+    <h2 class="sh-title">Things I've <span>built.</span></h2>
+  </div>
+  <div class="pg" id="pg"></div>
+</section>
+
+<section id="future">
+  <div class="roadmap-flip-bg" aria-hidden="true">
+    <div class="roadmap-flip-sticky">
+      <div class="roadmap-flip-card" id="roadmapFlipCard">
+        <div class="roadmap-flip-front">
           <img
-            src="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false"
-            alt="Tapish Spotify Now Playing"
-            class="spotify-card-img"
-            loading="lazy"
+            src="https://drive.google.com/thumbnail?id=1pHVJylQsK4WuCqqCdpEHtSo7834GjUbJ&sz=w2400"
+            data-fallback="https://lh3.googleusercontent.com/d/1pHVJylQsK4WuCqqCdpEHtSo7834GjUbJ=w2400"
+            onerror="this.onerror=null;this.src=this.dataset.fallback;"
             referrerpolicy="no-referrer"
-          >
-        </a>
-      </div>
-
-      <div class="personal-live-card youtube-live-card">
-        <div class="live-card-copy">
-          <p class="live-label youtube-label">YOUTUBE LIVE</p>
-          <h2>Live Stream</h2>
-          <p>
-            When I go live on YouTube, the latest live stream will appear here automatically.
-          </p>
+            alt="Roadmap background image 1">
         </div>
-
-        <div class="youtube-status" id="youtubeLiveStatus">
-          Checking live status...
-        </div>
-
-        <div class="youtube-frame-wrap" id="youtubeLiveFrameWrap">
-          <div class="youtube-offline-box">
-            <div class="youtube-offline-dot"></div>
-            <h3>Currently Offline</h3>
-            <p>When Tapish goes live, the stream will appear here automatically.</p>
-          </div>
-        </div>
-
-        <a
-          href="https://www.youtube.com/@Rugnut1"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="youtube-channel-link"
-        >
-          Open YouTube Channel →
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="about">
-    <div class="section-head reveal">
-      <p class="section-tag">Who I Am</p>
-      <h2 class="section-title">Passion meets <span>purpose.</span></h2>
-    </div>
-
-    <div class="about-grid">
-      <div class="about-text reveal">
-        <div class="bio-block bio-engineer">
-          <p>I'm <strong>Tapish</strong> — a self-taught developer who thinks in functions, loops, and systems.</p>
-          <p>Currently deep in full-stack development, clean UI, GitHub, Vercel, and tools that actually work.</p>
-        </div>
-
-        <div class="bio-block bio-artist">
-          <p>I'm <strong>Tapish</strong> — a music producer and sonic explorer. I build sounds from silence and layer emotions into beats.</p>
-          <p>FL Studio is my canvas. Every session is a new experiment.</p>
-        </div>
-
-        <div class="bio-block bio-personal">
-          <p>Hey, I'm <strong>Tapish</strong>. Outside the screens, I love long walks, playlists, journaling, and overthinking ideas until they become real.</p>
-          <p>This personal mode is where the human side lives — music, live streams, thoughts, and experiments.</p>
-        </div>
-
-        <div class="tags" id="tagList"></div>
-      </div>
-
-      <div class="reveal">
-        <div class="skill-group">
-          <div class="skill-title" id="skillGroup1"></div>
-          <div id="skills1"></div>
-        </div>
-
-        <div class="skill-group">
-          <div class="skill-title" id="skillGroup2"></div>
-          <div id="skills2"></div>
+        <div class="roadmap-flip-back">
+          <img
+            src="https://drive.google.com/thumbnail?id=1NNBGRy5h31Npy4tLQTgzvJ5PO0I-KkA9&sz=w2400"
+            data-fallback="https://lh3.googleusercontent.com/d/1NNBGRy5h31Npy4tLQTgzvJ5PO0I-KkA9=w2400"
+            onerror="this.onerror=null;this.src=this.dataset.fallback;"
+            referrerpolicy="no-referrer"
+            alt="Roadmap background image 2">
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <section id="projects">
-    <div class="section-head reveal">
-      <p class="section-tag">Portfolio</p>
-      <h2 class="section-title">Things I've <span>built.</span></h2>
-    </div>
+  <div class="sh rev">
+    <div class="sh-tag">Roadmap</div>
+    <h2 class="sh-title">What's <span>next.</span></h2>
+  </div>
 
-    <div class="grid" id="projectsGrid"></div>
-  </section>
+  <div class="tl" id="tl"></div>
+</section>
 
-  <section id="future">
-    <div class="section-head reveal">
-      <p class="section-tag">Roadmap</p>
-      <h2 class="section-title">What's <span>next.</span></h2>
-    </div>
+<section id="blog">
+  <div class="sh rev">
+    <div class="sh-tag">Writing</div>
+    <h2 class="sh-title">Thoughts &amp; <span>learnings.</span></h2>
+  </div>
+  <div class="blg" id="blg"></div>
+</section>
 
-    <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="timeline-period">Q1 2026</div>
-        <div class="timeline-title">Master React & TypeScript</div>
-        <div class="timeline-desc">Build real projects with clean components, hooks, and production-ready patterns.</div>
-      </div>
+<section id="tools">
+  <div class="sh rev">
+    <div class="sh-tag">Stack</div>
+    <h2 class="sh-title">My <span>toolkit.</span></h2>
+  </div>
+  <div class="tg" id="tg"></div>
+</section>
 
-      <div class="timeline-item reveal">
-        <div class="timeline-period">Q2 2026</div>
-        <div class="timeline-title">Launch Personal Site v2</div>
-        <div class="timeline-desc">Add blog, live systems, media cards, and better portfolio storytelling.</div>
-      </div>
+<section id="now">
+  <div class="sh rev">
+    <div class="sh-tag">Status</div>
+    <h2 class="sh-title">Right <span>now.</span></h2>
+  </div>
+  <div class="ng" id="ng"></div>
+</section>
 
-      <div class="timeline-item reveal">
-        <div class="timeline-period">Q3 2026</div>
-        <div class="timeline-title">Backend + Database</div>
-        <div class="timeline-desc">Learn Express, APIs, auth, PostgreSQL, and deploy complete apps.</div>
-      </div>
+<section id="contact">
+  <div class="sh rev">
+    <div class="sh-tag">Connect</div>
+    <h2 class="sh-title">Say <span>hello.</span></h2>
+  </div>
 
-      <div class="timeline-item reveal">
-        <div class="timeline-period">2026</div>
-        <div class="timeline-title">Build a Real Product</div>
-        <div class="timeline-desc">Create something useful, ship publicly, and improve from feedback.</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="blog">
-    <div class="section-head reveal">
-      <p class="section-tag">Writing</p>
-      <h2 class="section-title">Thoughts & <span>learnings.</span></h2>
-    </div>
-
-    <div class="grid">
-      <div class="card reveal">
-        <div class="card-num">01</div>
-        <div class="card-title">What I learned building my first site</div>
-        <div class="card-desc">The small mistakes, layout problems, and wins that made me better.</div>
-        <div class="status">Read More →</div>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-num">02</div>
-        <div class="card-title">Why I like building in public</div>
-        <div class="card-desc">Posting progress makes learning more real and keeps the pressure healthy.</div>
-        <div class="status">Read More →</div>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-num">03</div>
-        <div class="card-title">My VS Code + GitHub workflow</div>
-        <div class="card-desc">A simple workflow for editing, committing, pushing, and deploying.</div>
-        <div class="status">Read More →</div>
+  <div class="cg">
+    <div class="cl rev">
+      <p id="cIntro">Have a project? Need a collaborator? My inbox is open.</p>
+      <div class="sls">
+        <a href="mailto:Tapish@example.com" class="sl">📧 Tapish@example.com</a>
+        <a href="https://github.com/Tapish" target="_blank" class="sl">🐙 github.com/Tapish</a>
+        <a href="https://www.youtube.com/@Rugnut1" target="_blank" class="sl">▶ youtube.com/@Rugnut1</a>
+        <a href="#" class="sl">💼 LinkedIn</a>
       </div>
     </div>
-  </section>
 
-  <section id="tools">
-    <div class="section-head reveal">
-      <p class="section-tag">Stack</p>
-      <h2 class="section-title">My <span>toolkit.</span></h2>
-    </div>
-
-    <div class="tool-grid">
-      <div class="tool reveal"><div class="tool-icon">⚡</div><div class="tool-name">VS Code</div></div>
-      <div class="tool reveal"><div class="tool-icon">🌐</div><div class="tool-name">HTML</div></div>
-      <div class="tool reveal"><div class="tool-icon">🎨</div><div class="tool-name">CSS</div></div>
-      <div class="tool reveal"><div class="tool-icon">📜</div><div class="tool-name">JavaScript</div></div>
-      <div class="tool reveal"><div class="tool-icon">⚛️</div><div class="tool-name">React</div></div>
-      <div class="tool reveal"><div class="tool-icon">🐙</div><div class="tool-name">GitHub</div></div>
-      <div class="tool reveal"><div class="tool-icon">☁️</div><div class="tool-name">Vercel</div></div>
-      <div class="tool reveal"><div class="tool-icon">🎹</div><div class="tool-name">FL Studio</div></div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="section-head reveal">
-      <p class="section-tag">Connect</p>
-      <h2 class="section-title">Say <span>hello.</span></h2>
-    </div>
-
-    <div class="contact-grid">
-      <div class="contact-left reveal">
-        <p id="contactIntro">Have a project? Need a collaborator? My inbox is open.</p>
-
-        <div class="contact-links">
-          <a href="mailto:Tapish@example.com" class="contact-link">📧 Tapish@example.com</a>
-          <a href="https://github.com/Tapish" target="_blank" class="contact-link">🐙 github.com/Tapish</a>
-          <a href="https://www.youtube.com/@Rugnut1" target="_blank" class="contact-link">▶ youtube.com/@Rugnut1</a>
-          <a href="#" class="contact-link">💼 LinkedIn</a>
-        </div>
+    <form class="cf rev" onsubmit="handleForm(event)">
+      <div class="fg">
+        <label>Name</label>
+        <input class="fi" type="text" placeholder="Your name" required>
       </div>
+      <div class="fg">
+        <label>Email</label>
+        <input class="fi" type="email" placeholder="your@email.com" required>
+      </div>
+      <div class="fg">
+        <label>Message</label>
+        <textarea class="fta" placeholder="What's on your mind?"></textarea>
+      </div>
+      <button type="submit" class="fsub">Send Message →</button>
+    </form>
+  </div>
+</section>
 
-      <form class="form reveal" onsubmit="sendMessage(event)">
-        <div class="field">
-          <label>Name</label>
-          <input type="text" placeholder="Your name" required>
-        </div>
+<footer>
+  <a href="#hero" class="fl2">Tapish<span>.</span></a>
+  <p class="ft">© 2026 Tapish — Built with intent.</p>
+  <p class="ft" id="fSt">open to work ✦</p>
+</footer>
 
-        <div class="field">
-          <label>Email</label>
-          <input type="email" placeholder="your@email.com" required>
-        </div>
+<script>
+const DATA={
+  engineer:{
+    lbl:'< Developer />',
+    title:'building things<br>that <em>work.</em>',
+    sub:'Self-taught and obsessed. I write clean code, break things, fix them, and ship.',
+    badge:'Open to Work',
+    cta:'Hire Me',
+    contact:'Have a project? Need a collaborator? Open to freelance work and interesting builds.',
+    footer:'open to work ✦',
+    tags:['JavaScript','React','Node.js','GitHub','Vercel','Clean Code'],
+    sg1:'Frontend',
+    sg2:'Backend & Tools',
+    s1:[['HTML / CSS',90],['JavaScript',75],['React',60]],
+    s2:[['Git / GitHub',80],['Node.js',55],['Databases',45]]
+  },
+  artist:{
+    lbl:'♩ Music Producer',
+    title:'making sounds<br>that <em>feel.</em>',
+    sub:'FL Studio is my canvas. I layer emotions into beats and find tension in silence.',
+    badge:'Accepting Collabs',
+    cta:'Collab →',
+    contact:'Open to creative collaborations, beat commissions, and music conversations.',
+    footer:'accepting collabs ♩',
+    tags:['FL Studio','Beat Making','Sound Design','Lo-Fi','Electronic','Sampling'],
+    sg1:'Production',
+    sg2:'Sound & Mix',
+    s1:[['Beat Production',85],['Sound Design',72],['Arrangement',68]],
+    s2:[['Mixing',60],['Sample Flipping',78],['Mastering',45]]
+  },
+  personal:{
+    lbl:'🌿 Just a Human',
+    title:'living, learning,<br><em>writing it down.</em>',
+    sub:'Unfiltered Tapish. Journals, tea, long walks, music, live streams, and building things between thoughts.',
+    badge:'Always Curious',
+    cta:'Say Hi →',
+    contact:'No agenda needed. Say hello, share something interesting, or just leave a note.',
+    footer:'always curious 🌿',
+    tags:['Journaling','Tea','Long Walks','Photography','Playlists','Live Streams'],
+    sg1:'Life Skills',
+    sg2:'Personal Growth',
+    s1:[['Curiosity',99],['Empathy',88],['Patience',70]],
+    s2:[['Journaling',82],['Deep Listening',75],['Getting Lost',65]]
+  }
+};
 
-        <div class="field">
-          <label>Message</label>
-          <textarea placeholder="What's on your mind?"></textarea>
-        </div>
+const projects=[
+  ['01','Dev Tracker','Track learning goals and celebrate milestones.',['JavaScript','CSS'],'Live'],
+  ['02','Portfolio v1','A dark premium portfolio built as a single HTML file.',['HTML','CSS'],'Live'],
+  ['03','Weather Dashboard','React app pulling live weather data.',['React','API'],'In Progress'],
+  ['04','Live Stream Embed','Mobile-safe YouTube Live section for personal mode.',['YouTube','Embed'],'Live'],
+  ['05','Spotify Now Playing','Live-updating Spotify GitHub Profile card.',['Spotify','Embed'],'Live'],
+  ['06','Static Blog Engine','Markdown-to-HTML generator idea.',['Node.js','Markdown'],'Planned']
+];
 
-        <button class="submit" type="submit">Send Message →</button>
-      </form>
+const roadmap=[
+  ['Q1 2026','Master React & TypeScript','Build real projects with clean components, hooks, and production-ready patterns.'],
+  ['Q2 2026','Launch Personal Site v2','Add blog, live systems, media cards, and better portfolio storytelling.'],
+  ['Q3 2026','Backend + Database','Learn Express, APIs, auth, PostgreSQL, and deploy complete apps.'],
+  ['2026','Build a Real Product','Create something useful, ship publicly, and improve from feedback.']
+];
+
+const posts=[
+  ['Mar 2026','What I learned building my first site','The small mistakes, layout problems, and wins that made me better.'],
+  ['Feb 2026','Why I like building in public','Posting progress makes learning more real and keeps the pressure healthy.'],
+  ['Jan 2026','My VS Code + GitHub workflow','A simple workflow for editing, committing, pushing, and deploying.']
+];
+
+const tools=[
+  ['⚡','VS Code'],['🌐','HTML5'],['🎨','CSS3'],['📜','JavaScript'],
+  ['⚛️','React'],['🐙','GitHub'],['☁️','Vercel'],['🎹','FL Studio']
+];
+
+const now=[
+  ['📚','Learning','Advanced React & TypeScript'],
+  ['🛠️','Building','Portfolio + live stream section'],
+  ['🎹','In FL Studio','Lo-fi experiments'],
+  ['📍','Location','India 🇮🇳'],
+  ['▶','Live','YouTube @Rugnut1'],
+  ['✅','Status','Open to work & collabs']
+];
+
+function skillHTML(arr){
+  return arr.map(([n,w])=>`
+    <div class="sbw">
+      <div class="sbi"><span>${n}</span><span>${w}%</span></div>
+      <div class="sbt"><div class="sbf" data-w="${w}"></div></div>
     </div>
-  </section>
+  `).join('');
+}
 
-  <footer>
-    <a href="#hero" class="footer-logo">Tapish<span>.</span></a>
-    <p class="footer-text">© 2026 Tapish — Built with intent.</p>
-    <p class="footer-text" id="footerStatus">open to work ✦</p>
-  </footer>
+function renderStatic(){
+  document.getElementById('pg').innerHTML=projects.map(p=>`
+    <div class="pc rev">
+      <div class="pc-num">${p[0]}</div>
+      <div class="pc-title">${p[1]}</div>
+      <div class="pc-desc">${p[2]}</div>
+      <div class="pc-tags">${p[3].map(t=>`<span class="pct">${t}</span>`).join('')}</div>
+      <div class="pc-s">${p[4]}</div>
+    </div>
+  `).join('');
 
-  <script>
-    const profiles = {
-      engineer: {
-        label: "< Developer />",
-        title: "building things<br>that <em>work.</em>",
-        sub: "Self-taught and obsessed. I write clean code, break things, fix them, and ship.",
-        badge: "Open to Work",
-        cta: "Hire Me",
-        contact: "Have a project? Need a collaborator? Open to freelance work and interesting builds.",
-        footer: "open to work ✦",
-        tags: ["JavaScript", "React", "Node.js", "GitHub", "Vercel", "Clean Code"],
-        sg1: "Frontend",
-        sg2: "Backend & Tools",
-        s1: [["HTML / CSS", 90], ["JavaScript", 75], ["React", 60]],
-        s2: [["Git / GitHub", 80], ["Node.js", 55], ["Databases", 45]]
-      },
-      artist: {
-        label: "♩ Music Producer",
-        title: "making sounds<br>that <em>feel.</em>",
-        sub: "FL Studio is my canvas. I layer emotions into beats and find tension in silence.",
-        badge: "Accepting Collabs",
-        cta: "Collab →",
-        contact: "Open to creative collaborations, beat commissions, and music conversations.",
-        footer: "accepting collabs ♩",
-        tags: ["FL Studio", "Beat Making", "Sound Design", "Lo-Fi", "Electronic", "Sampling"],
-        sg1: "Production",
-        sg2: "Sound & Mix",
-        s1: [["Beat Production", 85], ["Sound Design", 72], ["Arrangement", 68]],
-        s2: [["Mixing", 60], ["Sample Flipping", 78], ["Mastering", 45]]
-      },
-      personal: {
-        label: "🌿 Just a Human",
-        title: "living, learning,<br><em>writing it down.</em>",
-        sub: "Unfiltered Tapish. Journals, tea, long walks, music, live streams, and building things between thoughts.",
-        badge: "Always Curious",
-        cta: "Say Hi →",
-        contact: "No agenda needed. Say hello, share something interesting, or just leave a note.",
-        footer: "always curious 🌿",
-        tags: ["Journaling", "Tea", "Long Walks", "Photography", "Playlists", "Live Streams"],
-        sg1: "Life Skills",
-        sg2: "Personal Growth",
-        s1: [["Curiosity", 99], ["Empathy", 88], ["Patience", 70]],
-        s2: [["Journaling", 82], ["Deep Listening", 75], ["Getting Lost", 65]]
-      }
-    };
+  document.getElementById('tl').innerHTML=roadmap.map(r=>`
+    <div class="tl-item rev">
+      <div class="tl-dot"></div>
+      <div class="tl-p">${r[0]}</div>
+      <div class="tl-t">${r[1]}</div>
+      <div class="tl-d">${r[2]}</div>
+    </div>
+  `).join('');
 
-    const projects = [
-      {
-        n: "01",
-        title: "Dev Tracker",
-        desc: "Track learning goals and celebrate milestones.",
-        tags: ["JavaScript", "CSS"],
-        status: "Live"
-      },
-      {
-        n: "02",
-        title: "Portfolio v1",
-        desc: "A dark premium portfolio built as a single HTML file.",
-        tags: ["HTML", "CSS"],
-        status: "Live"
-      },
-      {
-        n: "03",
-        title: "Weather Dashboard",
-        desc: "React app pulling live weather data.",
-        tags: ["React", "API"],
-        status: "In Progress"
-      },
-      {
-        n: "04",
-        title: "Live Stream Embed",
-        desc: "Auto-detect YouTube Live section for personal mode.",
-        tags: ["YouTube API", "JS"],
-        status: "Live"
-      },
-      {
-        n: "05",
-        title: "Spotify Now Playing",
-        desc: "Live-updating Spotify GitHub Profile card.",
-        tags: ["Spotify", "Embed"],
-        status: "Live"
-      },
-      {
-        n: "06",
-        title: "Static Blog Engine",
-        desc: "Markdown-to-HTML generator idea.",
-        tags: ["Node.js", "Markdown"],
-        status: "Planned"
-      }
-    ];
+  document.getElementById('blg').innerHTML=posts.map(p=>`
+    <div class="bc rev">
+      <div class="bc-dt">${p[0]}</div>
+      <div class="bc-t">${p[1]}</div>
+      <div class="bc-e">${p[2]}</div>
+      <div class="bc-rm">Read more →</div>
+    </div>
+  `).join('');
 
-    let currentMode = "engineer";
+  document.getElementById('tg').innerHTML=tools.map(t=>`
+    <div class="ti rev">
+      <div class="ti-i">${t[0]}</div>
+      <div class="ti-n">${t[1]}</div>
+    </div>
+  `).join('');
 
-    function renderSkills(id, skills) {
-      document.getElementById(id).innerHTML = skills.map(([name, value]) => `
-        <div class="skill">
-          <div class="skill-top">
-            <span>${name}</span>
-            <span>${value}%</span>
-          </div>
-          <div class="bar"><span style="--w:${value}%"></span></div>
-        </div>
-      `).join("");
+  document.getElementById('ng').innerHTML=now.map(n=>`
+    <div class="nc rev">
+      <div class="nc-i">${n[0]}</div>
+      <div class="nc-l">${n[1]}</div>
+      <div class="nc-v">${n[2]}</div>
+    </div>
+  `).join('');
+}
+
+function switchMode(mode){
+  const d=DATA[mode];
+  document.documentElement.setAttribute('data-mode',mode);
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.toggle('active',c.dataset.m===mode));
+
+  document.getElementById('hLbl').textContent=d.lbl;
+  document.getElementById('hTitle').innerHTML=d.title;
+  document.getElementById('hSub').textContent=d.sub;
+  document.getElementById('hBadge').textContent=d.badge;
+  document.getElementById('navCta').textContent=d.cta;
+  document.getElementById('cIntro').textContent=d.contact;
+  document.getElementById('fSt').textContent=d.footer;
+
+  document.getElementById('ptagList').innerHTML=d.tags.map(t=>`<span class="ptag">${t}</span>`).join('');
+  document.getElementById('sg1n').textContent=d.sg1;
+  document.getElementById('sg2n').textContent=d.sg2;
+  document.getElementById('sb1').innerHTML=skillHTML(d.s1);
+  document.getElementById('sb2').innerHTML=skillHTML(d.s2);
+
+  setTimeout(()=>{
+    document.querySelectorAll('.sbf').forEach(f=>f.style.width=f.dataset.w+'%');
+  },80);
+
+  doReveal();
+}
+
+function loadYouTubeLive(){
+  const statusEl=document.getElementById('youtubeLiveStatus');
+  const frameWrap=document.getElementById('youtubeLiveFrameWrap');
+  const channelId='UCB7aM4NJoLaXWrZzelOvaJw';
+
+  if(!statusEl||!frameWrap)return;
+
+  statusEl.textContent='Live player ready';
+  statusEl.className='youtube-status live';
+
+  frameWrap.innerHTML=`
+    <iframe
+      src="https://www.youtube.com/embed/live_stream?channel=${channelId}&rel=0"
+      title="Tapish YouTube Live Stream"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  `;
+}
+
+function doReveal(){
+  document.querySelectorAll('.rev,.tl-item').forEach(el=>{
+    if(el.getBoundingClientRect().top<window.innerHeight-70){
+      el.classList.add('vis');
     }
+  });
+}
 
-    function renderProjects() {
-      document.getElementById("projectsGrid").innerHTML = projects.map(project => `
-        <div class="card reveal">
-          <div class="card-num">${project.n}</div>
-          <div class="card-title">${project.title}</div>
-          <div class="card-desc">${project.desc}</div>
-          <div class="mini-tags">
-            ${project.tags.map(tag => `<span>${tag}</span>`).join("")}
-          </div>
-          <div class="status">${project.status}</div>
-        </div>
-      `).join("");
-    }
+function updateRoadmapFlip(){
+  const card=document.getElementById('roadmapFlipCard');
+  const section=document.getElementById('future');
+  if(!card||!section)return;
+  const trigger=section.offsetTop+(section.offsetHeight*.1);
+  card.classList.toggle('flipped',window.scrollY>=trigger);
+}
 
-    function switchMode(mode) {
-      currentMode = mode;
-      const data = profiles[mode];
+function handleForm(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.fsub');
+  btn.textContent='Sent ✓';
+  setTimeout(()=>btn.textContent='Send Message →',2500);
+}
 
-      document.documentElement.setAttribute("data-mode", mode);
+const hbg=document.getElementById('hbg');
+const navLinks=document.getElementById('navLinks');
+const navCta=document.getElementById('navCta');
 
-      document.querySelectorAll(".mode-card").forEach(card => {
-        card.classList.toggle("active", card.dataset.m === mode);
-      });
+hbg.addEventListener('click',()=>{
+  hbg.classList.toggle('active');
+  navLinks.classList.toggle('open');
+  navCta.classList.toggle('open');
+});
 
-      document.getElementById("heroLabel").textContent = data.label;
-      document.getElementById("heroTitle").innerHTML = data.title;
-      document.getElementById("heroSub").textContent = data.sub;
-      document.getElementById("heroBadge").textContent = data.badge;
-      document.getElementById("navCta").textContent = data.cta;
-      document.getElementById("contactIntro").textContent = data.contact;
-      document.getElementById("footerStatus").textContent = data.footer;
+document.querySelectorAll('#navLinks a,#navCta').forEach(link=>{
+  link.addEventListener('click',()=>{
+    hbg.classList.remove('active');
+    navLinks.classList.remove('open');
+    navCta.classList.remove('open');
+  });
+});
 
-      document.getElementById("tagList").innerHTML = data.tags.map(tag => `
-        <span class="tag">${tag}</span>
-      `).join("");
+let lastY=0;
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('pf').style.width=(window.scrollY/h*100)+'%';
+  document.querySelector('nav').classList.toggle('hide',window.scrollY>lastY&&window.scrollY>200);
+  lastY=window.scrollY;
+  doReveal();
+  updateRoadmapFlip();
+},{passive:true});
 
-      document.getElementById("skillGroup1").textContent = data.sg1;
-      document.getElementById("skillGroup2").textContent = data.sg2;
+window.addEventListener('resize',updateRoadmapFlip);
 
-      renderSkills("skills1", data.s1);
-      renderSkills("skills2", data.s2);
-
-      revealOnScroll();
-    }
-
-    function revealOnScroll() {
-      document.querySelectorAll(".reveal").forEach(el => {
-        if (el.getBoundingClientRect().top < window.innerHeight - 70) {
-          el.classList.add("visible");
-        }
-      });
-    }
-
-    function sendMessage(event) {
-      event.preventDefault();
-      const btn = event.target.querySelector(".submit");
-      btn.textContent = "Sent ✓";
-      setTimeout(() => {
-        btn.textContent = "Send Message →";
-      }, 2500);
-    }
-
-    const YOUTUBE_CHANNEL_ID = "UCB7aM4NJoLaXWrZzelOvaJw";
-    const YOUTUBE_API_KEY = "AIzaSyBBrjM4gEonZNDRcn_lZGQI5oeemDxHmoo";
-
-    async function loadYouTubeLive() {
-      const statusEl = document.getElementById("youtubeLiveStatus");
-      const frameWrap = document.getElementById("youtubeLiveFrameWrap");
-
-      if (!statusEl || !frameWrap) return;
-
-      try {
-        statusEl.textContent = "Checking live status...";
-        statusEl.className = "youtube-status";
-
-        const apiUrl =
-          "https://www.googleapis.com/youtube/v3/search" +
-          "?part=snippet" +
-          "&channelId=" + encodeURIComponent(YOUTUBE_CHANNEL_ID) +
-          "&eventType=live" +
-          "&type=video" +
-          "&maxResults=1" +
-          "&key=" + encodeURIComponent(YOUTUBE_API_KEY);
-
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data?.error?.message || "YouTube API error");
-        }
-
-        const liveVideo = data.items && data.items[0];
-
-        if (liveVideo && liveVideo.id && liveVideo.id.videoId) {
-          const videoId = liveVideo.id.videoId;
-
-          statusEl.textContent = "● Live now";
-          statusEl.className = "youtube-status live";
-
-          frameWrap.innerHTML = `
-            <iframe
-              src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0"
-              title="Tapish YouTube Live Stream"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowfullscreen>
-            </iframe>
-          `;
-        } else {
-          statusEl.textContent = "Offline — stream appears here when live";
-          statusEl.className = "youtube-status offline";
-
-          frameWrap.innerHTML = `
-            <div class="youtube-offline-box">
-              <div class="youtube-offline-dot"></div>
-              <h3>Currently Offline</h3>
-              <p>When Tapish goes live, the stream will appear here automatically.</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        statusEl.textContent = "Live check unavailable — check API key/domain restriction";
-        statusEl.className = "youtube-status offline";
-
-        frameWrap.innerHTML = `
-          <div class="youtube-offline-box">
-            <div class="youtube-offline-dot"></div>
-            <h3>Live Check Unavailable</h3>
-            <p>Please check your YouTube API key, quota, and domain restrictions.</p>
-          </div>
-        `;
-
-        console.error("YouTube live check failed:", error);
-      }
-    }
-
-    const hamburger = document.getElementById("hamburger");
-    const navLinks = document.getElementById("navLinks");
-    const navCta = document.getElementById("navCta");
-    const nav = document.getElementById("nav");
-    const progress = document.getElementById("progress");
-
-    hamburger.addEventListener("click", () => {
-      hamburger.classList.toggle("active");
-      navLinks.classList.toggle("open");
-      navCta.classList.toggle("open");
-    });
-
-    document.querySelectorAll("#navLinks a, #navCta").forEach(link => {
-      link.addEventListener("click", () => {
-        hamburger.classList.remove("active");
-        navLinks.classList.remove("open");
-        navCta.classList.remove("open");
-      });
-    });
-
-    let lastY = 0;
-
-    window.addEventListener("scroll", () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      progress.style.width = `${(window.scrollY / scrollHeight) * 100}%`;
-
-      nav.classList.toggle("hide", window.scrollY > lastY && window.scrollY > 180);
-      lastY = window.scrollY;
-
-      revealOnScroll();
-    }, { passive: true });
-
-    renderProjects();
-    switchMode("engineer");
-    loadYouTubeLive();
-    setInterval(loadYouTubeLive, 60000);
-
-    setTimeout(revealOnScroll, 150);
-  </script>
+renderStatic();
+switchMode('engineer');
+loadYouTubeLive();
+setTimeout(doReveal,150);
+setTimeout(updateRoadmapFlip,200);
+</script>
 </body>
 </html>
