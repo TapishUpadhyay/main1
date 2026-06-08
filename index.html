@@ -2656,7 +2656,7 @@ function loadYouTubeLive(fromUserGesture=false){
   });
 }
 
-// If the visitor arrives with Personal already active, try loading after the page is ready.
+// If te visitor arrives with Personal already active, try loading after the page is ready.
 // Normal autoplay may still depend on browser policy.
 function loadYouTubeIfPersonal(){
   if(document.documentElement.getAttribute('data-mode')==='personal')loadYouTubeLive(false);
