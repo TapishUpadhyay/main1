@@ -1425,44 +1425,6 @@ hr.afd{border:none;border-top:1px solid #111827;margin:1.2rem 0}
   #spotify .youtube-frame-wrap{min-height:180px !important}
   #spotify .youtube-status,#spotify .youtube-channel-link{font-size:.54rem !important}
 }
-
-/* YouTube mobile placeholder shown before Personal mode loads the iframe */
-#spotify .youtube-mobile-placeholder{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:.55rem;
-  text-align:center;
-  padding:1.2rem;
-  background:
-    radial-gradient(circle at center,rgba(255,0,0,.09),transparent 45%),
-    linear-gradient(145deg,#111,#050505);
-}
-#spotify .youtube-mobile-dot{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:#ff4b4b;
-  box-shadow:0 0 18px rgba(255,75,75,.6);
-  animation:youtubePulse 1.6s ease-in-out infinite;
-}
-#spotify .youtube-mobile-placeholder h3{
-  color:#f5f5f5;
-  font-family:'Nunito',sans-serif;
-  font-size:1.05rem;
-  margin:0;
-}
-#spotify .youtube-mobile-placeholder p{
-  color:#aaa;
-  max-width:360px;
-  font-size:.82rem;
-  line-height:1.55;
-  margin:0;
-}
-
 </style>
 </head>
 <body>
@@ -1602,13 +1564,13 @@ hr.afd{border:none;border-top:1px solid #111827;margin:1.2rem 0}
       <h2>Live Stream</h2>
       <p class="youtube-live-note">When I go live on YouTube, the stream will appear here automatically. This embed is mobile-safe and does not depend on an API key.</p>
 
-      <div class="youtube-status" id="youtubeLiveStatus">Tap Personal to load live player</div>
+      <div class="youtube-status" id="youtubeLiveStatus">Tap Personal to start the live player</div>
 
       <div class="youtube-frame-wrap" id="youtubeLiveFrameWrap">
-        <div class="youtube-mobile-placeholder">
-          <div class="youtube-mobile-dot"></div>
-          <h3>Live player will start here</h3>
-          <p>The stream loads when Personal mode is opened, so mobile browsers can autoplay it muted.</p>
+        <div class="youtube-offline-box" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem;background:#0b0b0b;color:#f5f5f5;">
+          <div style="width:12px;height:12px;border-radius:999px;background:#ff4b4b;box-shadow:0 0 18px #ff4b4b;margin-bottom:.7rem;"></div>
+          <h3 style="font-size:1rem;margin-bottom:.35rem;">Live Player Ready</h3>
+          <p style="font-size:.82rem;color:#aaa;max-width:340px;">Tap Personal mode and the muted YouTube live player will load automatically.</p>
         </div>
       </div>
 
@@ -2061,15 +2023,17 @@ function applyMode(m,animate){
 }
 
 function switchMode(m){
-  if(m===curMode)return;
+  if(m===curMode){
+    if(m==='personal') loadYouTubeLive(true);
+    return;
+  }
   const r=document.getElementById('mripple');
   r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash');
-  setTimeout(()=>{
-    applyMode(m,true);
-    if(m==='personal'){
-      requestAnimationFrame(()=>loadYouTubeLive());
-    }
-  },90);
+
+  // Important: call applyMode + loadYouTubeLive immediately inside the user tap/click.
+  // Mobile browsers are much more likely to allow muted autoplay when it starts from this gesture.
+  applyMode(m,true);
+  if(m==='personal') loadYouTubeLive(true);
 }
 
 /* ══ MODAL ══ */
@@ -2385,39 +2349,64 @@ window.addEventListener('resize',updateRoadmapFlip);
 
 
 
-/* ══ MOBILE-SAFE YOUTUBE LIVE EMBED (ALL DEVICES) ══ */
-/* Fix: do NOT load the YouTube iframe while Personal section is hidden.
-   Mobile browsers often block autoplay if the iframe is created inside display:none.
-   This function runs only after Personal mode becomes visible. */
+/* ══ MOBILE-SAFE YOUTUBE LIVE EMBED (LOAD ONLY AFTER PERSONAL TAP) ══ */
 let youtubeLiveLoaded=false;
 
-function loadYouTubeLive(){
+function loadYouTubeLive(fromUserGesture=false){
   const statusEl=document.getElementById('youtubeLiveStatus');
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
   const channelId='UCB7aM4NJoLaXWrZzelOvaJw';
 
   if(!statusEl||!frameWrap)return;
-  if(document.documentElement.getAttribute('data-mode')!=='personal')return;
-  if(youtubeLiveLoaded)return;
 
-  youtubeLiveLoaded=true;
-  statusEl.textContent='Live player autoplay ready';
+  // Do not load the iframe while the section is hidden.
+  // Hidden iframe autoplay is commonly blocked on phones.
+  if(document.documentElement.getAttribute('data-mode')!=='personal')return;
+
+  statusEl.textContent='Starting muted live player...';
   statusEl.className='youtube-status live';
 
   const origin=encodeURIComponent(window.location.origin);
+  const src=`https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1&origin=${origin}`;
+
   frameWrap.innerHTML=`
     <iframe
-      src="https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=0&mute=1&playsinline=1&rel=0&enablejsapi=1&origin=${origin}"
+      id="youtubeLiveIframe"
+      src="${src}"
       title="Tapish YouTube Live Stream"
-      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-      allowfullscreen>
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen
+      referrerpolicy="strict-origin-when-cross-origin">
     </iframe>
   `;
+
+  youtubeLiveLoaded=true;
+
+  const iframe=document.getElementById('youtubeLiveIframe');
+  iframe.addEventListener('load',()=>{
+    // Extra push for browsers that need the YouTube IFrame command after loading.
+    setTimeout(()=>{
+      try{
+        iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'mute',args:[]}), '*');
+        iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'playVideo',args:[]}), '*');
+        statusEl.textContent='Muted autoplay requested — tap video if your browser blocks it';
+      }catch(e){
+        statusEl.textContent='Live player ready';
+      }
+    },700);
+  });
 }
+
+// If the visitor arrives with Personal already active, try loading after the page is ready.
+// Normal autoplay may still depend on browser policy.
+function loadYouTubeIfPersonal(){
+  if(document.documentElement.getAttribute('data-mode')==='personal')loadYouTubeLive(false);
+}
+
 /* ══ INIT ══ */
 renderAll();
 applyMode('engineer',false);
-/* YouTube loads only after Personal mode is opened, so mobile autoplay is not blocked. */
+loadYouTubeIfPersonal();
 buildEQ();
 setTimeout(doReveal,200);
 setTimeout(updateRoadmapFlip,220);
