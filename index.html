@@ -1425,6 +1425,267 @@ hr.afd{border:none;border-top:1px solid #111827;margin:1.2rem 0}
   #spotify .youtube-frame-wrap{min-height:180px !important}
   #spotify .youtube-status,#spotify .youtube-channel-link{font-size:.54rem !important}
 }
+
+
+/* ══ FINAL LAYOUT PATCH: YOUTUBE BIG CARD + SPOTIFY MINI OVERLAY ══ */
+#spotify.spotify-section{
+  display:none;
+  position:relative;
+  z-index:80;
+  padding:0 5vw;
+  margin-top:-74px;
+  margin-bottom:-48px;
+  background:transparent;
+}
+[data-mode="personal"] #spotify.spotify-section{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+[data-mode="personal"] .spotify-nav-item{display:list-item!important}
+#spotify.spotify-section::before{display:none!important}
+.live-layout-shell{
+  width:min(100%,1180px);
+  margin:0 auto;
+  position:relative;
+}
+.youtube-main-panel{
+  position:relative;
+  min-height:430px;
+  overflow:visible;
+  border-radius:46px;
+  border:1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(circle at 50% 0%,rgba(255,0,0,.16),transparent 38%),
+    linear-gradient(145deg,rgba(18,18,18,.97),rgba(5,7,10,.96));
+  box-shadow:
+    0 34px 95px rgba(0,0,0,.62),
+    0 0 60px rgba(255,0,0,.12),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(22px) saturate(1.25);
+  padding:1.3rem;
+}
+.youtube-main-panel::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.09),transparent 34%),
+    radial-gradient(circle at 15% 100%,rgba(29,185,84,.13),transparent 26%);
+  z-index:1;
+}
+.youtube-main-copy{
+  position:absolute;
+  top:1.45rem;
+  left:1.6rem;
+  z-index:4;
+  max-width:430px;
+  padding:.95rem 1rem;
+  border-radius:22px;
+  background:rgba(0,0,0,.34);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(16px);
+}
+#spotify .youtube-live-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.55rem;
+  font-family:'Fira Code',monospace;
+  font-size:.62rem;
+  letter-spacing:.2em;
+  color:#ff4b4b;
+  font-weight:700;
+  text-transform:uppercase;
+  margin-bottom:.45rem;
+}
+#spotify .youtube-live-label::before{
+  content:'';
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#ff4b4b;
+  box-shadow:0 0 16px #ff4b4b;
+  animation:youtubePulse 1.6s ease-in-out infinite;
+}
+#spotify .youtube-main-copy h2{
+  font-family:'Nunito',sans-serif;
+  color:#fff;
+  font-size:clamp(1.55rem,3vw,2.55rem);
+  line-height:1;
+  letter-spacing:-.04em;
+  margin-bottom:.4rem;
+  font-weight:900;
+}
+#spotify .youtube-live-note{
+  color:rgba(245,245,245,.72);
+  font-size:.86rem;
+  line-height:1.55;
+  margin-bottom:.5rem;
+}
+#spotify .youtube-status{
+  font-family:'Fira Code',monospace;
+  font-size:.62rem;
+  letter-spacing:.08em;
+  color:#ff6b6b;
+}
+#spotify .youtube-frame-wrap{
+  position:relative;
+  z-index:2;
+  width:100%!important;
+  min-height:400px;
+  aspect-ratio:16/9;
+  border-radius:36px;
+  overflow:hidden;
+  background:#050505;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+}
+#spotify .youtube-frame-wrap iframe{
+  position:absolute;
+  inset:0;
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+  display:block!important;
+}
+#spotify .youtube-channel-link{
+  position:absolute;
+  right:1.8rem;
+  bottom:1.6rem;
+  z-index:5;
+  display:inline-flex;
+  color:#fff;
+  background:rgba(255,0,0,.82);
+  border:1px solid rgba(255,255,255,.16);
+  padding:.55rem .9rem;
+  border-radius:999px;
+  text-decoration:none;
+  font-family:'Fira Code',monospace;
+  font-size:.58rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  backdrop-filter:blur(14px);
+  transition:transform .25s ease,filter .25s ease;
+}
+#spotify .youtube-channel-link:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.12);
+}
+.spotify-mini-card{
+  position:absolute;
+  left:1rem;
+  bottom:-1.05rem;
+  z-index:8;
+  width:150px;
+  min-height:104px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-decoration:none;
+  overflow:hidden;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at top,rgba(29,185,84,.28),transparent 48%),
+    linear-gradient(145deg,#121212,#050806);
+  border:1px solid rgba(29,185,84,.35);
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.65),
+    0 0 30px rgba(29,185,84,.20);
+  transition:transform .3s ease,filter .3s ease;
+}
+.spotify-mini-card:hover{
+  transform:translateY(-6px) scale(1.03);
+  filter:brightness(1.08);
+}
+.spotify-mini-label{
+  position:absolute;
+  left:.75rem;
+  top:.62rem;
+  z-index:2;
+  font-family:'Fira Code',monospace;
+  font-size:.62rem;
+  font-weight:700;
+  color:#b8ffd1;
+  text-transform:lowercase;
+  letter-spacing:-.04em;
+}
+.spotify-mini-img{
+  width:100%;
+  height:100%;
+  min-height:104px;
+  object-fit:cover;
+  opacity:.82;
+  transform:scale(1.18);
+}
+.spotify-mini-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.58));
+  pointer-events:none;
+}
+[data-mode="personal"] #about{padding-top:150px!important}
+
+@media(max-width:900px){
+  #spotify.spotify-section,
+  [data-mode="personal"] #spotify.spotify-section{
+    padding:26px 14px 54px!important;
+    margin-top:0!important;
+    margin-bottom:0!important;
+  }
+  .youtube-main-panel{
+    min-height:auto;
+    border-radius:34px;
+    padding:.9rem;
+  }
+  .youtube-main-copy{
+    position:relative;
+    top:auto;
+    left:auto;
+    max-width:100%;
+    text-align:center;
+    margin-bottom:.8rem;
+    border-radius:22px;
+  }
+  #spotify .youtube-live-label{justify-content:center;font-size:.54rem;letter-spacing:.16em}
+  #spotify .youtube-main-copy h2{font-size:clamp(1.5rem,8vw,2.15rem)}
+  #spotify .youtube-live-note{font-size:.8rem}
+  #spotify .youtube-status{font-size:.56rem}
+  #spotify .youtube-frame-wrap{
+    min-height:210px;
+    border-radius:26px;
+    aspect-ratio:16/9;
+  }
+  #spotify .youtube-frame-wrap iframe{min-height:210px!important}
+  #spotify .youtube-channel-link{
+    right:1.15rem;
+    bottom:1.15rem;
+    font-size:.5rem;
+    padding:.48rem .7rem;
+  }
+  .spotify-mini-card{
+    left:.65rem;
+    bottom:-.7rem;
+    width:112px;
+    min-height:82px;
+    border-radius:15px;
+  }
+  .spotify-mini-img{min-height:82px}
+  .spotify-mini-label{font-size:.5rem;left:.55rem;top:.48rem}
+  [data-mode="personal"] #about{padding-top:76px!important}
+}
+@media(max-width:420px){
+  #spotify.spotify-section,
+  [data-mode="personal"] #spotify.spotify-section{padding:22px 10px 48px!important}
+  .youtube-main-panel{border-radius:28px;padding:.7rem}
+  #spotify .youtube-frame-wrap{min-height:190px;border-radius:22px}
+  #spotify .youtube-frame-wrap iframe{min-height:190px!important}
+  #spotify .youtube-channel-link{display:none}
+  .spotify-mini-card{width:92px;min-height:72px;bottom:-.55rem;left:.55rem;border-radius:13px}
+  .spotify-mini-img{min-height:72px}
+}
 </style>
 </head>
 <body>
@@ -1533,48 +1794,28 @@ hr.afd{border:none;border-top:1px solid #111827;margin:1.2rem 0}
   </div>
 </section>
 
-<!-- ════ PERSONAL LIVE OVERLAP: SPOTIFY + YOUTUBE ════ -->
+<!-- ════ PERSONAL LIVE OVERLAP: YOUTUBE MAIN + SPOTIFY MINI ════ -->
 <section id="spotify" class="spotify-section rev">
-  <div class="spotify-container personal-live-container">
+  <div class="live-layout-shell">
 
-    <div class="spotify-copy personal-live-spotify">
-      <p class="spotify-label">LIVE SPOTIFY</p>
-      <h2>What I’m Listening To</h2>
-      <p class="spotify-note">A live-updating Spotify Now Playing card. It shows the current track, album cover, or offline status when I’m not listening.</p>
-
-      <a 
-        href="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&redirect=true" 
-        target="_blank"
-        rel="noopener noreferrer"
-        class="spotify-card-link"
-        aria-label="Open Tapish Spotify Now Playing card"
-      >
-        <img 
-          src="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false"
-          alt="Tapish Spotify Now Playing"
-          class="spotify-card"
-          loading="lazy"
-          referrerpolicy="no-referrer"
-        >
-      </a>
-    </div>
-
-    <div class="youtube-live-box">
-      <p class="youtube-live-label">YOUTUBE LIVE</p>
-      <h2>Live Stream</h2>
-      <p class="youtube-live-note">When I go live on YouTube, the stream will appear here automatically. This embed is mobile-safe and does not depend on an API key.</p>
-
-      <div class="youtube-status" id="youtubeLiveStatus">Tap Personal to start the live player</div>
-
-      <div class="youtube-frame-wrap" id="youtubeLiveFrameWrap">
-        <div class="youtube-offline-box" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1rem;background:#0b0b0b;color:#f5f5f5;">
-          <div style="width:12px;height:12px;border-radius:999px;background:#ff4b4b;box-shadow:0 0 18px #ff4b4b;margin-bottom:.7rem;"></div>
-          <h3 style="font-size:1rem;margin-bottom:.35rem;">Live Player Ready</h3>
-          <p style="font-size:.82rem;color:#aaa;max-width:340px;">Tap Personal mode and the muted YouTube live player will load automatically.</p>
-        </div>
+    <div class="youtube-main-panel">
+      <div class="youtube-main-copy">
+        <p class="youtube-live-label">YOUTUBE LIVE</p>
+        <h2>Live Stream</h2>
+        <p class="youtube-live-note">When I go live on YouTube, the stream will appear here automatically.</p>
+        <div class="youtube-status" id="youtubeLiveStatus">Live player ready</div>
       </div>
 
-      <a 
+      <div class="youtube-frame-wrap" id="youtubeLiveFrameWrap">
+        <iframe
+          src="https://www.youtube.com/embed/live_stream?channel=UCB7aM4NJoLaXWrZzelOvaJw&autoplay=1&mute=1&playsinline=1&enablejsapi=1&rel=0"
+          title="Tapish YouTube Live Stream"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <a
         href="https://www.youtube.com/@Rugnut1"
         target="_blank"
         rel="noopener noreferrer"
@@ -1582,6 +1823,24 @@ hr.afd{border:none;border-top:1px solid #111827;margin:1.2rem 0}
       >
         Open YouTube Channel →
       </a>
+
+      <a
+        href="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&redirect=true"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="spotify-mini-card"
+        aria-label="Open Tapish Spotify Now Playing card"
+      >
+        <span class="spotify-mini-label">spotify</span>
+        <img
+          src="https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false"
+          alt="Tapish Spotify Now Playing"
+          class="spotify-mini-img"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        >
+      </a>
+
     </div>
 
   </div>
