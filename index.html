@@ -1652,8 +1652,11 @@ html[data-mode="personal"] #idea-canvas{display:block}
 .canvas-admin-hint span{color:var(--A);opacity:.5}
 
 @media(max-width:640px){
-  .canvas-stage{height:clamp(260px,80vw,420px)}
+  .canvas-stage{height:clamp(300px,85vw,460px)}
   .canvas-chrome-label{display:none}
+  .czoom-btn{width:44px;height:44px;font-size:1.3rem;border-radius:12px}
+  .canvas-reset-btn{padding:.45rem 1rem;font-size:.54rem}
+  #idea-canvas .canvas-title{font-size:clamp(1.7rem,8vw,2.4rem)}
 }
 
 html[data-mode="personal"] body .spotify-nav-item{display:list-item !important;}
@@ -2952,135 +2955,142 @@ function loadYouTubeLive(){
   const iframe=document.getElementById('canvasIframe');
   if(!stage||!inner)return;
 
-  // Hide placeholder once iframe loads
+  /* ── Hide placeholder on iframe load ── */
+  function hidePlaceholder(){
+    if(!placeholder)return;
+    placeholder.style.transition='opacity .5s';
+    placeholder.style.opacity='0';
+    setTimeout(()=>{placeholder.style.display='none'},520);
+  }
   if(iframe){
-    iframe.addEventListener('load',function(){
-      if(placeholder){
-        placeholder.style.transition='opacity .5s';
-        placeholder.style.opacity='0';
-        setTimeout(()=>placeholder.style.display='none',500);
-      }
-    });
-    // Fallback: hide after 4s regardless
-    setTimeout(()=>{
-      if(placeholder){placeholder.style.opacity='0';setTimeout(()=>placeholder.style.display='none',500)}
-    },4000);
+    iframe.addEventListener('load',hidePlaceholder);
+    setTimeout(hidePlaceholder,4500);
   }
 
-  let scale=1,minScale=.2,maxScale=4;
+  /* ── State ── */
+  let scale=1,minScale=.15,maxScale=4;
   let tx=0,ty=0;
-  let dragging=false,startX=0,startY=0,originTx=0,originTy=0;
 
-  function clampScale(s){return Math.min(maxScale,Math.max(minScale,s))}
+  function clamp(s){return Math.min(maxScale,Math.max(minScale,s))}
 
   function fitToStage(){
-    if(!iframe)return;
     const sw=stage.offsetWidth,sh=stage.offsetHeight;
-    const iw=parseFloat(iframe.style.width)||1200;
-    const ih=parseFloat(iframe.style.height)||800;
-    const fitScale=Math.min(sw/iw,sh/ih)*.96;
-    scale=clampScale(fitScale);
-    tx=(sw-iw*scale)/2;
-    ty=(sh-ih*scale)/2;
+    const iw=iframe?parseFloat(iframe.style.width)||1200:1200;
+    const ih=iframe?parseFloat(iframe.style.height)||800:800;
+    const s=Math.min(sw/iw,sh/ih)*.95;
+    scale=clamp(s);
+    tx=Math.round((sw-iw*scale)/2);
+    ty=Math.round((sh-ih*scale)/2);
   }
 
-  function applyTransform(){
-    inner.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;
+  function apply(){
     inner.style.transformOrigin='0 0';
-    label.textContent=Math.round(scale*100)+'%';
+    inner.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;
+    if(label)label.textContent=Math.round(scale*100)+'%';
   }
 
-  // Initial fit
-  fitToStage();
-  applyTransform();
+  fitToStage();apply();
+  window.addEventListener('resize',()=>{fitToStage();apply()});
 
-  // Re-fit on resize
-  window.addEventListener('resize',()=>{fitToStage();applyTransform()});
+  /* ── Overlay: captures all pointer/touch events so iframe can't steal them ── */
+  const ov=document.createElement('div');
+  ov.style.cssText=[
+    'position:absolute','inset:0','z-index:5',
+    'cursor:grab','touch-action:none',   /* <-- critical for mobile */
+    '-webkit-user-select:none','user-select:none'
+  ].join(';');
+  stage.appendChild(ov);
 
-  // Pointer overlay — sits on top of iframe to capture drag/wheel without iframe stealing events
-  const overlay=document.createElement('div');
-  overlay.style.cssText='position:absolute;inset:0;z-index:5;cursor:grab;';
-  stage.appendChild(overlay);
-
-  // Mouse wheel zoom
-  overlay.addEventListener('wheel',e=>{
-    e.preventDefault();
-    const rect=stage.getBoundingClientRect();
-    const px=e.clientX-rect.left,py=e.clientY-rect.top;
-    const delta=e.deltaY>0?-.1:.1;
-    const newScale=clampScale(scale*(1+delta));
-    tx=px-(px-tx)*(newScale/scale);
-    ty=py-(py-ty)*(newScale/scale);
-    scale=newScale;
-    applyTransform();
-  },{passive:false});
-
-  // Mouse drag
-  overlay.addEventListener('mousedown',e=>{
-    dragging=true;startX=e.clientX;startY=e.clientY;
-    originTx=tx;originTy=ty;
-    overlay.style.cursor='grabbing';
+  /* ── Mouse drag ── */
+  let mDrag=false,mSX=0,mSY=0,mOX=0,mOY=0;
+  ov.addEventListener('mousedown',e=>{
+    mDrag=true;mSX=e.clientX;mSY=e.clientY;mOX=tx;mOY=ty;
+    ov.style.cursor='grabbing';
   });
   window.addEventListener('mousemove',e=>{
-    if(!dragging)return;
-    tx=originTx+(e.clientX-startX);
-    ty=originTy+(e.clientY-startY);
-    applyTransform();
+    if(!mDrag)return;
+    tx=mOX+(e.clientX-mSX);ty=mOY+(e.clientY-mSY);apply();
   });
-  window.addEventListener('mouseup',()=>{
-    dragging=false;
-    overlay.style.cursor='grab';
-  });
+  window.addEventListener('mouseup',()=>{mDrag=false;ov.style.cursor='grab'});
 
-  // Touch pinch & pan
-  let lastDist=0,lastTouchX=0,lastTouchY=0,touchOriginTx=0,touchOriginTy=0;
-  overlay.addEventListener('touchstart',e=>{
-    if(e.touches.length===2){
-      lastDist=Math.hypot(
+  /* ── Mouse wheel zoom ── */
+  ov.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const r=stage.getBoundingClientRect();
+    const px=e.clientX-r.left,py=e.clientY-r.top;
+    const ns=clamp(scale*(e.deltaY>0?.9:1.11));
+    tx=px-(px-tx)*(ns/scale);ty=py-(py-ty)*(ns/scale);
+    scale=ns;apply();
+  },{passive:false});
+
+  /* ── Touch: pan (1 finger) + pinch (2 fingers) ── */
+  let t1x=0,t1y=0,tOX=0,tOY=0,tDist=0;
+
+  /* passive:false on BOTH touchstart and touchmove so preventDefault works */
+  ov.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    if(e.touches.length===1){
+      t1x=e.touches[0].clientX;t1y=e.touches[0].clientY;
+      tOX=tx;tOY=ty;
+    }else if(e.touches.length===2){
+      tDist=Math.hypot(
         e.touches[0].clientX-e.touches[1].clientX,
         e.touches[0].clientY-e.touches[1].clientY
       );
-    }else if(e.touches.length===1){
-      lastTouchX=e.touches[0].clientX;lastTouchY=e.touches[0].clientY;
-      touchOriginTx=tx;touchOriginTy=ty;
+      /* also record midpoint as pan anchor */
+      const r=stage.getBoundingClientRect();
+      t1x=(e.touches[0].clientX+e.touches[1].clientX)/2-r.left;
+      t1y=(e.touches[0].clientY+e.touches[1].clientY)/2-r.top;
+      tOX=tx;tOY=ty;
     }
-  },{passive:true});
-  overlay.addEventListener('touchmove',e=>{
+  },{passive:false});
+
+  ov.addEventListener('touchmove',e=>{
     e.preventDefault();
-    if(e.touches.length===2){
+    if(e.touches.length===1){
+      /* single-finger pan — delta from touchstart origin each frame */
+      const dx=e.touches[0].clientX-t1x;
+      const dy=e.touches[0].clientY-t1y;
+      tx=tOX+dx;ty=tOY+dy;
+      apply();
+    }else if(e.touches.length===2){
+      const r=stage.getBoundingClientRect();
       const dist=Math.hypot(
         e.touches[0].clientX-e.touches[1].clientX,
         e.touches[0].clientY-e.touches[1].clientY
       );
-      const rect=stage.getBoundingClientRect();
-      const midX=(e.touches[0].clientX+e.touches[1].clientX)/2-rect.left;
-      const midY=(e.touches[0].clientY+e.touches[1].clientY)/2-rect.top;
-      const ratio=dist/lastDist;
-      const newScale=clampScale(scale*ratio);
-      tx=midX-(midX-tx)*(newScale/scale);
-      ty=midY-(midY-ty)*(newScale/scale);
-      scale=newScale;lastDist=dist;
-      applyTransform();
-    }else if(e.touches.length===1){
-      tx=touchOriginTx+(e.touches[0].clientX-lastTouchX);
-      ty=touchOriginTy+(e.touches[0].clientY-lastTouchY);
-      applyTransform();
+      const midX=(e.touches[0].clientX+e.touches[1].clientX)/2-r.left;
+      const midY=(e.touches[0].clientY+e.touches[1].clientY)/2-r.top;
+      if(tDist>0){
+        const ns=clamp(scale*(dist/tDist));
+        /* zoom toward pinch midpoint */
+        tx=midX-(midX-tOX)*(ns/scale);
+        ty=midY-(midY-tOY)*(ns/scale);
+        scale=ns;
+      }
+      tDist=dist;
+      tOX=tx;tOY=ty;
+      apply();
     }
   },{passive:false});
 
-  // Globals
+  ov.addEventListener('touchend',e=>{
+    /* if going from 2 fingers to 1, re-anchor */
+    if(e.touches.length===1){
+      t1x=e.touches[0].clientX;t1y=e.touches[0].clientY;
+      tOX=tx;tOY=ty;tDist=0;
+    }
+  },{passive:true});
+
+  /* ── Globals ── */
   window.canvasZoom=function(dir){
     const sw=stage.offsetWidth,sh=stage.offsetHeight;
-    const cx=sw/2,cy=sh/2;
-    const factor=dir>0?1.25:.8;
-    const newScale=clampScale(scale*factor);
-    tx=cx-(cx-tx)*(newScale/scale);
-    ty=cy-(cy-ty)*(newScale/scale);
-    scale=newScale;applyTransform();
+    const ns=clamp(scale*(dir>0?1.25:.8));
+    tx=(sw/2)-(sw/2-tx)*(ns/scale);
+    ty=(sh/2)-(sh/2-ty)*(ns/scale);
+    scale=ns;apply();
   };
-  window.canvasResetView=function(){
-    fitToStage();applyTransform();
-  };
+  window.canvasResetView=function(){fitToStage();apply()};
 })();
 
 
