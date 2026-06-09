@@ -1445,6 +1445,217 @@ html[data-mode="personal"] body #spotify.spotify-section{
 html:not([data-mode="personal"]) body #spotify.spotify-section{
   display:none !important;
 }
+
+/* ══ IDEA CANVAS NAV ITEM — personal only ══ */
+.canvas-nav-item{display:none}
+html[data-mode="personal"] body .canvas-nav-item{display:list-item !important}
+
+/* ══ IDEA CANVAS SECTION ══ */
+#idea-canvas{
+  display:none;
+  padding:clamp(48px,6vw,90px) 5vw clamp(60px,7vw,100px);
+  position:relative;z-index:2;
+  background:var(--bg2);
+  transition:background .7s;
+}
+html[data-mode="personal"] #idea-canvas{display:block}
+
+/* Header */
+#idea-canvas .canvas-header{margin-bottom:2.4rem}
+#idea-canvas .canvas-tag{
+  font-family:'Fira Code',monospace;font-size:.58rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--A);margin-bottom:.55rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+#idea-canvas .canvas-tag::before{
+  content:'';display:inline-block;width:28px;height:1px;background:var(--A);
+}
+#idea-canvas .canvas-title{
+  font-family:'Nunito',sans-serif;font-weight:900;
+  font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.04em;
+  color:var(--tx);line-height:1.1;margin-bottom:.65rem;
+}
+#idea-canvas .canvas-title span{color:var(--A)}
+#idea-canvas .canvas-sub{
+  font-size:.93rem;color:var(--txm);line-height:1.8;max-width:540px;
+}
+
+/* The viewer shell */
+.canvas-viewer-wrap{
+  position:relative;
+  width:100%;
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(74,222,128,.2);
+  background:#0a150e;
+  box-shadow:
+    0 32px 90px rgba(0,0,0,.6),
+    0 0 60px rgba(74,222,128,.07),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+/* Top bar chrome */
+.canvas-viewer-chrome{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.65rem 1.1rem;
+  background:rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(74,222,128,.12);
+  backdrop-filter:blur(8px);
+}
+.canvas-chrome-dots{display:flex;gap:.45rem}
+.canvas-chrome-dots span{
+  width:11px;height:11px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+}
+.canvas-chrome-label{
+  font-family:'Fira Code',monospace;font-size:.52rem;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--A);opacity:.6;
+}
+.canvas-chrome-actions{display:flex;gap:.5rem}
+.canvas-chrome-btn{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.06em;
+  text-transform:uppercase;background:rgba(74,222,128,.08);
+  border:1px solid rgba(74,222,128,.2);color:var(--A);
+  padding:.26rem .65rem;border-radius:6px;cursor:pointer;
+  transition:all .2s;
+}
+.canvas-chrome-btn:hover{background:rgba(74,222,128,.16);border-color:rgba(74,222,128,.4)}
+
+/* The actual pan/zoom stage */
+.canvas-stage{
+  position:relative;
+  width:100%;
+  height:clamp(420px,60vw,720px);
+  overflow:hidden;
+  cursor:grab;
+  touch-action:none;
+  background:
+    radial-gradient(circle at 15% 20%,rgba(74,222,128,.06),transparent 38%),
+    radial-gradient(circle at 80% 75%,rgba(74,222,128,.04),transparent 32%),
+    #060f09;
+}
+.canvas-stage:active{cursor:grabbing}
+
+/* Dot-grid background */
+.canvas-stage::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(74,222,128,.18) 1px,transparent 1px);
+  background-size:28px 28px;
+  opacity:.35;
+  transition:opacity .4s;
+}
+
+/* The image/embed inside */
+.canvas-inner{
+  position:absolute;
+  top:0;left:0;
+  transform-origin:0 0;
+  will-change:transform;
+  transition:none;
+}
+.canvas-inner img,
+.canvas-inner iframe{
+  display:block;
+  max-width:none;
+  border:none;
+}
+
+/* Placeholder state (no src yet) */
+.canvas-placeholder{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1rem;pointer-events:none;
+  opacity:1;transition:opacity .4s;
+}
+.canvas-placeholder.hidden{opacity:0}
+.canvas-ph-icon{
+  font-size:3rem;
+  filter:drop-shadow(0 0 18px rgba(74,222,128,.35));
+  animation:phFloat 4s ease-in-out infinite;
+}
+@keyframes phFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.canvas-ph-title{
+  font-family:'Nunito',sans-serif;font-weight:800;
+  font-size:1.3rem;color:var(--A);letter-spacing:-.02em;
+}
+.canvas-ph-sub{
+  font-family:'Fira Code',monospace;font-size:.58rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--txd);
+}
+
+/* Zoom controls */
+.canvas-zoom-controls{
+  position:absolute;bottom:1.1rem;right:1.1rem;
+  display:flex;flex-direction:column;gap:.35rem;z-index:10;
+}
+.czoom-btn{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(10,21,14,.9);
+  border:1px solid rgba(74,222,128,.25);
+  color:var(--A);font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;
+  backdrop-filter:blur(8px);
+  font-family:'Fira Code',monospace;font-weight:700;
+  user-select:none;
+}
+.czoom-btn:hover{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.5)}
+.czoom-btn:active{transform:scale(.92)}
+.czoom-level{
+  font-family:'Fira Code',monospace;font-size:.48rem;
+  letter-spacing:.06em;text-align:center;
+  color:var(--txd);padding:.2rem 0;
+}
+
+/* Reset button bottom-left */
+.canvas-reset-btn{
+  position:absolute;bottom:1.1rem;left:1.1rem;
+  font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.08em;
+  text-transform:uppercase;
+  background:rgba(10,21,14,.9);
+  border:1px solid rgba(74,222,128,.2);
+  color:var(--txm);padding:.38rem .85rem;border-radius:8px;
+  cursor:pointer;transition:all .2s;
+  backdrop-filter:blur(8px);z-index:10;
+}
+.canvas-reset-btn:hover{color:var(--A);border-color:rgba(74,222,128,.45)}
+
+/* Footer bar */
+.canvas-viewer-footer{
+  padding:.55rem 1.1rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(74,222,128,.1);
+  background:rgba(255,255,255,.02);
+}
+.canvas-footer-tip{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.07em;
+  color:var(--txd);
+}
+.canvas-footer-tip span{color:var(--A);opacity:.7}
+.canvas-open-link{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--A);text-decoration:none;
+  opacity:.6;transition:opacity .2s;
+  display:flex;align-items:center;gap:.3rem;
+}
+.canvas-open-link:hover{opacity:1}
+
+/* Admin link hint */
+.canvas-admin-hint{
+  margin-top:1rem;
+  font-family:'Fira Code',monospace;font-size:.52rem;
+  letter-spacing:.06em;color:var(--txd);
+  text-align:center;
+}
+.canvas-admin-hint span{color:var(--A);opacity:.5}
+
+@media(max-width:640px){
+  .canvas-stage{height:clamp(260px,80vw,420px)}
+  .canvas-chrome-label{display:none}
+}
+
 html[data-mode="personal"] body .spotify-nav-item{display:list-item !important;}
 
 /* Kill the old grid/card styling completely */
@@ -1706,6 +1917,7 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
   <ul class="nav-links" id="navLinks">
     <li><a href="#about" data-num="01">About</a></li>
     <li class="spotify-nav-item"><a href="#spotify" data-num="02">Live</a></li>
+    <li class="canvas-nav-item"><a href="#idea-canvas" data-num="02">Ideas</a></li>
     <li><a href="#projects" data-num="03">Work</a></li>
     <li><a href="#future" data-num="04">Roadmap</a></li>
     <li><a href="#blog" data-num="05">Blog</a></li>
@@ -1842,6 +2054,82 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
       </a>
     </div>
 
+  </div>
+</section>
+
+<!-- ════ IDEA CANVAS (personal mode only) ════ -->
+<section id="idea-canvas">
+  <div class="canvas-header rev">
+    <div class="canvas-tag">My Mind</div>
+    <h2 class="canvas-title">The <span>idea wall.</span></h2>
+    <p class="canvas-sub">A living canvas of thoughts, sketches, and half-baked plans. Pan around and zoom in — it's always changing.</p>
+  </div>
+
+  <div class="canvas-viewer-wrap rev">
+    <!-- Chrome bar -->
+    <div class="canvas-viewer-chrome">
+      <div class="canvas-chrome-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="canvas-chrome-label">tapish.ideas // live canvas</div>
+      <div class="canvas-chrome-actions">
+        <button class="canvas-chrome-btn" onclick="canvasResetView()">reset view</button>
+      </div>
+    </div>
+
+    <!-- Pan & zoom stage -->
+    <div class="canvas-stage" id="canvasStage">
+
+      <!-- The pannable/zoomable inner container -->
+      <div class="canvas-inner" id="canvasInner">
+        <iframe
+          id="canvasIframe"
+          src="https://www.canva.com/design/DAHMHAxTmng/view?embed"
+          allow="fullscreen"
+          allowfullscreen
+          loading="lazy"
+          title="Tapish Idea Canvas"
+          style="width:1200px;height:800px;border:none;border-radius:12px;display:block;"
+        ></iframe>
+      </div>
+
+      <!-- Loading indicator -->
+      <div class="canvas-placeholder" id="canvasPlaceholder">
+        <div class="canvas-ph-icon">🌿</div>
+        <div class="canvas-ph-title">Loading canvas…</div>
+        <div class="canvas-ph-sub">live from canva</div>
+      </div>
+
+      <!-- Zoom controls -->
+      <div class="canvas-zoom-controls">
+        <button class="czoom-btn" onclick="canvasZoom(1)" title="Zoom in">+</button>
+        <div class="czoom-level" id="canvasZoomLabel">100%</div>
+        <button class="czoom-btn" onclick="canvasZoom(-1)" title="Zoom out">−</button>
+      </div>
+
+      <!-- Reset position -->
+      <button class="canvas-reset-btn" onclick="canvasResetView()">⌂ reset</button>
+    </div>
+
+    <!-- Footer bar -->
+    <div class="canvas-viewer-footer">
+      <div class="canvas-footer-tip">
+        <span>scroll</span> to zoom · <span>drag</span> to pan · <span>pinch</span> on mobile
+      </div>
+      <a
+        href="https://www.canva.com/design/DAHMHAxTmng/rMSVOt3blCU83OmlxPsuOQ/view"
+        class="canvas-open-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="display:flex"
+      >
+        Open in Canva ↗
+      </a>
+    </div>
+  </div>
+
+  <div class="canvas-admin-hint">
+    Updates live — every time you draw in Canva it shows here automatically ✦
   </div>
 </section>
 
@@ -2000,6 +2288,7 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
     <button class="ap-tab" onclick="apTab(this,'tTools')">Tools</button>
     <button class="ap-tab" onclick="apTab(this,'tNow')">Now</button>
     <button class="ap-tab" onclick="apTab(this,'tContact')">Contact</button>
+    <button class="ap-tab" onclick="apTab(this,'tCanvas')">Canvas</button>
     <button class="ap-tab" onclick="apTab(this,'tSecurity')">Security</button>
   </div>
   <div class="ap-body">
@@ -2060,6 +2349,25 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
       <div class="afg"><label class="afl">LinkedIn URL</label><input class="afi" id="aCLi"></div>
       <div class="afg"><label class="afl">Contact Intro</label><textarea class="aft" id="aCIntro"></textarea></div>
       <div class="afg"><label class="afl">Footer Status</label><input class="afi" id="aFSt"></div>
+    </div>
+    <div class="ap-pane" id="tCanvas">
+      <div class="afg">
+        <label class="afl">Canva Image URL</label>
+        <span class="afh">// Paste the direct image URL from Canva (File → Share → Download as PNG → copy link, or use a public image host)</span>
+        <input class="afi" id="aCanvasUrl" placeholder="https://...your-canva-export-url...">
+      </div>
+      <div class="afg">
+        <label class="afl">Open-in-Canva Link (optional)</label>
+        <span class="afh">// Paste your Canva design's share link so visitors can open it</span>
+        <input class="afi" id="aCanvasLink" placeholder="https://www.canva.com/design/...">
+      </div>
+      <div style="font-family:'Fira Code',monospace;font-size:.5rem;color:#334155;line-height:1.7;margin-top:.5rem">
+        How to get the image URL:<br>
+        1. In Canva → Share → Download → PNG → Download<br>
+        2. Upload to Imgur, Cloudinary, or your own host<br>
+        3. Copy the direct image URL and paste above<br>
+        4. Hit Save Changes — the canvas updates live on the site
+      </div>
     </div>
     <div class="ap-pane" id="tSecurity">
       <div class="pwd-box">
@@ -2152,7 +2460,9 @@ const DEF={
     {i:'📍',l:'Location',v:'India 🇮🇳'},
     {i:'✅',l:'Status',v:'Open to work & collabs'}
   ],
-  contact:{email:'Tapish@example.com',gh:'https://github.com/Tapish',tw:'https://twitter.com/Tapish',li:'https://linkedin.com/in/Tapish'}
+  contact:{email:'Tapish@example.com',gh:'https://github.com/Tapish',tw:'https://twitter.com/Tapish',li:'https://linkedin.com/in/Tapish'},
+  canvasUrl:'',
+  canvasLink:''
 };
 
 let D=JSON.parse(localStorage.getItem('Tapish_data')||'null')||JSON.parse(JSON.stringify(DEF));
@@ -2362,6 +2672,10 @@ function populateAdmin(){
   document.getElementById('aCLi').value=D.contact.li||'';
   document.getElementById('aCIntro').value=D.eng.contact||'';
   document.getElementById('aFSt').value=D.eng.fSt||'';
+  const _cu=document.getElementById('aCanvasUrl');
+  const _cl=document.getElementById('aCanvasLink');
+  if(_cu)_cu.value=D.canvasUrl||'';
+  if(_cl)_cl.value=D.canvasLink||'';
 }
 function renderPassionChips(key,arr,wrapId){
   document.getElementById(wrapId).innerHTML=arr.map((p,i)=>
@@ -2485,6 +2799,12 @@ function saveAll(){
   D.contact.gh=document.getElementById('aCGh').value;
   D.contact.tw=document.getElementById('aCTw').value;
   D.contact.li=document.getElementById('aCLi').value;
+  // Canvas
+  const cu=document.getElementById('aCanvasUrl');
+  const cl=document.getElementById('aCanvasLink');
+  if(cu)D.canvasUrl=cu.value.trim();
+  if(cl)D.canvasLink=cl.value.trim();
+  if(D.canvasUrl&&window.canvasSetImage)window.canvasSetImage(D.canvasUrl,D.canvasLink);
   localStorage.setItem('Tapish_data',JSON.stringify(D));
   renderAll();applyMode(curMode,false);
   const btn=document.getElementById('apSave');
@@ -2623,7 +2943,147 @@ function loadYouTubeLive(){
     </iframe>
   `;
 }
-/* ══ INIT ══ */
+/* ══ IDEA CANVAS PAN & ZOOM ══ */
+(function(){
+  const stage=document.getElementById('canvasStage');
+  const inner=document.getElementById('canvasInner');
+  const label=document.getElementById('canvasZoomLabel');
+  const placeholder=document.getElementById('canvasPlaceholder');
+  const iframe=document.getElementById('canvasIframe');
+  if(!stage||!inner)return;
+
+  // Hide placeholder once iframe loads
+  if(iframe){
+    iframe.addEventListener('load',function(){
+      if(placeholder){
+        placeholder.style.transition='opacity .5s';
+        placeholder.style.opacity='0';
+        setTimeout(()=>placeholder.style.display='none',500);
+      }
+    });
+    // Fallback: hide after 4s regardless
+    setTimeout(()=>{
+      if(placeholder){placeholder.style.opacity='0';setTimeout(()=>placeholder.style.display='none',500)}
+    },4000);
+  }
+
+  let scale=1,minScale=.2,maxScale=4;
+  let tx=0,ty=0;
+  let dragging=false,startX=0,startY=0,originTx=0,originTy=0;
+
+  function clampScale(s){return Math.min(maxScale,Math.max(minScale,s))}
+
+  function fitToStage(){
+    if(!iframe)return;
+    const sw=stage.offsetWidth,sh=stage.offsetHeight;
+    const iw=parseFloat(iframe.style.width)||1200;
+    const ih=parseFloat(iframe.style.height)||800;
+    const fitScale=Math.min(sw/iw,sh/ih)*.96;
+    scale=clampScale(fitScale);
+    tx=(sw-iw*scale)/2;
+    ty=(sh-ih*scale)/2;
+  }
+
+  function applyTransform(){
+    inner.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;
+    inner.style.transformOrigin='0 0';
+    label.textContent=Math.round(scale*100)+'%';
+  }
+
+  // Initial fit
+  fitToStage();
+  applyTransform();
+
+  // Re-fit on resize
+  window.addEventListener('resize',()=>{fitToStage();applyTransform()});
+
+  // Pointer overlay — sits on top of iframe to capture drag/wheel without iframe stealing events
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:absolute;inset:0;z-index:5;cursor:grab;';
+  stage.appendChild(overlay);
+
+  // Mouse wheel zoom
+  overlay.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const rect=stage.getBoundingClientRect();
+    const px=e.clientX-rect.left,py=e.clientY-rect.top;
+    const delta=e.deltaY>0?-.1:.1;
+    const newScale=clampScale(scale*(1+delta));
+    tx=px-(px-tx)*(newScale/scale);
+    ty=py-(py-ty)*(newScale/scale);
+    scale=newScale;
+    applyTransform();
+  },{passive:false});
+
+  // Mouse drag
+  overlay.addEventListener('mousedown',e=>{
+    dragging=true;startX=e.clientX;startY=e.clientY;
+    originTx=tx;originTy=ty;
+    overlay.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    tx=originTx+(e.clientX-startX);
+    ty=originTy+(e.clientY-startY);
+    applyTransform();
+  });
+  window.addEventListener('mouseup',()=>{
+    dragging=false;
+    overlay.style.cursor='grab';
+  });
+
+  // Touch pinch & pan
+  let lastDist=0,lastTouchX=0,lastTouchY=0,touchOriginTx=0,touchOriginTy=0;
+  overlay.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){
+      lastDist=Math.hypot(
+        e.touches[0].clientX-e.touches[1].clientX,
+        e.touches[0].clientY-e.touches[1].clientY
+      );
+    }else if(e.touches.length===1){
+      lastTouchX=e.touches[0].clientX;lastTouchY=e.touches[0].clientY;
+      touchOriginTx=tx;touchOriginTy=ty;
+    }
+  },{passive:true});
+  overlay.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(e.touches.length===2){
+      const dist=Math.hypot(
+        e.touches[0].clientX-e.touches[1].clientX,
+        e.touches[0].clientY-e.touches[1].clientY
+      );
+      const rect=stage.getBoundingClientRect();
+      const midX=(e.touches[0].clientX+e.touches[1].clientX)/2-rect.left;
+      const midY=(e.touches[0].clientY+e.touches[1].clientY)/2-rect.top;
+      const ratio=dist/lastDist;
+      const newScale=clampScale(scale*ratio);
+      tx=midX-(midX-tx)*(newScale/scale);
+      ty=midY-(midY-ty)*(newScale/scale);
+      scale=newScale;lastDist=dist;
+      applyTransform();
+    }else if(e.touches.length===1){
+      tx=touchOriginTx+(e.touches[0].clientX-lastTouchX);
+      ty=touchOriginTy+(e.touches[0].clientY-lastTouchY);
+      applyTransform();
+    }
+  },{passive:false});
+
+  // Globals
+  window.canvasZoom=function(dir){
+    const sw=stage.offsetWidth,sh=stage.offsetHeight;
+    const cx=sw/2,cy=sh/2;
+    const factor=dir>0?1.25:.8;
+    const newScale=clampScale(scale*factor);
+    tx=cx-(cx-tx)*(newScale/scale);
+    ty=cy-(cy-ty)*(newScale/scale);
+    scale=newScale;applyTransform();
+  };
+  window.canvasResetView=function(){
+    fitToStage();applyTransform();
+  };
+})();
+
+
 renderAll();
 applyMode('engineer',false);
 loadYouTubeLive();
