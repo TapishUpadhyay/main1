@@ -1526,7 +1526,7 @@ html[data-mode="personal"] #idea-canvas{display:block}
 .canvas-stage{
   position:relative;
   width:100%;
-  height:clamp(420px,60vw,720px);
+  height:clamp(420px,75vw,780px);
   overflow:hidden;
   cursor:grab;
   touch-action:none;
@@ -2087,12 +2087,12 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
       <div class="canvas-inner" id="canvasInner">
         <iframe
           id="canvasIframe"
-          src="https://www.canva.com/design/DAHMHAxTmng/view?embed"
+          src="https://www.canva.com/design/DAHMHAxTmng/kyBVIootbRistw8E073xGQ/view?embed"
+          allowfullscreen="allowfullscreen"
           allow="fullscreen"
-          allowfullscreen
           loading="lazy"
           title="Tapish Idea Canvas"
-          style="width:1200px;height:800px;border:none;border-radius:12px;display:block;"
+          style="width:1200px;height:1200px;border:none;border-radius:12px;display:block;"
         ></iframe>
       </div>
 
@@ -2120,7 +2120,7 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
         <span>scroll</span> to zoom · <span>drag</span> to pan · <span>pinch</span> on mobile
       </div>
       <a
-        href="https://www.canva.com/design/DAHMHAxTmng/rMSVOt3blCU83OmlxPsuOQ/view"
+        href="https://www.canva.com/design/DAHMHAxTmng/kyBVIootbRistw8E073xGQ/view"
         class="canvas-open-link"
         target="_blank"
         rel="noopener noreferrer"
@@ -2976,7 +2976,7 @@ function loadYouTubeLive(){
   function fitToStage(){
     const sw=stage.offsetWidth,sh=stage.offsetHeight;
     const iw=iframe?parseFloat(iframe.style.width)||1200:1200;
-    const ih=iframe?parseFloat(iframe.style.height)||800:800;
+    const ih=iframe?parseFloat(iframe.style.height)||1200:1200;
     const s=Math.min(sw/iw,sh/ih)*.95;
     scale=clamp(s);
     tx=Math.round((sw-iw*scale)/2);
