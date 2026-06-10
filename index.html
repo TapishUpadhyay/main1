@@ -5,6 +5,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tapish</title>
+<script>
+/* Restore saved mode before CSS renders — prevents black flash */
+try{var _sm=localStorage.getItem('Tapish_mode');if(_sm)document.documentElement.setAttribute('data-mode',_sm);}catch(e){}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -2625,7 +2629,17 @@ const DEF={
   ytApiKey:''
 };
 
-let D=JSON.parse(localStorage.getItem('Tapish_data')||'null')||JSON.parse(JSON.stringify(DEF));
+let D=(function(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('Tapish_data')||'null');
+    if(!saved)return JSON.parse(JSON.stringify(DEF));
+    /* Merge: keep saved data but fill in any keys added since last save */
+    const base=JSON.parse(JSON.stringify(DEF));
+    return Object.assign(base,saved,{
+      ytApiKey:saved.ytApiKey||base.ytApiKey||''
+    });
+  }catch(e){return JSON.parse(JSON.stringify(DEF));}
+})();
 
 /* ══ PARTICLES ══ */
 (function initParticles(){
@@ -3333,20 +3347,22 @@ function loadYouTubeLive(){
   setInterval(refreshSpotify,INTERVAL);
 })();
 
-renderAll();
+try{renderAll();}catch(e){console.error('renderAll failed',e);}
 (function(){
-  const savedMode=localStorage.getItem('Tapish_mode')||'engineer';
-  const savedScroll=parseInt(localStorage.getItem('Tapish_scroll')||'0',10);
-  applyMode(savedMode,false);
-  if(savedMode==='personal') loadYouTubeLive();
-  window.addEventListener('load',()=>{
-    if(savedScroll>0) window.scrollTo({top:savedScroll,behavior:'instant'});
-  });
-  window.addEventListener('scroll',()=>{
-    localStorage.setItem('Tapish_scroll',window.scrollY);
-  },{passive:true});
+  try{
+    const savedMode=localStorage.getItem('Tapish_mode')||'engineer';
+    const savedScroll=parseInt(localStorage.getItem('Tapish_scroll')||'0',10);
+    applyMode(savedMode,false);
+    if(savedMode==='personal') loadYouTubeLive();
+    window.addEventListener('load',()=>{
+      if(savedScroll>0) window.scrollTo({top:savedScroll,behavior:'instant'});
+    });
+    window.addEventListener('scroll',()=>{
+      localStorage.setItem('Tapish_scroll',window.scrollY);
+    },{passive:true});
+  }catch(e){console.error('init failed',e);applyMode('engineer',false);}
 })();
-buildEQ();
+try{buildEQ();}catch(e){}
 setTimeout(doReveal,200);
 setTimeout(updateRoadmapFlip,220);
 setTimeout(()=>cnt(document.getElementById('hStat'),D.proj.length,1600),300);
