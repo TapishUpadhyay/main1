@@ -1896,7 +1896,148 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
   html[data-mode="personal"] body #spotify .youtube-live-note{display:none !important;}
   html[data-mode="personal"] body #spotify .spotify-copy.personal-live-spotify{width:88px !important;left:10px !important;bottom:12px !important;}
 }
-</style>
+
+/* ══════════════════════════════════════════════════════════
+   3-LAYOUT LIVE SYSTEM
+   data-live="spotify-only"  → Spotify big, YouTube small bottom-left
+   data-live="both-offline"  → Equal side-by-side (default)
+   data-live="both-live"     → YouTube big, Spotify small bottom-left
+══════════════════════════════════════════════════════════ */
+
+/* ── Shared transition base for both cards ── */
+html[data-mode="personal"] body #spotify .spotify-copy.personal-live-spotify,
+html[data-mode="personal"] body #spotify .youtube-live-box{
+  transition:
+    width .55s cubic-bezier(.4,0,.2,1),
+    min-height .55s cubic-bezier(.4,0,.2,1),
+    padding .55s cubic-bezier(.4,0,.2,1),
+    border-radius .55s cubic-bezier(.4,0,.2,1),
+    left .55s cubic-bezier(.4,0,.2,1),
+    bottom .55s cubic-bezier(.4,0,.2,1),
+    opacity .35s ease,
+    box-shadow .55s ease,
+    border-color .55s ease !important;
+}
+
+/* ── Layout-switching fade class (added by JS) ── */
+html[data-mode="personal"] body #spotify.layout-switching .spotify-copy.personal-live-spotify,
+html[data-mode="personal"] body #spotify.layout-switching .youtube-live-box{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* ── LAYOUT 1: spotify-only ─────────────────────────────── */
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .personal-live-container{
+  position:relative !important;
+}
+/* Spotify takes the full big-card role */
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify{
+  position:relative !important;
+  left:auto !important; bottom:auto !important;
+  width:100% !important; max-width:100% !important;
+  padding:clamp(28px,4vw,54px) clamp(20px,4vw,56px) clamp(48px,6vw,72px) !important;
+  border-radius:clamp(28px,5vw,60px) !important;
+  background:
+    radial-gradient(circle at 50% 10%,rgba(29,185,84,.22),transparent 38%),
+    linear-gradient(145deg,rgba(18,18,18,.99),rgba(3,3,3,.97)) !important;
+  border:2px solid rgba(29,185,84,.4) !important;
+  box-shadow:0 42px 130px rgba(0,0,0,.72),0 0 80px rgba(29,185,84,.16),inset 0 1px 0 rgba(255,255,255,.08) !important;
+  text-align:center !important;
+  backdrop-filter:none !important;
+  overflow:visible !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify::before,
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify::after{
+  display:none !important; content:none !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-label{
+  display:flex !important; justify-content:center !important;
+  font-size:clamp(.56rem,1vw,.72rem) !important; margin:0 auto 1rem auto !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify h2{
+  display:block !important;
+  font-family:'Nunito',sans-serif !important; font-weight:900 !important;
+  font-size:clamp(2.5rem,7vw,6.3rem) !important; line-height:.9 !important;
+  letter-spacing:-.07em !important; color:#fff !important;
+  margin:0 0 1.25rem !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-note{
+  display:block !important; text-align:center !important;
+  max-width:720px !important; margin:0 auto 1.5rem !important;
+  color:rgba(255,255,255,.7) !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-card-link{
+  display:block !important; width:min(100%,480px) !important;
+  max-width:480px !important; margin:0 auto !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-card{
+  display:block !important; width:100% !important; height:auto !important;
+  border-radius:clamp(14px,2vw,24px) !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+  box-shadow:0 24px 80px rgba(0,0,0,.65) !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-card-link::after{
+  display:none !important; content:none !important;
+}
+/* YouTube: small overlay bottom-left of Spotify big card */
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-box{
+  position:absolute !important;
+  left:clamp(12px,2.5vw,36px) !important;
+  bottom:clamp(12px,2.5vw,36px) !important;
+  z-index:10 !important;
+  width:clamp(120px,18vw,220px) !important;
+  min-height:0 !important; height:auto !important;
+  padding:clamp(8px,1.2vw,14px) !important;
+  border-radius:clamp(14px,2vw,22px) !important;
+  background:
+    radial-gradient(circle at top left,rgba(255,0,0,.28),transparent 44%),
+    linear-gradient(145deg,rgba(18,18,18,.98),rgba(3,8,5,.96)) !important;
+  border:2px solid rgba(255,0,0,.35) !important;
+  box-shadow:0 22px 60px rgba(0,0,0,.7),0 0 36px rgba(255,0,0,.18) !important;
+  text-align:center !important;
+  overflow:hidden !important;
+  backdrop-filter:blur(16px) saturate(1.2) !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-box::before{
+  display:none !important; content:none !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-label{
+  display:flex !important; justify-content:center !important;
+  font-size:clamp(.38rem,1vw,.54rem) !important; letter-spacing:.07em !important;
+  gap:.25rem !important; margin:0 0 .35rem !important;
+  white-space:nowrap !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-box h2,
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-note,
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-status,
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-frame-wrap,
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-channel-link{
+  display:none !important;
+}
+html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-offline-badge{
+  display:block !important;
+  font-family:'Fira Code',monospace; font-size:.48rem; letter-spacing:.06em;
+  color:rgba(255,255,255,.4); text-transform:uppercase; margin-top:.15rem;
+}
+
+/* ── LAYOUT 2: both-offline ──────────────────────────────── */
+/* This is the original side-by-side layout — already handled by existing CSS.
+   We just make sure the container is relative so no absolute positioning leaks. */
+html[data-mode="personal"] body #spotify[data-live="both-offline"] .personal-live-container{
+  position:relative !important;
+}
+
+/* ── LAYOUT 3: both-live ─────────────────────────────────── */
+/* Already handled by existing CSS (YouTube big, Spotify bottom-left).
+   data-live="both-live" just keeps the default layout active — it's the existing CSS.
+   We set it explicitly so JS can reference the state cleanly. */
+html[data-mode="personal"] body #spotify[data-live="both-live"] .personal-live-container{
+  position:relative !important;
+}
+
+/* Offline badge element (hidden by default, shown in spotify-only layout) */
+.youtube-offline-badge{ display:none; }
+
 </head>
 <body>
 
@@ -2033,6 +2174,7 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
 
     <div class="youtube-live-box">
       <p class="youtube-live-label">YOUTUBE LIVE</p>
+      <span class="youtube-offline-badge">offline</span>
       <h2>Live Stream</h2>
       <p class="youtube-live-note">When I go live on YouTube, the stream will appear here automatically. This embed is mobile-safe and does not depend on an API key.</p>
 
@@ -2292,6 +2434,7 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
     <button class="ap-tab" onclick="apTab(this,'tNow')">Now</button>
     <button class="ap-tab" onclick="apTab(this,'tContact')">Contact</button>
     <button class="ap-tab" onclick="apTab(this,'tCanvas')">Canvas</button>
+    <button class="ap-tab" onclick="apTab(this,'tLive')">Live</button>
     <button class="ap-tab" onclick="apTab(this,'tSecurity')">Security</button>
   </div>
   <div class="ap-body">
@@ -2370,6 +2513,19 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
         2. Upload to Imgur, Cloudinary, or your own host<br>
         3. Copy the direct image URL and paste above<br>
         4. Hit Save Changes — the canvas updates live on the site
+      </div>
+    </div>
+    <div class="ap-pane" id="tLive">
+      <div class="afg">
+        <label class="afl">YouTube Data API Key</label>
+        <span class="afh">// Used to detect if you're live on YouTube. Get one free at console.cloud.google.com</span>
+        <input class="afi" id="aYtApiKey" placeholder="AIza...">
+      </div>
+      <div style="font-family:'Fira Code',monospace;font-size:.5rem;color:#334155;line-height:1.7;margin-top:.5rem">
+        Layout auto-switches based on live status:<br>
+        🟢 Spotify playing only → Spotify big, YouTube small bottom-left<br>
+        🔴 Both offline → Equal side-by-side layout<br>
+        🎥 Both live → YouTube big, Spotify small bottom-left
       </div>
     </div>
     <div class="ap-pane" id="tSecurity">
@@ -2465,7 +2621,8 @@ const DEF={
   ],
   contact:{email:'Tapish@example.com',gh:'https://github.com/Tapish',tw:'https://twitter.com/Tapish',li:'https://linkedin.com/in/Tapish'},
   canvasUrl:'',
-  canvasLink:''
+  canvasLink:'',
+  ytApiKey:''
 };
 
 let D=JSON.parse(localStorage.getItem('Tapish_data')||'null')||JSON.parse(JSON.stringify(DEF));
@@ -2680,6 +2837,8 @@ function populateAdmin(){
   const _cl=document.getElementById('aCanvasLink');
   if(_cu)_cu.value=D.canvasUrl||'';
   if(_cl)_cl.value=D.canvasLink||'';
+  const _yk=document.getElementById('aYtApiKey');
+  if(_yk)_yk.value=D.ytApiKey||'';
 }
 function renderPassionChips(key,arr,wrapId){
   document.getElementById(wrapId).innerHTML=arr.map((p,i)=>
@@ -2809,6 +2968,8 @@ function saveAll(){
   if(cu)D.canvasUrl=cu.value.trim();
   if(cl)D.canvasLink=cl.value.trim();
   if(D.canvasUrl&&window.canvasSetImage)window.canvasSetImage(D.canvasUrl,D.canvasLink);
+  const _yk=document.getElementById('aYtApiKey');
+  if(_yk)D.ytApiKey=_yk.value.trim();
   localStorage.setItem('Tapish_data',JSON.stringify(D));
   renderAll();applyMode(curMode,false);
   const btn=document.getElementById('apSave');
@@ -2927,25 +3088,88 @@ window.addEventListener('resize',updateRoadmapFlip);
 
 
 
-/* ══ MOBILE-SAFE YOUTUBE LIVE EMBED (ALL DEVICES) ══ */
-function loadYouTubeLive(){
-  const statusEl=document.getElementById('youtubeLiveStatus');
+/* ══ 3-LAYOUT LIVE DETECTION SYSTEM ══ */
+const YT_CHANNEL_ID='UCB7aM4NJoLaXWrZzelOvaJw';
+const SPOTIFY_UID='314attxxk7fsvdmy6mvz2wbjonuy';
+const SPOTIFY_WIDGET_BASE='https://spotify-github-profile.kittinanx.com/api/view?uid='+SPOTIFY_UID+'&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
+
+let _liveState=null; // track current state to avoid redundant DOM updates
+
+function applyLiveLayout(state){
+  if(state===_liveState)return;
+  const section=document.getElementById('spotify');
+  if(!section)return;
+
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
-  const channelId='UCB7aM4NJoLaXWrZzelOvaJw';
+  const statusEl=document.getElementById('youtubeLiveStatus');
 
-  if(!statusEl||!frameWrap)return;
+  function applyState(){
+    _liveState=state;
+    section.setAttribute('data-live',state);
+    if(state==='both-live'){
+      if(frameWrap&&!frameWrap.querySelector('iframe')){
+        frameWrap.innerHTML=`<iframe src="https://www.youtube.com/embed/live_stream?channel=${YT_CHANNEL_ID}&autoplay=1&mute=1&playsinline=1&rel=0" title="Tapish YouTube Live Stream" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      }
+      if(statusEl){statusEl.textContent='🔴 Live now';statusEl.className='youtube-status live';}
+    } else if(state==='spotify-only'){
+      if(frameWrap)frameWrap.innerHTML='';
+      if(statusEl){statusEl.textContent='offline';statusEl.className='youtube-status';}
+    } else {
+      if(frameWrap)frameWrap.innerHTML='';
+      if(statusEl){statusEl.textContent='Not live right now';statusEl.className='youtube-status';}
+    }
+  }
 
-  statusEl.textContent='Live player autoplay ready';
-  statusEl.className='youtube-status live';
+  /* If first load (no prior state), apply instantly */
+  if(_liveState===null){applyState();return;}
 
-  frameWrap.innerHTML=`
-    <iframe
-      src="https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1&rel=0"
-      title="Tapish YouTube Live Stream"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-  `;
+  /* Fade out → swap layout → fade in */
+  section.classList.add('layout-switching');
+  clearTimeout(section._layoutTimer);
+  section._layoutTimer=setTimeout(()=>{
+    applyState();
+    /* Force reflow so CSS picks up new data-live before removing class */
+    void section.offsetWidth;
+    section.classList.remove('layout-switching');
+  },380); /* matches opacity transition duration */
+}
+
+async function checkYoutubeLive(){
+  const key=(D&&D.ytApiKey)||'';
+  if(!key)return false;
+  try{
+    const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${YT_CHANNEL_ID}&eventType=live&type=video&key=${key}`;
+    const r=await fetch(url);
+    if(!r.ok)return false;
+    const j=await r.json();
+    return !!(j.items&&j.items.length>0);
+  }catch(e){return false;}
+}
+
+async function checkSpotifyPlaying(){
+  try{
+    const url=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+    const r=await fetch(url,{cache:'no-store'});
+    if(!r.ok)return false;
+    const text=await r.text();
+    /* Widget SVG contains "offline" or "not playing" text when nothing is on */
+    const lower=text.toLowerCase();
+    return !(lower.includes('offline')||lower.includes('not playing')||lower.includes('currently offline'));
+  }catch(e){return false;}
+}
+
+async function detectAndApplyLayout(){
+  const[ytLive,spotifyPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
+  if(ytLive&&spotifyPlaying)     applyLiveLayout('both-live');
+  else if(!ytLive&&spotifyPlaying) applyLiveLayout('spotify-only');
+  else                             applyLiveLayout('both-offline');
+}
+
+function loadYouTubeLive(){
+  detectAndApplyLayout();
+  /* Poll every 5s for live status */
+  if(window._liveDetectInterval)clearInterval(window._liveDetectInterval);
+  window._liveDetectInterval=setInterval(detectAndApplyLayout,5000);
 }
 /* ══ IDEA CANVAS PAN & ZOOM ══ */
 (function(){
@@ -3097,7 +3321,6 @@ function loadYouTubeLive(){
 
 /* ══ SPOTIFY AUTO-REFRESH ══ */
 (function(){
-  const BASE='https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
   const INTERVAL=5000; // refresh every 5 seconds
   function refreshSpotify(){
     const img=document.getElementById('spotifyCard');
@@ -3105,7 +3328,7 @@ function loadYouTubeLive(){
     const fresh=new Image();
     fresh.referrerPolicy='no-referrer';
     fresh.onload=function(){img.src=fresh.src};
-    fresh.src=BASE+'&t='+Date.now();
+    fresh.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
   }
   setInterval(refreshSpotify,INTERVAL);
 })();
