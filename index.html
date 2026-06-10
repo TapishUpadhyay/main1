@@ -3150,7 +3150,17 @@ function applyLiveLayout(state){
 
 async function checkYoutubeLive(){
   const key=(D&&D.ytApiKey)||'';
-  if(!key)return false;
+  if(!key){
+    /* No API key — probe by loading the live embed and checking if iframe src resolves */
+    return new Promise(resolve=>{
+      const probe=document.createElement('img');
+      const t=setTimeout(()=>{probe.onload=probe.onerror=null;resolve(false);},4000);
+      /* YouTube returns a 404 thumbnail when not live, 200 when live */
+      probe.onload=()=>{clearTimeout(t);resolve(true)};
+      probe.onerror=()=>{clearTimeout(t);resolve(false)};
+      probe.src=`https://img.youtube.com/vi/live_stream/maxresdefault.jpg?channel=${YT_CHANNEL_ID}&t=`+Date.now();
+    });
+  }
   try{
     const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${YT_CHANNEL_ID}&eventType=live&type=video&key=${key}`;
     const r=await fetch(url);
@@ -3160,21 +3170,26 @@ async function checkYoutubeLive(){
   }catch(e){return false;}
 }
 
-async function checkSpotifyPlaying(){
-  try{
-    const url=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
-    const r=await fetch(url,{cache:'no-store'});
-    if(!r.ok)return false;
-    const text=await r.text();
-    /* Widget SVG contains "offline" or "not playing" text when nothing is on */
-    const lower=text.toLowerCase();
-    return !(lower.includes('offline')||lower.includes('not playing')||lower.includes('currently offline'));
-  }catch(e){return false;}
+function checkSpotifyPlaying(){
+  /* Use image load — no CORS issues. Widget serves a different sized image when playing vs offline */
+  return new Promise(resolve=>{
+    const img=new Image();
+    const t=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},5000);
+    img.onload=function(){
+      clearTimeout(t);
+      /* When playing: image is taller (album art included) ~300px+
+         When offline: image is shorter ~90-120px */
+      resolve(img.naturalHeight>150);
+    };
+    img.onerror=()=>{clearTimeout(t);resolve(false)};
+    img.crossOrigin='anonymous';
+    img.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+  });
 }
 
 async function detectAndApplyLayout(){
   const[ytLive,spotifyPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
-  if(ytLive&&spotifyPlaying)     applyLiveLayout('both-live');
+  if(ytLive&&spotifyPlaying)       applyLiveLayout('both-live');
   else if(!ytLive&&spotifyPlaying) applyLiveLayout('spotify-only');
   else                             applyLiveLayout('both-offline');
 }
@@ -3335,13 +3350,29 @@ function loadYouTubeLive(){
 
 /* ══ SPOTIFY AUTO-REFRESH ══ */
 (function(){
-  const INTERVAL=5000; // refresh every 5 seconds
+  const INTERVAL=5000;
   function refreshSpotify(){
     const img=document.getElementById('spotifyCard');
     if(!img)return;
     const fresh=new Image();
+    fresh.crossOrigin='anonymous';
     fresh.referrerPolicy='no-referrer';
-    fresh.onload=function(){img.src=fresh.src};
+    fresh.onload=function(){
+      img.src=fresh.src;
+      /* Re-check layout based on new image height */
+      const isPlaying=fresh.naturalHeight>150;
+      checkYoutubeLive().then(ytLive=>{
+        if(ytLive&&isPlaying)       applyLiveLayout('both-live');
+        else if(!ytLive&&isPlaying) applyLiveLayout('spotify-only');
+        else                        applyLiveLayout('both-offline');
+      });
+    };
+    fresh.onerror=function(){
+      /* On error assume offline */
+      checkYoutubeLive().then(ytLive=>{
+        applyLiveLayout(ytLive?'both-live':'both-offline');
+      });
+    };
     fresh.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
   }
   setInterval(refreshSpotify,INTERVAL);
