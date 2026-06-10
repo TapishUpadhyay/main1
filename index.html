@@ -2599,6 +2599,7 @@ function switchMode(m){
   r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash');
   setTimeout(()=>{
     applyMode(m,true);
+    localStorage.setItem('Tapish_mode',m);
     if(m==='personal') loadYouTubeLive();
   },90);
 }
@@ -3097,7 +3098,7 @@ function loadYouTubeLive(){
 /* ══ SPOTIFY AUTO-REFRESH ══ */
 (function(){
   const BASE='https://spotify-github-profile.kittinanx.com/api/view?uid=314attxxk7fsvdmy6mvz2wbjonuy&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
-  const INTERVAL=15000; // refresh every 15 seconds
+  const INTERVAL=5000; // refresh every 5 seconds
   function refreshSpotify(){
     const img=document.getElementById('spotifyCard');
     if(!img)return;
@@ -3110,8 +3111,18 @@ function loadYouTubeLive(){
 })();
 
 renderAll();
-applyMode('engineer',false);
-loadYouTubeLive();
+(function(){
+  const savedMode=localStorage.getItem('Tapish_mode')||'engineer';
+  const savedScroll=parseInt(localStorage.getItem('Tapish_scroll')||'0',10);
+  applyMode(savedMode,false);
+  if(savedMode==='personal') loadYouTubeLive();
+  window.addEventListener('load',()=>{
+    if(savedScroll>0) window.scrollTo({top:savedScroll,behavior:'instant'});
+  });
+  window.addEventListener('scroll',()=>{
+    localStorage.setItem('Tapish_scroll',window.scrollY);
+  },{passive:true});
+})();
 buildEQ();
 setTimeout(doReveal,200);
 setTimeout(updateRoadmapFlip,220);
