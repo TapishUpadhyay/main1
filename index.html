@@ -3105,24 +3105,30 @@ function setLayoutYoutubeBig(){
 /* ── Transition engine ── */
 function switchLayout(toSpotifyBig){
   const newState=toSpotifyBig?'spotify-only':'default';
-  if(newState===_liveState)return;
+  const sp=document.querySelector('#spotify .personal-live-spotify');
+  const yt=document.querySelector('#spotify .youtube-live-box');
+  if(!sp||!yt)return;
+  /* Skip only if state matches AND classes are already correct */
+  const alreadyCorrect=toSpotifyBig
+    ?sp.classList.contains('plc-big')
+    :yt.classList.contains('plc-big');
+  if(newState===_liveState&&alreadyCorrect)return;
 
+  _liveState=newState;
   const container=document.querySelector('#spotify .personal-live-container');
   if(!container)return;
 
-  container.style.transition='opacity 0.35s ease';
+  container.style.transition='opacity 0.3s ease';
   container.style.opacity='0';
 
   setTimeout(()=>{
-    _liveState=newState;
     if(toSpotifyBig)setLayoutSpotifyBig();
     else setLayoutYoutubeBig();
-
     requestAnimationFrame(()=>{requestAnimationFrame(()=>{
       container.style.opacity='1';
-      setTimeout(()=>{container.style.transition='';container.style.opacity='';},420);
+      setTimeout(()=>{container.style.transition='';container.style.opacity='';},380);
     });});
-  },360);
+  },320);
 }
 
 /* ── Detection ── */
@@ -3183,17 +3189,21 @@ async function detectAndApplyLayout(){
   const[ytLive,spPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
   _ytLive=ytLive;
   _spPlaying=spPlaying;
-  console.log('[Layout] ytLive='+ytLive+' spPlaying='+spPlaying+' => '+((!ytLive&&spPlaying)?'SPOTIFY-BIG':'DEFAULT'));
-  switchLayout(!ytLive&&spPlaying);
+  const wantSpotifyBig=!ytLive&&spPlaying;
+  console.log('[Layout] ytLive='+ytLive+' spPlaying='+spPlaying+' => '+(wantSpotifyBig?'SPOTIFY-BIG':'DEFAULT'));
+  /* Force state reset so switchLayout never no-ops incorrectly */
+  _liveState='';
+  switchLayout(wantSpotifyBig);
 }
 
 function loadYouTubeLive(){
-  /* Apply default layout immediately so page renders before detection */
+  /* Apply YouTube-big immediately so page renders before detection completes */
   setLayoutYoutubeBig();
   _liveState='default';
-  detectAndApplyLayout();
+  /* Run detection after a short delay so DOM is painted first */
+  setTimeout(detectAndApplyLayout, 800);
   if(window._liveDetectInterval)clearInterval(window._liveDetectInterval);
-  window._liveDetectInterval=setInterval(detectAndApplyLayout,5000);
+  window._liveDetectInterval=setInterval(detectAndApplyLayout,6000);
 }
 /* ══ IDEA CANVAS PAN & ZOOM ══ */
 (function(){
