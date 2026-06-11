@@ -2014,6 +2014,11 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
 
 <!-- ════ PERSONAL LIVE OVERLAP: SPOTIFY + YOUTUBE ════ -->
 <section id="spotify" class="spotify-section rev" data-live="default">
+<div id="liveDebug" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px">
+  <button onclick="_liveState=null;applyLiveLayout(true,false)" style="padding:10px 16px;background:#1db954;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px">TEST: Spotify Big</button>
+  <button onclick="_liveState=null;applyLiveLayout(false,false)" style="padding:10px 16px;background:#e00;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px">TEST: YT Default</button>
+  <button onclick="document.getElementById('liveDebug').remove()" style="padding:6px 10px;background:#111;color:#666;border:1px solid #333;border-radius:8px;cursor:pointer;font-size:11px">hide</button>
+</div>
   <div class="spotify-container personal-live-container">
 
     <div class="spotify-copy personal-live-spotify">
