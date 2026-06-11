@@ -1907,14 +1907,6 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
    data-live="default"      → YouTube BIG, Spotify pip bottom-left (all other states)
 ══════════════════════════════════════════════════════════ */
 
-/* ── Layout-switching fade class (added by JS during transition) ── */
-html[data-mode="personal"] body #spotify.layout-switching .spotify-copy.personal-live-spotify,
-html[data-mode="personal"] body #spotify.layout-switching .youtube-live-box{
-  opacity:0 !important;
-  pointer-events:none !important;
-  transition:opacity .35s ease !important;
-}
-
 /* ══════════════════════════════════════════════
    LAYOUT: spotify-only
    Spotify = BIG main card
@@ -3104,15 +3096,16 @@ function applyLiveLayout(state){
 
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
   const statusEl=document.getElementById('youtubeLiveStatus');
+  const sp=section.querySelector('.personal-live-spotify');
+  const yt=section.querySelector('.youtube-live-box');
 
-  function applyState(){
+  function updateDOM(){
     _liveState=state;
     section.setAttribute('data-live',state);
     if(state==='spotify-only'){
       if(frameWrap)frameWrap.innerHTML='';
       if(statusEl){statusEl.textContent='offline';statusEl.className='youtube-status';}
     } else {
-      /* default: YouTube big — load iframe if YouTube is live */
       const ytLive=section._ytLive||false;
       if(ytLive){
         if(frameWrap&&!frameWrap.querySelector('iframe')){
@@ -3126,18 +3119,33 @@ function applyLiveLayout(state){
     }
   }
 
-  /* If first load (no prior state), apply instantly */
-  if(_liveState===null){applyState();return;}
+  /* First load — apply instantly, no animation */
+  if(_liveState===null){updateDOM();return;}
 
-  /* Fade out → swap layout → fade in */
-  section.classList.add('layout-switching');
+  /* Step 1: fade out */
+  if(sp){sp.style.transition='opacity .32s ease';sp.style.opacity='0';}
+  if(yt){yt.style.transition='opacity .32s ease';yt.style.opacity='0';}
+
   clearTimeout(section._layoutTimer);
   section._layoutTimer=setTimeout(()=>{
-    applyState();
-    /* Force reflow so CSS picks up new data-live before removing class */
-    void section.offsetWidth;
-    section.classList.remove('layout-switching');
-  },380); /* matches opacity transition duration */
+    /* Step 2: swap layout while invisible */
+    updateDOM();
+    /* Step 3: force reflow, then fade back in */
+    void section.offsetHeight;
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        const sp2=section.querySelector('.personal-live-spotify');
+        const yt2=section.querySelector('.youtube-live-box');
+        if(sp2){sp2.style.transition='opacity .45s ease';sp2.style.opacity='1';}
+        if(yt2){yt2.style.transition='opacity .45s ease';yt2.style.opacity='1';}
+        /* Clean up inline styles after transition completes */
+        setTimeout(()=>{
+          if(sp2){sp2.style.transition='';sp2.style.opacity='';}
+          if(yt2){yt2.style.transition='';yt2.style.opacity='';}
+        },480);
+      });
+    });
+  },350);
 }
 
 async function checkYoutubeLive(){
