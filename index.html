@@ -2015,8 +2015,8 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
 <!-- ════ PERSONAL LIVE OVERLAP: SPOTIFY + YOUTUBE ════ -->
 <section id="spotify" class="spotify-section rev" data-live="default">
 <div id="liveDebug" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px">
-  <button onclick="_liveState=null;applyLiveLayout(true,false)" style="padding:10px 16px;background:#1db954;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px">TEST: Spotify Big</button>
-  <button onclick="_liveState=null;applyLiveLayout(false,false)" style="padding:10px 16px;background:#e00;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px">TEST: YT Default</button>
+  <button onclick="_liveState='default';switchLayout(true)" style="padding:10px 16px;background:#1db954;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px">TEST: Spotify Big</button>
+  <button onclick="_liveState='spotify-only';switchLayout(false)" style="padding:10px 16px;background:#e00;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px">TEST: YT Default</button>
   <button onclick="document.getElementById('liveDebug').remove()" style="padding:6px 10px;background:#111;color:#666;border:1px solid #333;border-radius:8px;cursor:pointer;font-size:11px">hide</button>
 </div>
   <div class="spotify-container personal-live-container">
@@ -2974,49 +2974,100 @@ const YT_CHANNEL_ID='UCB7aM4NJoLaXWrZzelOvaJw';
 const SPOTIFY_UID='314attxxk7fsvdmy6mvz2wbjonuy';
 const SPOTIFY_WIDGET_BASE='https://spotify-github-profile.kittinanx.com/api/view?uid='+SPOTIFY_UID+'&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
 
-let _liveState=null;
+let _liveState='default'; // start as default so first real detection can trigger change
+let _ytLive=false;
+let _spPlaying=false;
 
+/* ── Layout 1: Spotify BIG, YouTube pip bottom-left ── */
 function setLayoutSpotifyBig(){
-  const container=document.querySelector('#spotify .personal-live-container');
+  const wrap=document.querySelector('#spotify .personal-live-container');
   const sp=document.querySelector('#spotify .personal-live-spotify');
   const yt=document.querySelector('#spotify .youtube-live-box');
-  if(!container||!sp||!yt)return;
-  container.style.cssText='position:relative;display:block;width:100%;padding:0;border:none;background:none;box-shadow:none;backdrop-filter:none;overflow:visible';
-  sp.style.cssText='position:relative;width:100%;min-height:420px;padding:2.5rem 2.5rem 5rem;border-radius:48px;background:radial-gradient(circle at 50% 8%,rgba(29,185,84,.2),transparent 40%),linear-gradient(145deg,#121212,#030303);border:2px solid rgba(29,185,84,.4);box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 70px rgba(29,185,84,.14);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:visible';
-  yt.style.cssText='position:absolute;left:24px;bottom:24px;z-index:10;width:180px;padding:12px 14px;border-radius:20px;background:radial-gradient(circle at top left,rgba(255,0,0,.2),transparent 50%),linear-gradient(145deg,#121212,#060303);border:2px solid rgba(255,60,60,.35);box-shadow:0 14px 40px rgba(0,0,0,.7);overflow:hidden;text-align:center';
-  const ytH2=yt.querySelector('h2');
-  const ytNote=yt.querySelector('.youtube-live-note');
-  const ytFrame=yt.querySelector('.youtube-frame-wrap');
-  const ytLink=yt.querySelector('.youtube-channel-link');
-  const ytBadge=yt.querySelector('.youtube-offline-badge');
-  if(ytH2)ytH2.style.display='none';
-  if(ytNote)ytNote.style.display='none';
-  if(ytFrame)ytFrame.style.display='none';
-  if(ytLink)ytLink.style.display='none';
-  if(ytBadge){ytBadge.style.display='block';ytBadge.textContent='offline';}
+  if(!wrap||!sp||!yt)return;
+
+  /* wrap: relative + enough bottom padding so the pip that hangs below is visible */
+  wrap.style.cssText=[
+    'position:relative',
+    'display:block',
+    'width:100%',
+    'max-width:1180px',
+    'margin:0 auto',
+    'padding:0 0 80px 0',
+    'background:none',
+    'border:none',
+    'box-shadow:none',
+    'backdrop-filter:none',
+    'overflow:visible'
+  ].join(';');
+
+  /* Spotify: full big card, no extra bottom padding — pip hangs OUTSIDE below it */
+  sp.style.cssText=[
+    'position:relative',
+    'width:100%',
+    'min-height:460px',
+    'padding:3rem 3rem 3rem',
+    'border-radius:48px',
+    'background:radial-gradient(circle at 50% 8%,rgba(29,185,84,.18),transparent 42%),linear-gradient(145deg,#0d1a10,#030303)',
+    'border:2px solid rgba(29,185,84,.45)',
+    'box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 60px rgba(29,185,84,.12)',
+    'display:flex',
+    'flex-direction:column',
+    'align-items:center',
+    'justify-content:center',
+    'text-align:center',
+    'overflow:visible',
+    'z-index:1'
+  ].join(';');
+
+  /* YouTube pip: bottom-left, OVERLAPPING the Spotify card boundary
+     negative bottom pushes it so ~half the pip sits below the Spotify card edge */
+  yt.style.cssText=[
+    'position:absolute',
+    'left:24px',
+    'bottom:-50px',
+    'z-index:10',
+    'width:160px',
+    'height:auto',
+    'padding:14px 16px',
+    'border-radius:22px',
+    'background:radial-gradient(circle at top left,rgba(255,0,0,.18),transparent 55%),linear-gradient(145deg,#120808,#060303)',
+    'border:2px solid rgba(255,50,50,.38)',
+    'box-shadow:0 16px 48px rgba(0,0,0,.75),0 0 24px rgba(255,0,0,.12)',
+    'overflow:hidden',
+    'text-align:center'
+  ].join(';');
+
+  /* Hide verbose YT content — just show label + offline badge */
+  ['h2','.youtube-live-note','.youtube-frame-wrap','.youtube-channel-link','.youtube-status']
+    .forEach(sel=>{const el=yt.querySelector(sel);if(el)el.style.display='none';});
+  const badge=yt.querySelector('.youtube-offline-badge');
+  if(badge){badge.style.display='block';badge.textContent='offline';}
+  const frameWrap=document.getElementById('youtubeLiveFrameWrap');
+  if(frameWrap)frameWrap.innerHTML='';
 }
 
-function setLayoutYoutubeBig(ytLive){
-  const container=document.querySelector('#spotify .personal-live-container');
+/* ── Layout 2: YouTube BIG, Spotify pip bottom-left ── */
+function setLayoutYoutubeBig(){
+  const wrap=document.querySelector('#spotify .personal-live-container');
   const sp=document.querySelector('#spotify .personal-live-spotify');
   const yt=document.querySelector('#spotify .youtube-live-box');
-  if(!container||!sp||!yt)return;
-  container.style.cssText='';
+  if(!wrap||!sp||!yt)return;
+
+  /* Clear all inline styles — let original CSS grid take over */
+  wrap.style.cssText='';
   sp.style.cssText='';
   yt.style.cssText='';
-  const ytH2=yt.querySelector('h2');
-  const ytNote=yt.querySelector('.youtube-live-note');
-  const ytFrame=yt.querySelector('.youtube-frame-wrap');
-  const ytLink=yt.querySelector('.youtube-channel-link');
-  const ytBadge=yt.querySelector('.youtube-offline-badge');
-  if(ytH2)ytH2.style.display='';
-  if(ytNote)ytNote.style.display='';
-  if(ytFrame)ytFrame.style.display='';
-  if(ytLink)ytLink.style.display='';
-  if(ytBadge)ytBadge.style.display='none';
+
+  /* Restore YT content */
+  ['h2','.youtube-live-note','.youtube-frame-wrap','.youtube-channel-link','.youtube-status']
+    .forEach(sel=>{const el=yt.querySelector(sel);if(el)el.style.display='';});
+  const badge=yt.querySelector('.youtube-offline-badge');
+  if(badge)badge.style.display='none';
+
+  /* YouTube iframe */
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
   const statusEl=document.getElementById('youtubeLiveStatus');
-  if(ytLive){
+  if(_ytLive){
     if(frameWrap&&!frameWrap.querySelector('iframe')){
       frameWrap.innerHTML='<iframe src="https://www.youtube.com/embed/live_stream?channel='+YT_CHANNEL_ID+'&autoplay=1&mute=1&playsinline=1&rel=0" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen></iframe>';
     }
@@ -3027,50 +3078,102 @@ function setLayoutYoutubeBig(ytLive){
   }
 }
 
-function applyLiveLayout(spotifyPlaying,ytLive){
-  const newState=(!ytLive&&spotifyPlaying)?'spotify-only':'default';
-  if(newState===_liveState)return;
+/* ── Transition engine ── */
+function switchLayout(toSpotifyBig){
+  const newState=toSpotifyBig?'spotify-only':'default';
+  if(newState===_liveState)return; // already in this state, do nothing
+
   const sp=document.querySelector('#spotify .personal-live-spotify');
   const yt=document.querySelector('#spotify .youtube-live-box');
-  function fadeOut(el){if(el){el.style.transition='opacity .3s ease';el.style.opacity='0';}}
-  function fadeIn(el){if(el){el.style.transition='opacity .4s ease';el.style.opacity='1';setTimeout(()=>{if(el){el.style.transition='';el.style.opacity='';}},450);}}
-  fadeOut(sp);fadeOut(yt);
+  if(!sp||!yt)return;
+
+  /* STEP 1: fade both cards out */
+  sp.style.transition='opacity 0.35s ease';
+  sp.style.opacity='0';
+  yt.style.transition='opacity 0.35s ease';
+  yt.style.opacity='0';
+
+  /* STEP 2: after fade, swap layout, then fade back in */
   setTimeout(()=>{
-    if(newState==='spotify-only')setLayoutSpotifyBig();
-    else setLayoutYoutubeBig(ytLive);
     _liveState=newState;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{fadeIn(sp);fadeIn(yt);}));
-  },320);
+    if(toSpotifyBig) setLayoutSpotifyBig();
+    else setLayoutYoutubeBig();
+
+    /* STEP 3: double rAF ensures browser has painted the new layout before fading in */
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        sp.style.transition='opacity 0.4s ease';
+        sp.style.opacity='1';
+        yt.style.transition='opacity 0.4s ease';
+        yt.style.opacity='1';
+        /* Clean up transition styles after animation */
+        setTimeout(()=>{
+          sp.style.transition='';sp.style.opacity='';
+          yt.style.transition='';yt.style.opacity='';
+        },450);
+      });
+    });
+  },360);
 }
 
+/* ── Detection ── */
+
+/* Spotify: fetch SVG text via no-cors capable CORS proxy, parse offline string */
 function checkSpotifyPlaying(){
   return new Promise(resolve=>{
-    const img=new Image();
-    const t=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},5000);
-    img.onload=()=>{clearTimeout(t);resolve(img.naturalHeight>150);};
-    img.onerror=()=>{clearTimeout(t);resolve(false);};
-    img.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+    /* Strategy: load widget SVG as blob via fetch — works because
+       spotify-github-profile.kittinanx.com sends CORS headers */
+    const url=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+    const t=setTimeout(()=>resolve(false),7000);
+    fetch(url,{cache:'no-store'})
+      .then(r=>{
+        if(!r.ok){clearTimeout(t);resolve(false);return null;}
+        return r.text();
+      })
+      .then(text=>{
+        if(!text){return;}
+        clearTimeout(t);
+        const low=text.toLowerCase();
+        /* Widget contains these strings when nothing is playing */
+        const offline=low.includes('not playing')||low.includes('offline')||low.includes('currently offline')||low.includes('nothing is playing');
+        console.log('[Spotify] offline='+offline+' ('+text.length+' bytes)');
+        resolve(!offline);
+      })
+      .catch(()=>{
+        clearTimeout(t);
+        /* CORS blocked — fallback to image height */
+        const img=new Image();
+        const t2=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},6000);
+        img.onload=()=>{
+          clearTimeout(t2);
+          console.log('[Spotify fallback] naturalHeight='+img.naturalHeight);
+          resolve(img.naturalHeight>180);
+        };
+        img.onerror=()=>{clearTimeout(t2);resolve(false);};
+        img.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+      });
   });
 }
 
 function checkYoutubeLive(){
   const key=(D&&D.ytApiKey)||'';
-  if(key){
-    return fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId='+YT_CHANNEL_ID+'&eventType=live&type=video&key='+key)
-      .then(r=>r.ok?r.json():null).then(j=>!!(j&&j.items&&j.items.length>0)).catch(()=>false);
-  }
-  return new Promise(resolve=>{
-    const img=new Image();
-    const t=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},4000);
-    img.onload=()=>{clearTimeout(t);resolve(true);};
-    img.onerror=()=>{clearTimeout(t);resolve(false);};
-    img.src='https://img.youtube.com/vi/live_stream/maxresdefault.jpg?channel='+YT_CHANNEL_ID+'&_='+Date.now();
-  });
+  if(!key){console.log('[YouTube] no API key — assuming offline');return Promise.resolve(false);}
+  return fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId='+YT_CHANNEL_ID+'&eventType=live&type=video&key='+key)
+    .then(r=>r.ok?r.json():null)
+    .then(j=>{
+      const live=!!(j&&j.items&&j.items.length>0);
+      console.log('[YouTube] live='+live);
+      return live;
+    })
+    .catch(e=>{console.log('[YouTube] error:'+e);return false;});
 }
 
 async function detectAndApplyLayout(){
-  const[ytLive,spotifyPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
-  applyLiveLayout(spotifyPlaying,ytLive);
+  const[ytLive,spPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
+  _ytLive=ytLive;
+  _spPlaying=spPlaying;
+  console.log('[Layout] ytLive='+ytLive+' spPlaying='+spPlaying+' => '+((!ytLive&&spPlaying)?'SPOTIFY-BIG':'DEFAULT'));
+  switchLayout(!ytLive&&spPlaying);
 }
 
 function loadYouTubeLive(){
