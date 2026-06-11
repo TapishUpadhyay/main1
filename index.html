@@ -1248,199 +1248,23 @@ hr.afd{border:none;border-top:1px solid #111827;margin:1.2rem 0}
 
 
 
-/* ══ FINAL ALL-DEVICE PERSONAL LIVE FIX: SPOTIFY + YOUTUBE ══ */
-/* This overrides older overlap styles and keeps the live block visible on every phone/tablet/desktop only in Personal mode. */
+/* ══ PERSONAL LIVE: PIP-OVERLAP LAYOUT SYSTEM ══
+   Default / YT live: YouTube = BIG, Spotify = pip bottom-left
+   Spotify only:      Spotify = BIG, YouTube = pip bottom-left
+═══════════════════════════════════════════════════════ */
+
+/* Section visibility */
 #spotify.spotify-section{
   display:none;
   position:relative;
   z-index:60;
   background:transparent;
 }
-[data-mode="personal"] #spotify.spotify-section{
-  display:block !important;
-  visibility:visible !important;
-  opacity:1 !important;
-}
-[data-mode="personal"] .spotify-nav-item{display:list-item !important}
-#spotify .personal-live-container{
-  width:min(100%,1180px) !important;
-  max-width:1180px !important;
-  margin:0 auto !important;
-  display:grid !important;
-  grid-template-columns:1.05fr .95fr !important;
-  align-items:stretch !important;
-  gap:1.2rem !important;
-  padding:1.2rem !important;
-  border-radius:28px !important;
-  border:1px solid rgba(255,255,255,.08) !important;
-  background:
-    radial-gradient(circle at 16% 0%,rgba(29,185,84,.18),transparent 34%),
-    radial-gradient(circle at 84% 0%,rgba(255,0,0,.13),transparent 34%),
-    linear-gradient(135deg,rgba(18,18,18,.96),rgba(7,13,10,.94)) !important;
-  box-shadow:0 34px 95px rgba(0,0,0,.58),0 0 60px rgba(29,185,84,.1),inset 0 1px 0 rgba(255,255,255,.07) !important;
-  backdrop-filter:blur(22px) saturate(1.25) !important;
-  overflow:visible !important;
-}
-#spotify .personal-live-spotify,
-#spotify .youtube-live-box{
-  position:relative !important;
-  z-index:2 !important;
-  min-width:0 !important;
-  padding:1.15rem !important;
-  border-radius:24px !important;
-  background:rgba(255,255,255,.035) !important;
-  border:1px solid rgba(255,255,255,.075) !important;
-  overflow:hidden !important;
-}
-#spotify .personal-live-spotify::before,
-#spotify .youtube-live-box::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:linear-gradient(135deg,rgba(255,255,255,.07),transparent 38%);
-  z-index:-1;
-}
-#spotify .youtube-live-box{
-  background:
-    radial-gradient(circle at top left,rgba(255,0,0,.15),transparent 36%),
-    linear-gradient(145deg,rgba(18,18,18,.96),rgba(14,7,7,.92)) !important;
-}
-#spotify .youtube-live-label{
-  display:inline-flex;
-  align-items:center;
-  gap:.55rem;
-  font-family:'Fira Code',monospace;
-  font-size:.64rem;
-  letter-spacing:.2em;
-  color:#ff4b4b;
-  font-weight:700;
-  text-transform:uppercase;
-  margin-bottom:.55rem;
-}
-#spotify .youtube-live-label::before{
-  content:'';
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#ff4b4b;
-  box-shadow:0 0 16px #ff4b4b;
-  animation:youtubePulse 1.6s ease-in-out infinite;
-}
-@keyframes youtubePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.48}}
-#spotify .youtube-live-box h2{
-  font-family:'Nunito',sans-serif;
-  color:#f5f5f5;
-  font-size:clamp(1.35rem,3vw,2.35rem);
-  line-height:1.05;
-  letter-spacing:-.04em;
-  margin-bottom:.55rem;
-  font-weight:900;
-}
-#spotify .youtube-live-note{
-  color:rgba(245,245,245,.62);
-  font-size:.88rem;
-  line-height:1.65;
-  margin-bottom:1rem;
-}
-#spotify .youtube-status{
-  font-family:'Fira Code',monospace;
-  font-size:.66rem;
-  letter-spacing:.08em;
-  color:#ff4b4b;
-  margin-bottom:.85rem;
-}
-#spotify .youtube-frame-wrap{
-  position:relative;
-  width:100% !important;
-  aspect-ratio:16/9 !important;
-  min-height:220px;
-  overflow:hidden;
-  border-radius:20px;
-  background:#0b0b0b;
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 26px 70px rgba(0,0,0,.5),0 0 45px rgba(255,0,0,.12);
-}
-#spotify .youtube-frame-wrap iframe{
-  position:absolute;
-  inset:0;
-  width:100% !important;
-  height:100% !important;
-  border:0 !important;
-  display:block !important;
-}
-#spotify .youtube-channel-link{
-  display:inline-flex;
-  margin-top:1rem;
-  color:#ff6b6b;
-  text-decoration:none;
-  font-family:'Fira Code',monospace;
-  font-size:.65rem;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  transition:transform .25s ease,color .25s ease;
-}
-#spotify .youtube-channel-link:hover{color:#fff;transform:translateX(5px)}
-@media(max-width:820px){
-  #spotify.spotify-section,
-  [data-mode="personal"] #spotify.spotify-section{
-    margin-top:0 !important;
-    margin-bottom:0 !important;
-    padding:28px 14px 55px !important;
-    position:relative !important;
-    z-index:70 !important;
-  }
-  #spotify .personal-live-container{
-    display:grid !important;
-    grid-template-columns:1fr !important;
-    width:100% !important;
-    max-width:100% !important;
-    gap:18px !important;
-    padding:12px !important;
-    border-radius:22px !important;
-    overflow:visible !important;
-  }
-  #spotify .personal-live-spotify,
-  #spotify .youtube-live-box{
-    width:100% !important;
-    display:block !important;
-    padding:16px !important;
-    border-radius:20px !important;
-    min-width:0 !important;
-  }
-  #spotify .spotify-copy{text-align:center !important;padding:0 !important}
-  #spotify .spotify-label,
-  #spotify .youtube-live-label{justify-content:center;font-size:.55rem;letter-spacing:.16em}
-  #spotify .spotify-container h2,
-  #spotify .youtube-live-box h2{text-align:center;font-size:clamp(1.45rem,8vw,2.1rem) !important}
-  #spotify .spotify-note,
-  #spotify .youtube-live-note{text-align:center;max-width:100%;font-size:.82rem;line-height:1.55}
-  #spotify .spotify-card-link{width:100% !important;max-width:100% !important;margin:0 auto !important}
-  #spotify .spotify-card{width:100% !important;max-width:100% !important;height:auto !important;display:block !important;border-radius:18px !important}
-  #spotify .youtube-status{text-align:center;font-size:.58rem}
-  #spotify .youtube-frame-wrap{width:100% !important;min-height:190px !important;aspect-ratio:16/9 !important;display:block !important}
-  #spotify .youtube-frame-wrap iframe{min-height:190px !important;display:block !important}
-  #spotify .youtube-channel-link{font-size:.56rem}
-  [data-mode="personal"] #about{padding-top:70px !important}
-}
-@media(max-width:420px){
-  #spotify.spotify-section,[data-mode="personal"] #spotify.spotify-section{padding:24px 10px 50px !important}
-  #spotify .personal-live-container{padding:8px !important;border-radius:18px !important}
-  #spotify .personal-live-spotify,#spotify .youtube-live-box{padding:14px !important;border-radius:18px !important}
-  #spotify .youtube-frame-wrap{min-height:180px !important}
-  #spotify .youtube-status,#spotify .youtube-channel-link{font-size:.54rem !important}
-}
-
-
-/* ═══════════════════════════════════════════════════════
-   LAYOUT: YouTube BIG (full width) + Spotify MINI bottom-left overlap
-   Matches sketch: large YouTube card, small Spotify card overlapping bottom-left corner
-═══════════════════════════════════════════════════════ */
 html[data-mode="personal"] body #spotify.spotify-section{
   display:block !important;
   visibility:visible !important;
   opacity:1 !important;
-  padding:clamp(24px,4vw,58px) 5vw 70px !important;
+  padding:clamp(24px,4vw,58px) 5vw clamp(60px,7vw,90px) !important;
   margin:0 !important;
   background:transparent !important;
   position:relative !important;
@@ -1448,6 +1272,267 @@ html[data-mode="personal"] body #spotify.spotify-section{
 }
 html:not([data-mode="personal"]) body #spotify.spotify-section{
   display:none !important;
+}
+[data-mode="personal"] .spotify-nav-item{display:list-item !important}
+
+/* ── Container: just a positioning anchor ── */
+#spotify .personal-live-container{
+  position:relative !important;
+  width:min(100%,900px) !important;
+  max-width:900px !important;
+  margin:0 auto !important;
+  /* pip hangs below — give bottom room */
+  padding-bottom:72px !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  display:block !important;
+  overflow:visible !important;
+}
+
+/* ── BIG card (whichever is primary) ── */
+#spotify .plc-big{
+  position:relative !important;
+  width:100% !important;
+  border-radius:32px !important;
+  overflow:hidden !important;
+  z-index:1 !important;
+  transition:opacity .4s ease !important;
+}
+
+/* ── PIP card (small overlay bottom-left) ── */
+#spotify .plc-pip{
+  position:absolute !important;
+  left:20px !important;
+  bottom:0 !important;           /* sits in the padding-bottom zone */
+  width:clamp(130px,18vw,180px) !important;
+  z-index:10 !important;
+  border-radius:20px !important;
+  overflow:hidden !important;
+  transition:opacity .4s ease, transform .3s ease !important;
+  cursor:pointer !important;
+}
+#spotify .plc-pip:hover{
+  transform:scale(1.04) translateY(-3px) !important;
+}
+
+/* ── YouTube BIG styles ── */
+#spotify .youtube-live-box.plc-big{
+  background:
+    radial-gradient(circle at top left,rgba(255,0,0,.18),transparent 42%),
+    linear-gradient(145deg,#120808,#060303) !important;
+  border:2px solid rgba(255,50,50,.38) !important;
+  box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 60px rgba(255,0,0,.1) !important;
+  padding:2rem !important;
+}
+
+/* ── Spotify BIG styles ── */
+#spotify .personal-live-spotify.plc-big{
+  background:
+    radial-gradient(circle at 50% 8%,rgba(29,185,84,.18),transparent 42%),
+    linear-gradient(145deg,#0d1a10,#030303) !important;
+  border:2px solid rgba(29,185,84,.45) !important;
+  box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 60px rgba(29,185,84,.12) !important;
+  padding:2.5rem 2rem !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  text-align:center !important;
+  min-height:380px !important;
+  justify-content:center !important;
+}
+
+/* ── YouTube PIP styles ── */
+#spotify .youtube-live-box.plc-pip{
+  background:
+    radial-gradient(circle at top left,rgba(255,0,0,.22),transparent 55%),
+    linear-gradient(145deg,#120808,#060303) !important;
+  border:2px solid rgba(255,50,50,.42) !important;
+  box-shadow:0 16px 48px rgba(0,0,0,.75),0 0 24px rgba(255,0,0,.15) !important;
+  padding:12px !important;
+  text-align:center !important;
+}
+
+/* ── Spotify PIP styles ── */
+#spotify .personal-live-spotify.plc-pip{
+  background:
+    radial-gradient(circle at top left,rgba(29,185,84,.22),transparent 55%),
+    linear-gradient(145deg,#0d1a10,#030303) !important;
+  border:2px solid rgba(29,185,84,.42) !important;
+  box-shadow:0 16px 48px rgba(0,0,0,.75),0 0 24px rgba(29,185,84,.15) !important;
+  padding:10px !important;
+  text-align:center !important;
+}
+
+/* ── Hide verbose content when a card is PIP ── */
+#spotify .plc-pip h2,
+#spotify .plc-pip .youtube-live-note,
+#spotify .plc-pip .youtube-channel-link,
+#spotify .plc-pip .youtube-frame-wrap,
+#spotify .plc-pip .spotify-note,
+#spotify .plc-pip .spotify-copy h2{
+  display:none !important;
+}
+#spotify .plc-pip .youtube-live-label,
+#spotify .plc-pip .spotify-label{
+  font-size:.52rem !important;
+  letter-spacing:.14em !important;
+  margin-bottom:.4rem !important;
+}
+#spotify .plc-pip .youtube-status{
+  font-size:.5rem !important;
+  margin-bottom:.4rem !important;
+}
+/* Spotify card image in pip */
+#spotify .plc-pip .spotify-card-link{
+  width:100% !important;
+  display:block !important;
+}
+#spotify .plc-pip .spotify-card{
+  width:100% !important;
+  height:auto !important;
+  border-radius:12px !important;
+}
+/* Offline badge in pip */
+#spotify .plc-pip .youtube-offline-badge{
+  display:block !important;
+  font-family:'Fira Code',monospace;
+  font-size:.5rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:rgba(255,100,100,.7);
+  padding:.25rem .5rem;
+  border:1px solid rgba(255,100,100,.25);
+  border-radius:20px;
+  margin:0 auto .3rem;
+  width:fit-content;
+}
+
+/* ── YouTube live label & status (shared) ── */
+#spotify .youtube-live-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  font-family:'Fira Code',monospace;
+  font-size:.62rem;
+  letter-spacing:.18em;
+  color:#ff4b4b;
+  font-weight:700;
+  text-transform:uppercase;
+  margin-bottom:.5rem;
+}
+#spotify .youtube-live-label::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:#ff4b4b;box-shadow:0 0 12px #ff4b4b;
+  animation:youtubePulse 1.6s ease-in-out infinite;
+}
+@keyframes youtubePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.48}}
+
+#spotify .youtube-live-box h2{
+  font-family:'Nunito',sans-serif;color:#f5f5f5;
+  font-size:clamp(1.35rem,3vw,2.35rem);line-height:1.05;
+  letter-spacing:-.04em;margin-bottom:.55rem;font-weight:900;
+}
+#spotify .youtube-live-note{
+  color:rgba(245,245,245,.62);font-size:.88rem;line-height:1.65;margin-bottom:1rem;
+}
+#spotify .youtube-status{
+  font-family:'Fira Code',monospace;font-size:.64rem;
+  letter-spacing:.08em;color:#ff4b4b;margin-bottom:.8rem;
+}
+#spotify .youtube-frame-wrap{
+  position:relative;width:100% !important;aspect-ratio:16/9 !important;
+  min-height:200px;overflow:hidden;border-radius:18px;background:#0b0b0b;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(255,0,0,.1);
+}
+#spotify .youtube-frame-wrap iframe{
+  position:absolute;inset:0;width:100% !important;height:100% !important;
+  border:0 !important;display:block !important;
+}
+#spotify .youtube-channel-link{
+  display:inline-flex;margin-top:.9rem;color:#ff6b6b;text-decoration:none;
+  font-family:'Fira Code',monospace;font-size:.62rem;letter-spacing:.08em;
+  text-transform:uppercase;transition:transform .25s,color .25s;
+}
+#spotify .youtube-channel-link:hover{color:#fff;transform:translateX(5px)}
+/* hide offline badge by default — shown only in pip */
+#spotify .youtube-offline-badge{display:none}
+
+/* ── Spotify label (shared) ── */
+#spotify .spotify-label{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:'Fira Code',monospace;font-size:.62rem;
+  letter-spacing:.18em;color:#1db954;font-weight:700;
+  text-transform:uppercase;margin-bottom:.5rem;
+}
+#spotify .spotify-label::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:#1db954;box-shadow:0 0 12px #1db954;
+  animation:spotPulse 1.6s ease-in-out infinite;
+}
+@keyframes spotPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.48}}
+
+/* Spotify big card image */
+#spotify .plc-big .spotify-card-link{
+  width:min(420px,72%) !important;
+  display:block !important;
+  margin:0 auto !important;
+  transition:transform .35s,filter .35s !important;
+}
+#spotify .plc-big .spotify-card-link:hover{transform:translateY(-6px) scale(1.015);filter:brightness(1.07)}
+#spotify .plc-big .spotify-card{
+  width:100% !important;height:auto !important;
+  border-radius:18px !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(29,185,84,.18) !important;
+}
+#spotify .plc-big .spotify-note{
+  color:rgba(245,245,245,.62);font-size:.88rem;line-height:1.65;
+  max-width:360px;margin:.8rem auto 1.4rem !important;
+}
+#spotify .plc-big h2{
+  font-family:'Nunito',sans-serif;color:#f5f5f5;
+  font-size:clamp(1.35rem,3vw,2.35rem);line-height:1.05;
+  letter-spacing:-.04em;margin-bottom:.5rem;font-weight:900;
+}
+
+/* ── MOBILE: stack vertically, pip becomes second card ── */
+@media(max-width:700px){
+  html[data-mode="personal"] body #spotify.spotify-section{
+    padding:20px 14px 40px !important;
+  }
+  #spotify .personal-live-container{
+    padding-bottom:0 !important;
+    width:100% !important;
+  }
+  #spotify .plc-pip{
+    position:relative !important;
+    left:auto !important;
+    bottom:auto !important;
+    width:100% !important;
+    margin-top:14px !important;
+    border-radius:22px !important;
+  }
+  /* restore content hidden for pip on mobile */
+  #spotify .plc-pip h2{display:block !important}
+  #spotify .plc-pip .youtube-live-note{display:block !important}
+  #spotify .plc-pip .youtube-channel-link{display:inline-flex !important}
+  #spotify .plc-pip .youtube-frame-wrap{display:block !important}
+  #spotify .plc-pip .spotify-note{display:block !important}
+  #spotify .plc-pip .youtube-live-label,
+  #spotify .plc-pip .spotify-label{font-size:.58rem !important;letter-spacing:.16em !important}
+  #spotify .plc-pip .youtube-status{font-size:.56rem !important}
+  #spotify .youtube-live-box.plc-pip{
+    padding:16px !important;text-align:left !important;
+  }
+  #spotify .personal-live-spotify.plc-pip{
+    padding:16px !important;text-align:center !important;
+  }
+  #spotify .plc-big .spotify-card-link{width:100% !important}
+  #spotify .personal-live-spotify.plc-big{min-height:unset !important;padding:1.5rem !important}
+  [data-mode="personal"] #about{padding-top:60px !important}
 }
 
 /* ══ IDEA CANVAS NAV ITEM — personal only ══ */
@@ -2970,96 +3055,39 @@ const YT_CHANNEL_ID='UCB7aM4NJoLaXWrZzelOvaJw';
 const SPOTIFY_UID='314attxxk7fsvdmy6mvz2wbjonuy';
 const SPOTIFY_WIDGET_BASE='https://spotify-github-profile.kittinanx.com/api/view?uid='+SPOTIFY_UID+'&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
 
-let _liveState='default'; // start as default so first real detection can trigger change
+let _liveState=''; // empty — first detection always applies layout
 let _ytLive=false;
 let _spPlaying=false;
 
+/* ── Layout helpers: assign plc-big / plc-pip classes ── */
+function _applyPipClasses(bigEl,pipEl){
+  bigEl.classList.remove('plc-pip');bigEl.classList.add('plc-big');
+  pipEl.classList.remove('plc-big');pipEl.classList.add('plc-pip');
+}
+
 /* ── Layout 1: Spotify BIG, YouTube pip bottom-left ── */
 function setLayoutSpotifyBig(){
-  const wrap=document.querySelector('#spotify .personal-live-container');
   const sp=document.querySelector('#spotify .personal-live-spotify');
   const yt=document.querySelector('#spotify .youtube-live-box');
-  if(!wrap||!sp||!yt)return;
-
-  /* wrap: relative + enough bottom padding so the pip that hangs below is visible */
-  wrap.style.cssText=[
-    'position:relative',
-    'display:block',
-    'width:100%',
-    'max-width:1180px',
-    'margin:0 auto',
-    'padding:0 0 80px 0',
-    'background:none',
-    'border:none',
-    'box-shadow:none',
-    'backdrop-filter:none',
-    'overflow:visible'
-  ].join(';');
-
-  /* Spotify: full big card, no extra bottom padding — pip hangs OUTSIDE below it */
-  sp.style.cssText=[
-    'position:relative',
-    'width:100%',
-    'min-height:460px',
-    'padding:3rem 3rem 3rem',
-    'border-radius:48px',
-    'background:radial-gradient(circle at 50% 8%,rgba(29,185,84,.18),transparent 42%),linear-gradient(145deg,#0d1a10,#030303)',
-    'border:2px solid rgba(29,185,84,.45)',
-    'box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 60px rgba(29,185,84,.12)',
-    'display:flex',
-    'flex-direction:column',
-    'align-items:center',
-    'justify-content:center',
-    'text-align:center',
-    'overflow:visible',
-    'z-index:1'
-  ].join(';');
-
-  /* YouTube pip: bottom-left, OVERLAPPING the Spotify card boundary
-     negative bottom pushes it so ~half the pip sits below the Spotify card edge */
-  yt.style.cssText=[
-    'position:absolute',
-    'left:24px',
-    'bottom:-50px',
-    'z-index:10',
-    'width:160px',
-    'height:auto',
-    'padding:14px 16px',
-    'border-radius:22px',
-    'background:radial-gradient(circle at top left,rgba(255,0,0,.18),transparent 55%),linear-gradient(145deg,#120808,#060303)',
-    'border:2px solid rgba(255,50,50,.38)',
-    'box-shadow:0 16px 48px rgba(0,0,0,.75),0 0 24px rgba(255,0,0,.12)',
-    'overflow:hidden',
-    'text-align:center'
-  ].join(';');
-
-  /* Hide verbose YT content — just show label + offline badge */
-  ['h2','.youtube-live-note','.youtube-frame-wrap','.youtube-channel-link','.youtube-status']
-    .forEach(sel=>{const el=yt.querySelector(sel);if(el)el.style.display='none';});
-  const badge=yt.querySelector('.youtube-offline-badge');
-  if(badge){badge.style.display='block';badge.textContent='offline';}
+  if(!sp||!yt)return;
+  _applyPipClasses(sp,yt);
+  /* clear any leftover inline styles */
+  sp.style.cssText='';yt.style.cssText='';
+  /* YouTube iframe: clear (not live in pip) */
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
   if(frameWrap)frameWrap.innerHTML='';
+  const statusEl=document.getElementById('youtubeLiveStatus');
+  if(statusEl){statusEl.textContent='Not live right now';statusEl.className='youtube-status';}
 }
 
 /* ── Layout 2: YouTube BIG, Spotify pip bottom-left ── */
 function setLayoutYoutubeBig(){
-  const wrap=document.querySelector('#spotify .personal-live-container');
   const sp=document.querySelector('#spotify .personal-live-spotify');
   const yt=document.querySelector('#spotify .youtube-live-box');
-  if(!wrap||!sp||!yt)return;
-
-  /* Clear all inline styles — let original CSS grid take over */
-  wrap.style.cssText='';
-  sp.style.cssText='';
-  yt.style.cssText='';
-
-  /* Restore YT content */
-  ['h2','.youtube-live-note','.youtube-frame-wrap','.youtube-channel-link','.youtube-status']
-    .forEach(sel=>{const el=yt.querySelector(sel);if(el)el.style.display='';});
-  const badge=yt.querySelector('.youtube-offline-badge');
-  if(badge)badge.style.display='none';
-
+  if(!sp||!yt)return;
+  _applyPipClasses(yt,sp);
+  /* clear any leftover inline styles */
+  sp.style.cssText='';yt.style.cssText='';
   /* YouTube iframe */
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
   const statusEl=document.getElementById('youtubeLiveStatus');
@@ -3077,38 +3105,23 @@ function setLayoutYoutubeBig(){
 /* ── Transition engine ── */
 function switchLayout(toSpotifyBig){
   const newState=toSpotifyBig?'spotify-only':'default';
-  if(newState===_liveState)return; // already in this state, do nothing
+  if(newState===_liveState)return;
 
-  const sp=document.querySelector('#spotify .personal-live-spotify');
-  const yt=document.querySelector('#spotify .youtube-live-box');
-  if(!sp||!yt)return;
+  const container=document.querySelector('#spotify .personal-live-container');
+  if(!container)return;
 
-  /* STEP 1: fade both cards out */
-  sp.style.transition='opacity 0.35s ease';
-  sp.style.opacity='0';
-  yt.style.transition='opacity 0.35s ease';
-  yt.style.opacity='0';
+  container.style.transition='opacity 0.35s ease';
+  container.style.opacity='0';
 
-  /* STEP 2: after fade, swap layout, then fade back in */
   setTimeout(()=>{
     _liveState=newState;
-    if(toSpotifyBig) setLayoutSpotifyBig();
+    if(toSpotifyBig)setLayoutSpotifyBig();
     else setLayoutYoutubeBig();
 
-    /* STEP 3: double rAF ensures browser has painted the new layout before fading in */
-    requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        sp.style.transition='opacity 0.4s ease';
-        sp.style.opacity='1';
-        yt.style.transition='opacity 0.4s ease';
-        yt.style.opacity='1';
-        /* Clean up transition styles after animation */
-        setTimeout(()=>{
-          sp.style.transition='';sp.style.opacity='';
-          yt.style.transition='';yt.style.opacity='';
-        },450);
-      });
-    });
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>{
+      container.style.opacity='1';
+      setTimeout(()=>{container.style.transition='';container.style.opacity='';},420);
+    });});
   },360);
 }
 
@@ -3117,35 +3130,37 @@ function switchLayout(toSpotifyBig){
 /* Spotify: fetch SVG text via no-cors capable CORS proxy, parse offline string */
 function checkSpotifyPlaying(){
   return new Promise(resolve=>{
-    /* Strategy: load widget SVG as blob via fetch — works because
-       spotify-github-profile.kittinanx.com sends CORS headers */
     const url=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
-    const t=setTimeout(()=>resolve(false),7000);
-    fetch(url,{cache:'no-store'})
+    const t=setTimeout(()=>resolve(false),8000);
+
+    fetch(url,{cache:'no-store',mode:'cors'})
       .then(r=>{
         if(!r.ok){clearTimeout(t);resolve(false);return null;}
         return r.text();
       })
       .then(text=>{
-        if(!text){return;}
+        if(!text)return;
         clearTimeout(t);
         const low=text.toLowerCase();
-        /* Widget contains these strings when nothing is playing */
         const offline=low.includes('not playing')||low.includes('offline')||low.includes('currently offline')||low.includes('nothing is playing');
-        console.log('[Spotify] offline='+offline+' ('+text.length+' bytes)');
+        console.log('[Spotify] fetch ok, offline='+offline);
         resolve(!offline);
       })
       .catch(()=>{
+        /* fetch failed (CORS blocked on some mobile browsers) — use image height */
         clearTimeout(t);
-        /* CORS blocked — fallback to image height */
+        console.log('[Spotify] fetch blocked, trying image fallback');
         const img=new Image();
-        const t2=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},6000);
+        img.crossOrigin='anonymous';
+        const t2=setTimeout(()=>{img.onload=img.onerror=null;
+          console.log('[Spotify] image fallback timeout');resolve(false);},7000);
         img.onload=()=>{
           clearTimeout(t2);
           console.log('[Spotify fallback] naturalHeight='+img.naturalHeight);
-          resolve(img.naturalHeight>180);
+          /* Playing widget is taller (~300px+), offline widget is ~180px */
+          resolve(img.naturalHeight>200);
         };
-        img.onerror=()=>{clearTimeout(t2);resolve(false);};
+        img.onerror=()=>{clearTimeout(t2);console.log('[Spotify] image load error');resolve(false);};
         img.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
       });
   });
@@ -3173,6 +3188,9 @@ async function detectAndApplyLayout(){
 }
 
 function loadYouTubeLive(){
+  /* Apply default layout immediately so page renders before detection */
+  setLayoutYoutubeBig();
+  _liveState='default';
   detectAndApplyLayout();
   if(window._liveDetectInterval)clearInterval(window._liveDetectInterval);
   window._liveDetectInterval=setInterval(detectAndApplyLayout,5000);
