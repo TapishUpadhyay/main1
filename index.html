@@ -1901,124 +1901,6 @@ html[data-mode="personal"] body #about{padding-top:80px !important;}
   html[data-mode="personal"] body #spotify .spotify-copy.personal-live-spotify{width:88px !important;left:10px !important;bottom:12px !important;}
 }
 
-/* ══════════════════════════════════════════════════════════
-   2-LAYOUT LIVE SYSTEM
-   data-live="spotify-only" → Spotify BIG, YouTube pip bottom-left
-   data-live="default"      → YouTube BIG, Spotify pip bottom-left (all other states)
-══════════════════════════════════════════════════════════ */
-
-/* ══════════════════════════════════════════════
-   LAYOUT: spotify-only
-   Spotify = BIG main card
-   YouTube = small pip overlapping bottom-left
-══════════════════════════════════════════════ */
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .personal-live-container{
-  position:relative !important;
-}
-/* Spotify takes the full big card */
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify{
-  position:relative !important;
-  left:auto !important; bottom:auto !important;
-  width:100% !important; max-width:100% !important;
-  min-height:clamp(420px,55vw,680px) !important;
-  padding:clamp(28px,4vw,54px) clamp(20px,4vw,56px) clamp(70px,8vw,100px) !important;
-  border-radius:clamp(28px,5vw,60px) !important;
-  background:
-    radial-gradient(circle at 50% 10%,rgba(29,185,84,.22),transparent 38%),
-    linear-gradient(145deg,rgba(18,18,18,.99),rgba(3,3,3,.97)) !important;
-  border:2px solid rgba(29,185,84,.45) !important;
-  box-shadow:0 42px 130px rgba(0,0,0,.72),0 0 80px rgba(29,185,84,.16),inset 0 1px 0 rgba(255,255,255,.08) !important;
-  text-align:center !important;
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  backdrop-filter:none !important;
-  overflow:visible !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify::before,
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify::after{
-  display:none !important; content:none !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-label{
-  display:flex !important; justify-content:center !important;
-  font-size:clamp(.56rem,1vw,.72rem) !important; margin:0 auto .8rem auto !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify h2{
-  display:block !important;
-  font-family:'Nunito',sans-serif !important; font-weight:900 !important;
-  font-size:clamp(2.5rem,7vw,6.3rem) !important; line-height:.9 !important;
-  letter-spacing:-.07em !important; color:#fff !important;
-  margin:0 0 1.25rem !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-note{
-  display:block !important; text-align:center !important;
-  max-width:680px !important; margin:0 auto 1.5rem !important;
-  color:rgba(255,255,255,.65) !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-card-link{
-  display:block !important; width:min(100%,460px) !important;
-  max-width:460px !important; margin:0 auto !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-card-link::after{
-  display:none !important; content:none !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .spotify-copy.personal-live-spotify .spotify-card{
-  display:block !important; width:100% !important; height:auto !important;
-  border-radius:clamp(14px,2vw,24px) !important;
-  border:1px solid rgba(255,255,255,.12) !important;
-  box-shadow:0 24px 80px rgba(0,0,0,.65) !important;
-}
-/* YouTube pip: small card overlapping bottom-left of Spotify */
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-box{
-  position:absolute !important;
-  left:clamp(12px,2.5vw,36px) !important;
-  bottom:clamp(12px,2.5vw,36px) !important;
-  z-index:10 !important;
-  width:clamp(110px,16vw,190px) !important;
-  min-height:0 !important; height:auto !important;
-  padding:clamp(8px,1.2vw,14px) !important;
-  border-radius:clamp(14px,2vw,22px) !important;
-  background:
-    radial-gradient(circle at top left,rgba(255,0,0,.22),transparent 44%),
-    linear-gradient(145deg,rgba(18,18,18,.97),rgba(6,3,3,.97)) !important;
-  border:2px solid rgba(255,60,60,.35) !important;
-  box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 28px rgba(255,0,0,.15) !important;
-  text-align:center !important;
-  overflow:hidden !important;
-  backdrop-filter:blur(16px) saturate(1.2) !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-box::before{
-  display:none !important; content:none !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-label{
-  display:flex !important; justify-content:center !important;
-  font-size:clamp(.38rem,1vw,.52rem) !important; letter-spacing:.07em !important;
-  gap:.25rem !important; margin:0 0 .3rem !important; white-space:nowrap !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-box h2,
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-live-note,
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-status,
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-frame-wrap,
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-channel-link{
-  display:none !important;
-}
-html[data-mode="personal"] body #spotify[data-live="spotify-only"] .youtube-offline-badge{
-  display:block !important;
-  font-family:'Fira Code',monospace; font-size:.44rem; letter-spacing:.06em;
-  color:rgba(255,180,180,.5); text-transform:uppercase; margin-top:.1rem;
-}
-
-/* ══════════════════════════════════════════════
-   LAYOUT: default
-   YouTube = BIG main card (existing CSS handles this)
-   Spotify = small pip overlapping bottom-left
-   This is the default — both online, both offline, YT only
-══════════════════════════════════════════════ */
-html[data-mode="personal"] body #spotify[data-live="default"] .personal-live-container{
-  position:relative !important;
-}
-
 /* Offline badge element */
 .youtube-offline-badge{ display:none; }
 </style>
@@ -3082,122 +2964,112 @@ window.addEventListener('resize',updateRoadmapFlip);
 
 
 
-/* ══ 3-LAYOUT LIVE DETECTION SYSTEM ══ */
+/* ══ LIVE LAYOUT SYSTEM ══ */
 const YT_CHANNEL_ID='UCB7aM4NJoLaXWrZzelOvaJw';
 const SPOTIFY_UID='314attxxk7fsvdmy6mvz2wbjonuy';
 const SPOTIFY_WIDGET_BASE='https://spotify-github-profile.kittinanx.com/api/view?uid='+SPOTIFY_UID+'&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
 
-let _liveState=null; // track current state to avoid redundant DOM updates
+let _liveState=null;
 
-function applyLiveLayout(state){
-  if(state===_liveState)return;
-  const section=document.getElementById('spotify');
-  if(!section)return;
-
-  const frameWrap=document.getElementById('youtubeLiveFrameWrap');
-  const statusEl=document.getElementById('youtubeLiveStatus');
-  const sp=section.querySelector('.personal-live-spotify');
-  const yt=section.querySelector('.youtube-live-box');
-
-  function updateDOM(){
-    _liveState=state;
-    section.setAttribute('data-live',state);
-    if(state==='spotify-only'){
-      if(frameWrap)frameWrap.innerHTML='';
-      if(statusEl){statusEl.textContent='offline';statusEl.className='youtube-status';}
-    } else {
-      const ytLive=section._ytLive||false;
-      if(ytLive){
-        if(frameWrap&&!frameWrap.querySelector('iframe')){
-          frameWrap.innerHTML=`<iframe src="https://www.youtube.com/embed/live_stream?channel=${YT_CHANNEL_ID}&autoplay=1&mute=1&playsinline=1&rel=0" title="Tapish YouTube Live Stream" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-        }
-        if(statusEl){statusEl.textContent='🔴 Live now';statusEl.className='youtube-status live';}
-      } else {
-        if(frameWrap)frameWrap.innerHTML='';
-        if(statusEl){statusEl.textContent='Not live right now';statusEl.className='youtube-status';}
-      }
-    }
-  }
-
-  /* First load — apply instantly, no animation */
-  if(_liveState===null){updateDOM();return;}
-
-  /* Step 1: fade out */
-  if(sp){sp.style.transition='opacity .32s ease';sp.style.opacity='0';}
-  if(yt){yt.style.transition='opacity .32s ease';yt.style.opacity='0';}
-
-  clearTimeout(section._layoutTimer);
-  section._layoutTimer=setTimeout(()=>{
-    /* Step 2: swap layout while invisible */
-    updateDOM();
-    /* Step 3: force reflow, then fade back in */
-    void section.offsetHeight;
-    requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        const sp2=section.querySelector('.personal-live-spotify');
-        const yt2=section.querySelector('.youtube-live-box');
-        if(sp2){sp2.style.transition='opacity .45s ease';sp2.style.opacity='1';}
-        if(yt2){yt2.style.transition='opacity .45s ease';yt2.style.opacity='1';}
-        /* Clean up inline styles after transition completes */
-        setTimeout(()=>{
-          if(sp2){sp2.style.transition='';sp2.style.opacity='';}
-          if(yt2){yt2.style.transition='';yt2.style.opacity='';}
-        },480);
-      });
-    });
-  },350);
+function setLayoutSpotifyBig(){
+  const container=document.querySelector('#spotify .personal-live-container');
+  const sp=document.querySelector('#spotify .personal-live-spotify');
+  const yt=document.querySelector('#spotify .youtube-live-box');
+  if(!container||!sp||!yt)return;
+  container.style.cssText='position:relative;display:block;width:100%;padding:0;border:none;background:none;box-shadow:none;backdrop-filter:none;overflow:visible';
+  sp.style.cssText='position:relative;width:100%;min-height:420px;padding:2.5rem 2.5rem 5rem;border-radius:48px;background:radial-gradient(circle at 50% 8%,rgba(29,185,84,.2),transparent 40%),linear-gradient(145deg,#121212,#030303);border:2px solid rgba(29,185,84,.4);box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 70px rgba(29,185,84,.14);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:visible';
+  yt.style.cssText='position:absolute;left:24px;bottom:24px;z-index:10;width:180px;padding:12px 14px;border-radius:20px;background:radial-gradient(circle at top left,rgba(255,0,0,.2),transparent 50%),linear-gradient(145deg,#121212,#060303);border:2px solid rgba(255,60,60,.35);box-shadow:0 14px 40px rgba(0,0,0,.7);overflow:hidden;text-align:center';
+  const ytH2=yt.querySelector('h2');
+  const ytNote=yt.querySelector('.youtube-live-note');
+  const ytFrame=yt.querySelector('.youtube-frame-wrap');
+  const ytLink=yt.querySelector('.youtube-channel-link');
+  const ytBadge=yt.querySelector('.youtube-offline-badge');
+  if(ytH2)ytH2.style.display='none';
+  if(ytNote)ytNote.style.display='none';
+  if(ytFrame)ytFrame.style.display='none';
+  if(ytLink)ytLink.style.display='none';
+  if(ytBadge){ytBadge.style.display='block';ytBadge.textContent='offline';}
 }
 
-async function checkYoutubeLive(){
-  const key=(D&&D.ytApiKey)||'';
-  if(!key){
-    /* No API key — probe by loading the live embed and checking if iframe src resolves */
-    return new Promise(resolve=>{
-      const probe=document.createElement('img');
-      const t=setTimeout(()=>{probe.onload=probe.onerror=null;resolve(false);},4000);
-      /* YouTube returns a 404 thumbnail when not live, 200 when live */
-      probe.onload=()=>{clearTimeout(t);resolve(true)};
-      probe.onerror=()=>{clearTimeout(t);resolve(false)};
-      probe.src=`https://img.youtube.com/vi/live_stream/maxresdefault.jpg?channel=${YT_CHANNEL_ID}&t=`+Date.now();
-    });
+function setLayoutYoutubeBig(ytLive){
+  const container=document.querySelector('#spotify .personal-live-container');
+  const sp=document.querySelector('#spotify .personal-live-spotify');
+  const yt=document.querySelector('#spotify .youtube-live-box');
+  if(!container||!sp||!yt)return;
+  container.style.cssText='';
+  sp.style.cssText='';
+  yt.style.cssText='';
+  const ytH2=yt.querySelector('h2');
+  const ytNote=yt.querySelector('.youtube-live-note');
+  const ytFrame=yt.querySelector('.youtube-frame-wrap');
+  const ytLink=yt.querySelector('.youtube-channel-link');
+  const ytBadge=yt.querySelector('.youtube-offline-badge');
+  if(ytH2)ytH2.style.display='';
+  if(ytNote)ytNote.style.display='';
+  if(ytFrame)ytFrame.style.display='';
+  if(ytLink)ytLink.style.display='';
+  if(ytBadge)ytBadge.style.display='none';
+  const frameWrap=document.getElementById('youtubeLiveFrameWrap');
+  const statusEl=document.getElementById('youtubeLiveStatus');
+  if(ytLive){
+    if(frameWrap&&!frameWrap.querySelector('iframe')){
+      frameWrap.innerHTML='<iframe src="https://www.youtube.com/embed/live_stream?channel='+YT_CHANNEL_ID+'&autoplay=1&mute=1&playsinline=1&rel=0" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen></iframe>';
+    }
+    if(statusEl){statusEl.textContent='\uD83D\uDD34 Live now';statusEl.className='youtube-status live';}
+  } else {
+    if(frameWrap)frameWrap.innerHTML='';
+    if(statusEl){statusEl.textContent='Not live right now';statusEl.className='youtube-status';}
   }
-  try{
-    const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${YT_CHANNEL_ID}&eventType=live&type=video&key=${key}`;
-    const r=await fetch(url);
-    if(!r.ok)return false;
-    const j=await r.json();
-    return !!(j.items&&j.items.length>0);
-  }catch(e){return false;}
+}
+
+function applyLiveLayout(spotifyPlaying,ytLive){
+  const newState=(!ytLive&&spotifyPlaying)?'spotify-only':'default';
+  if(newState===_liveState)return;
+  const sp=document.querySelector('#spotify .personal-live-spotify');
+  const yt=document.querySelector('#spotify .youtube-live-box');
+  function fadeOut(el){if(el){el.style.transition='opacity .3s ease';el.style.opacity='0';}}
+  function fadeIn(el){if(el){el.style.transition='opacity .4s ease';el.style.opacity='1';setTimeout(()=>{if(el){el.style.transition='';el.style.opacity='';}},450);}}
+  fadeOut(sp);fadeOut(yt);
+  setTimeout(()=>{
+    if(newState==='spotify-only')setLayoutSpotifyBig();
+    else setLayoutYoutubeBig(ytLive);
+    _liveState=newState;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{fadeIn(sp);fadeIn(yt);}));
+  },320);
 }
 
 function checkSpotifyPlaying(){
-  /* Use image load — no CORS issues. Widget serves a different sized image when playing vs offline */
   return new Promise(resolve=>{
     const img=new Image();
     const t=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},5000);
-    img.onload=function(){
-      clearTimeout(t);
-      /* When playing: image is taller (album art included) ~300px+
-         When offline: image is shorter ~90-120px */
-      resolve(img.naturalHeight>150);
-    };
-    img.onerror=()=>{clearTimeout(t);resolve(false)};
-    img.crossOrigin='anonymous';
+    img.onload=()=>{clearTimeout(t);resolve(img.naturalHeight>150);};
+    img.onerror=()=>{clearTimeout(t);resolve(false);};
     img.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+  });
+}
+
+function checkYoutubeLive(){
+  const key=(D&&D.ytApiKey)||'';
+  if(key){
+    return fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId='+YT_CHANNEL_ID+'&eventType=live&type=video&key='+key)
+      .then(r=>r.ok?r.json():null).then(j=>!!(j&&j.items&&j.items.length>0)).catch(()=>false);
+  }
+  return new Promise(resolve=>{
+    const img=new Image();
+    const t=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},4000);
+    img.onload=()=>{clearTimeout(t);resolve(true);};
+    img.onerror=()=>{clearTimeout(t);resolve(false);};
+    img.src='https://img.youtube.com/vi/live_stream/maxresdefault.jpg?channel='+YT_CHANNEL_ID+'&_='+Date.now();
   });
 }
 
 async function detectAndApplyLayout(){
   const[ytLive,spotifyPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
-  const section=document.getElementById('spotify');
-  if(section)section._ytLive=ytLive;
-  if(!ytLive&&spotifyPlaying) applyLiveLayout('spotify-only');
-  else                         applyLiveLayout('default');
+  applyLiveLayout(spotifyPlaying,ytLive);
 }
 
 function loadYouTubeLive(){
   detectAndApplyLayout();
-  /* Poll every 5s for live status */
   if(window._liveDetectInterval)clearInterval(window._liveDetectInterval);
   window._liveDetectInterval=setInterval(detectAndApplyLayout,5000);
 }
@@ -3349,27 +3221,16 @@ function loadYouTubeLive(){
 })();
 
 
-/* ══ SPOTIFY AUTO-REFRESH ══ */
+/* ══ SPOTIFY CARD AUTO-REFRESH (5s) ══ */
 (function(){
-  const INTERVAL=5000;
   function refreshSpotify(){
     const img=document.getElementById('spotifyCard');
     if(!img)return;
     const fresh=new Image();
-    fresh.crossOrigin='anonymous';
-    fresh.referrerPolicy='no-referrer';
-    fresh.onload=function(){
-      img.src=fresh.src;
-      const isPlaying=fresh.naturalHeight>150;
-      const section=document.getElementById('spotify');
-      const ytLive=(section&&section._ytLive)||false;
-      if(!ytLive&&isPlaying) applyLiveLayout('spotify-only');
-      else                   applyLiveLayout('default');
-    };
-    fresh.onerror=function(){ applyLiveLayout('default'); };
+    fresh.onload=()=>{img.src=fresh.src;};
     fresh.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
   }
-  setInterval(refreshSpotify,INTERVAL);
+  setInterval(refreshSpotify,5000);
 })();
 
 try{renderAll();}catch(e){console.error('renderAll failed',e);}
