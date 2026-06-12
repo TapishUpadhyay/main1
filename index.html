@@ -2976,26 +2976,198 @@ window.addEventListener('resize',updateRoadmapFlip);
 
 
 
-/* ══ MOBILE-SAFE YOUTUBE LIVE EMBED (ALL DEVICES) ══ */
-function loadYouTubeLive(){
-  const statusEl=document.getElementById('youtubeLiveStatus');
+/* ══ LIVE LAYOUT SYSTEM ══
+   Default layout: Spotify BIG, YouTube pip bottom-left
+   Spotify-only:   same (Spotify still big)
+   Both offline:   same
+   The ONLY difference: when Spotify is playing, the widget shows track info
+═══════════════════════════════════════════════════════════ */
+const YT_CHANNEL_ID='UCB7aM4NJoLaXWrZzelOvaJw';
+const SPOTIFY_UID='314attxxk7fsvdmy6mvz2wbjonuy';
+const SPOTIFY_WIDGET_BASE='https://spotify-github-profile.kittinanx.com/api/view?uid='+SPOTIFY_UID+'&cover_image=true&theme=default&show_offline=true&background_color=121212&interchange=true&profanity=true&hide_remaster=false';
+
+let _liveState=null;
+let _ytLive=false;
+let _spPlaying=false;
+
+function isMobile(){return window.innerWidth<=820;}
+
+/* ── Apply layout styles directly — works on all screen sizes ── */
+function applyLayoutStyles(spotifyBig){
+  const wrap=document.querySelector('#spotify .personal-live-container');
+  const sp=document.querySelector('#spotify .personal-live-spotify');
+  const yt=document.querySelector('#spotify .youtube-live-box');
+  if(!wrap||!sp||!yt)return;
+
+  const mob=isMobile();
+  const pipW=mob?Math.round(window.innerWidth*.28)+'px':'160px';
+  const pipBottom=mob?'-44px':'-50px';
+  const pipLeft=mob?'16px':'24px';
+  const spRadius=mob?'28px':'48px';
+  const spMinH=mob?'320px':'460px';
+  const spPad=mob?'1.6rem 1.2rem 2.4rem':'3rem 3rem 3rem';
+  const wrapPadBottom=mob?'70px':'80px';
+
+  /* Container always: block + relative + overflow visible */
+  wrap.style.cssText=[
+    'position:relative',
+    'display:block',
+    'width:100%',
+    'max-width:'+(mob?'100%':'1180px'),
+    'margin:0 auto',
+    'padding:0 0 '+wrapPadBottom+' 0',
+    'background:none',
+    'border:none',
+    'box-shadow:none',
+    'backdrop-filter:none',
+    'overflow:visible',
+    'min-height:0'
+  ].join(';');
+
+  /* Spotify always BIG */
+  sp.style.cssText=[
+    'position:relative',
+    'width:100%',
+    'min-height:'+spMinH,
+    'padding:'+spPad,
+    'border-radius:'+spRadius,
+    'background:radial-gradient(circle at 50% 8%,rgba(29,185,84,.18),transparent 42%),linear-gradient(145deg,#0d1a10,#030303)',
+    'border:2px solid rgba(29,185,84,.45)',
+    'box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 60px rgba(29,185,84,.12)',
+    'display:flex',
+    'flex-direction:column',
+    'align-items:center',
+    'justify-content:center',
+    'text-align:center',
+    'overflow:visible',
+    'z-index:1',
+    'box-sizing:border-box'
+  ].join(';');
+
+  /* Restore all Spotify content */
+  ['h2','.spotify-note','.spotify-card-link','.spotify-label']
+    .forEach(sel=>{const el=sp.querySelector(sel);if(el)el.style.display='';});
+
+  /* YouTube always small pip bottom-left */
+  yt.style.cssText=[
+    'position:absolute',
+    'left:'+pipLeft,
+    'bottom:'+pipBottom,
+    'z-index:10',
+    'width:'+pipW,
+    'height:auto',
+    'padding:10px 12px',
+    'border-radius:18px',
+    'background:radial-gradient(circle at top left,rgba(255,0,0,.2),transparent 55%),linear-gradient(145deg,#120808,#060303)',
+    'border:2px solid rgba(255,50,50,.4)',
+    'box-shadow:0 12px 40px rgba(0,0,0,.75),0 0 20px rgba(255,0,0,.14)',
+    'overflow:hidden',
+    'text-align:center'
+  ].join(';');
+
+  /* Hide verbose YT content — only label + badge in pip */
+  ['h2','.youtube-live-note','.youtube-frame-wrap','.youtube-channel-link','.youtube-status']
+    .forEach(sel=>{const el=yt.querySelector(sel);if(el)el.style.display='none';});
+  const label=yt.querySelector('.youtube-live-label');
+  if(label)label.style.display='flex';
+  const badge=yt.querySelector('.youtube-offline-badge');
+  if(badge){badge.style.display='block';badge.textContent=_ytLive?'live':'offline';}
   const frameWrap=document.getElementById('youtubeLiveFrameWrap');
-  const channelId='UCB7aM4NJoLaXWrZzelOvaJw';
-
-  if(!statusEl||!frameWrap)return;
-
-  statusEl.textContent='Live player autoplay ready';
-  statusEl.className='youtube-status live';
-
-  frameWrap.innerHTML=`
-    <iframe
-      src="https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&mute=1&playsinline=1&rel=0"
-      title="Tapish YouTube Live Stream"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-  `;
+  if(frameWrap)frameWrap.innerHTML='';
 }
+
+/* ── Transition: fade out → apply → fade in ── */
+function switchLayout(spotifyBig){
+  const newState=spotifyBig?'spotify-only':'default';
+  const sp=document.querySelector('#spotify .personal-live-spotify');
+  const yt=document.querySelector('#spotify .youtube-live-box');
+  if(!sp||!yt)return;
+
+  function doApply(){
+    _liveState=newState;
+    applyLayoutStyles(spotifyBig);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      sp.style.transition='opacity .4s ease';sp.style.opacity='1';
+      yt.style.transition='opacity .4s ease';yt.style.opacity='1';
+      setTimeout(()=>{
+        sp.style.transition='';sp.style.opacity='';
+        yt.style.transition='';yt.style.opacity='';
+      },450);
+    }));
+  }
+
+  if(_liveState===null){doApply();return;} /* first load — instant */
+  if(newState===_liveState)return;          /* no change */
+
+  sp.style.transition='opacity .32s ease';sp.style.opacity='0';
+  yt.style.transition='opacity .32s ease';yt.style.opacity='0';
+  setTimeout(doApply,340);
+}
+
+/* ── Detection ── */
+function checkSpotifyPlaying(){
+  return new Promise(resolve=>{
+    const url=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+    const t=setTimeout(()=>resolve(false),7000);
+    fetch(url,{cache:'no-store'})
+      .then(r=>r.ok?r.text():null)
+      .then(text=>{
+        if(!text){clearTimeout(t);resolve(false);return;}
+        clearTimeout(t);
+        const low=text.toLowerCase();
+        const offline=low.includes('not playing')||low.includes('offline')||low.includes('currently offline')||low.includes('nothing is playing');
+        console.log('[Spotify] playing='+!offline);
+        resolve(!offline);
+      })
+      .catch(()=>{
+        clearTimeout(t);
+        const img=new Image();
+        const t2=setTimeout(()=>{img.onload=img.onerror=null;resolve(false);},6000);
+        img.onload=()=>{clearTimeout(t2);resolve(img.naturalHeight>180);};
+        img.onerror=()=>{clearTimeout(t2);resolve(false);};
+        img.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+      });
+  });
+}
+
+function checkYoutubeLive(){
+  const key=(D&&D.ytApiKey)||'';
+  if(!key)return Promise.resolve(false);
+  return fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId='+YT_CHANNEL_ID+'&eventType=live&type=video&key='+key)
+    .then(r=>r.ok?r.json():null)
+    .then(j=>!!(j&&j.items&&j.items.length>0))
+    .catch(()=>false);
+}
+
+async function detectAndApplyLayout(){
+  const[ytLive,spPlaying]=await Promise.all([checkYoutubeLive(),checkSpotifyPlaying()]);
+  _ytLive=ytLive;_spPlaying=spPlaying;
+  console.log('[Layout] yt='+ytLive+' sp='+spPlaying);
+  switchLayout(!ytLive&&spPlaying);
+}
+
+/* Re-apply on resize so mobile↔desktop transitions stay correct */
+window.addEventListener('resize',()=>{
+  if(_liveState!==null)applyLayoutStyles(_liveState==='spotify-only');
+});
+
+function loadYouTubeLive(){
+  detectAndApplyLayout();
+  if(window._liveDetectInterval)clearInterval(window._liveDetectInterval);
+  window._liveDetectInterval=setInterval(detectAndApplyLayout,5000);
+}
+
+/* ══ SPOTIFY CARD AUTO-REFRESH (5s) ══ */
+(function(){
+  function refreshSpotify(){
+    const img=document.getElementById('spotifyCard');
+    if(!img)return;
+    const fresh=new Image();
+    fresh.onload=()=>{img.src=fresh.src;};
+    fresh.src=SPOTIFY_WIDGET_BASE+'&t='+Date.now();
+  }
+  setInterval(refreshSpotify,5000);
+})();
 /* ══ IDEA CANVAS PAN & ZOOM ══ */
 (function(){
   const stage=document.getElementById('canvasStage');
@@ -3145,8 +3317,36 @@ function loadYouTubeLive(){
 
 
 renderAll();
-applyMode('engineer',false);
-loadYouTubeLive();
+(function(){
+  try{
+    /* ── Restore saved mode ── */
+    const savedMode=localStorage.getItem('Tapish_mode')||'engineer';
+    applyMode(savedMode,false);
+    if(savedMode==='personal')loadYouTubeLive();
+
+    /* ── Save mode on switch ── */
+    const _origSwitch=window.switchMode;
+    window.switchMode=function(m){
+      localStorage.setItem('Tapish_mode',m);
+      _origSwitch(m);
+    };
+
+    /* ── Save scroll position on every scroll ── */
+    window.addEventListener('scroll',()=>{
+      localStorage.setItem('Tapish_scroll',String(window.scrollY));
+    },{passive:true});
+
+    /* ── Restore scroll after layout settles ── */
+    const savedScroll=parseInt(localStorage.getItem('Tapish_scroll')||'0',10);
+    if(savedScroll>0){
+      /* Wait for fonts, images, and mode-driven layout shifts to finish */
+      setTimeout(()=>window.scrollTo({top:savedScroll,behavior:'instant'}),320);
+    }
+  }catch(e){
+    console.error('init failed',e);
+    applyMode('engineer',false);
+  }
+})();
 buildEQ();
 setTimeout(doReveal,200);
 setTimeout(updateRoadmapFlip,220);
