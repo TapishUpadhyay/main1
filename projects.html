@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects // Tapish</title>
+<link rel="icon" type="image/png" href="PG LOGO.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#080b12}
+::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+
+:root{
+  --bg:#080b12;--bg2:#0d1117;--surface:#111827;--surf2:#1a2233;
+  --border:#1e293b;--bdr2:#3b82f6;
+  --A:#60a5fa;--B:#34d399;--C:#f472b6;--D:#fbbf24;--E:#a78bfa;--F:#4ade80;
+  --tx:#e2e8f0;--txm:#94a3b8;--txd:#334155;
+  --nav-bg:rgba(8,11,18,.92);--glow1:rgba(96,165,250,.15);--glow2:rgba(52,211,153,.08);
+  --skgrad:linear-gradient(90deg,#34d399,#60a5fa);
+}
+
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:'Space Grotesk',sans-serif;font-size:16px;line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* noise */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+/* cursor */
+.cur,.cur-ring{position:fixed;pointer-events:none;border-radius:50%;z-index:9999;top:0;left:0;transition:background .4s}
+.cur{width:6px;height:6px;background:var(--A);transform:translate(-50%,-50%);transition:background .4s,transform .12s}
+.cur-ring{width:32px;height:32px;border:1px solid var(--A);opacity:.3;z-index:9998;transform:translate(-50%,-50%);transition:border-color .4s,width .3s,height .3s,opacity .3s}
+
+/* scroll progress */
+.prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:400;background:rgba(255,255,255,.03)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--B),var(--A),var(--E));width:0;transition:width .05s;box-shadow:0 0 8px var(--A)}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;backdrop-filter:blur(24px) saturate(1.4);
+  background:var(--nav-bg);
+  border-bottom:1px solid rgba(255,255,255,.04);z-index:200;
+  transition:transform .35s;
+}
+nav::after{
+  content:'';position:absolute;bottom:0;left:5vw;right:5vw;height:1px;
+  background:linear-gradient(90deg,transparent,var(--A),transparent);
+  opacity:.2;
+}
+nav.hide{transform:translateY(-100%)}
+.nav-logo{
+  font-family:'Fira Code',monospace;font-size:1rem;font-weight:500;
+  color:var(--txm);text-decoration:none;letter-spacing:.04em;
+  display:flex;align-items:center;gap:.6rem;transition:color .3s;
+}
+.nav-logo:hover{color:var(--tx)}
+.nav-logo .sep{color:var(--txd)}
+.nav-logo .page{color:var(--A)}
+
+.nav-back{
+  font-family:'Fira Code',monospace;font-size:.6rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--txm);text-decoration:none;
+  display:flex;align-items:center;gap:.4rem;transition:color .25s;
+  border:1px solid var(--border);padding:.4rem 1rem;border-radius:6px;
+  background:rgba(255,255,255,.02);
+}
+.nav-back:hover{color:var(--A);border-color:var(--A)}
+.nav-back::before{content:'←';transition:transform .25s;display:inline-block}
+.nav-back:hover::before{transform:translateX(-3px)}
+
+/* HERO BANNER */
+.page-hero{
+  min-height:38vh;display:flex;align-items:flex-end;
+  padding:100px 5vw 4rem;position:relative;overflow:hidden;z-index:2;
+}
+.hero-grid-bg{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.013) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.013) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 80% 80% at 20% 60%,black,transparent);
+  pointer-events:none;
+}
+.hero-glow{
+  position:absolute;width:600px;height:600px;
+  background:radial-gradient(circle,var(--glow1),transparent);
+  top:-200px;left:-100px;pointer-events:none;
+  filter:blur(40px);
+  animation:gFloat 14s ease-in-out infinite;
+}
+@keyframes gFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-40px)}}
+
+.page-hero-content{position:relative;z-index:2}
+.page-eyebrow{
+  font-family:'Fira Code',monospace;font-size:.58rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--A);margin-bottom:.8rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.page-eyebrow::before{content:'//';color:var(--txd);margin-right:.2rem}
+.page-title{
+  font-family:'Fira Code',monospace;font-weight:500;line-height:1.05;
+  letter-spacing:-.01em;font-size:clamp(1.5rem,3vw,2.8rem);
+  margin-bottom:.8rem;
+}
+.page-title em{font-style:normal;color:var(--C)}
+.page-sub{font-size:.95rem;color:var(--txm);max-width:480px;line-height:1.8}
+.page-meta{
+  display:flex;align-items:center;gap:1.5rem;margin-top:1.6rem;
+  font-family:'Fira Code',monospace;font-size:.54rem;letter-spacing:.1em;
+  color:var(--txd);text-transform:uppercase;
+}
+.page-meta span{display:flex;align-items:center;gap:.4rem}
+.meta-dot{width:5px;height:5px;border-radius:50%;background:var(--F);box-shadow:0 0 6px var(--F);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--F)}50%{box-shadow:0 0 12px var(--F)}}
+
+/* FILTER BAR */
+.filter-bar{
+  position:sticky;top:60px;z-index:100;
+  background:rgba(8,11,18,.92);backdrop-filter:blur(20px) saturate(1.3);
+  border-bottom:1px solid var(--border);
+  padding:.9rem 5vw;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  transition:box-shadow .3s;
+}
+.filter-bar.scrolled{box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.filter-label{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--txd);margin-right:.4rem;
+}
+.filter-btn{
+  font-family:'Fira Code',monospace;font-size:.55rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:.3rem .85rem;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  color:var(--txm);border-radius:20px;cursor:pointer;
+  transition:all .22s;
+}
+.filter-btn:hover{border-color:var(--A);color:var(--A)}
+.filter-btn.active{background:var(--A);border-color:var(--A);color:var(--bg);font-weight:700}
+.filter-count{
+  margin-left:auto;font-family:'Fira Code',monospace;font-size:.52rem;
+  letter-spacing:.1em;color:var(--txd);
+}
+.filter-count span{color:var(--A);font-weight:700}
+
+/* PROJECTS GRID */
+.proj-section{padding:3rem 5vw 6rem;position:relative;z-index:2}
+.pg{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1px;background:var(--border);
+}
+
+/* PROJECT CARD */
+.pc{
+  background:var(--bg);padding:2rem;
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:background .35s,opacity .35s,transform .35s;
+}
+.pc.hidden{opacity:0;pointer-events:none;transform:scale(.97);height:0;padding:0;overflow:hidden}
+.pc::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--glow1),transparent 60%);
+  opacity:0;transition:opacity .4s;
+}
+.pc::after{
+  content:'';position:absolute;
+  top:-60px;right:-60px;width:120px;height:120px;border-radius:50%;
+  background:var(--A);filter:blur(60px);opacity:0;
+  transition:opacity .4s,transform .4s;transform:scale(.5);
+}
+.pc:hover{background:var(--surface)}
+.pc:hover::before{opacity:1}
+.pc:hover::after{opacity:.1;transform:scale(1)}
+.pc-corner{
+  position:absolute;top:0;left:0;width:0;height:0;
+  border-top:2px solid var(--A);border-left:2px solid var(--A);
+  transition:width .4s,height .4s;
+}
+.pc:hover .pc-corner{width:24px;height:24px}
+
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.9rem}
+.pc-num{
+  font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.16em;
+  color:var(--txd);transition:color .5s;
+}
+.pc-num::before{content:'// ';color:var(--F)}
+.pc-status{
+  font-family:'Fira Code',monospace;font-size:.48rem;letter-spacing:.1em;
+  text-transform:uppercase;display:flex;align-items:center;gap:.32rem;
+}
+.sdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.s-live .sdot{background:#4ade80;box-shadow:0 0 6px #4ade80;animation:livePulse 2s ease-in-out infinite}
+.s-live{color:#4ade80}
+.s-wip  .sdot{background:var(--A)}
+.s-wip {color:var(--A)}
+.s-plan .sdot{background:var(--txd)}
+.s-plan{color:var(--txd)}
+@keyframes livePulse{0%,100%{box-shadow:0 0 6px #4ade80}50%{box-shadow:0 0 12px #4ade80}}
+
+.pc-icon{
+  width:42px;height:42px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  margin-bottom:1rem;transition:all .3s;
+}
+.pc:hover .pc-icon{border-color:var(--A);background:rgba(96,165,250,.08)}
+
+.pc-title{
+  font-family:'Fira Code',monospace;font-size:.95rem;font-weight:500;
+  margin-bottom:.55rem;color:var(--tx);transition:color .3s;
+  line-height:1.3;
+}
+.pc:hover .pc-title{color:var(--A)}
+.pc-desc{font-size:.83rem;color:var(--txm);line-height:1.7;margin-bottom:1.2rem}
+
+.pc-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1.2rem}
+.pct{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.05em;
+  padding:.18rem .55rem;background:rgba(255,255,255,.04);
+  color:var(--txd);border:1px solid var(--border);border-radius:4px;transition:all .2s;
+}
+.pc:hover .pct{color:var(--txm)}
+
+.pc-links{display:flex;gap:.6rem;margin-top:auto}
+.pcl{
+  font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.08em;
+  text-transform:uppercase;text-decoration:none;
+  display:flex;align-items:center;gap:.3rem;
+  padding:.35rem .8rem;border-radius:5px;
+  transition:all .22s;
+}
+.pcl-demo{background:var(--A);color:var(--bg);font-weight:700}
+.pcl-demo:hover{box-shadow:0 0 16px var(--A);transform:translateY(-2px)}
+.pcl-code{border:1px solid var(--border);color:var(--txm)}
+.pcl-code:hover{border-color:var(--A);color:var(--A)}
+.pcl-none{border:1px solid var(--txd);color:var(--txd);opacity:.4;cursor:default;pointer-events:none}
+
+/* FEATURED CARD (first project, full width) */
+.pc.featured{
+  grid-column:1/-1;
+  display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;
+  padding:2.5rem 2.5rem;
+}
+.pc.featured .pc-featured-right{
+  display:flex;flex-direction:column;justify-content:center;
+  border-left:1px solid var(--border);padding-left:2.5rem;
+}
+.pc.featured .pc-long-desc{
+  font-size:.9rem;color:var(--txm);line-height:1.85;margin-bottom:1.4rem;
+}
+.featured-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--D);border:1px solid currentColor;
+  padding:.2rem .65rem;border-radius:30px;margin-bottom:1rem;
+}
+.featured-badge::before{content:'★';font-size:.45rem}
+
+/* EMPTY STATE */
+.empty-state{
+  grid-column:1/-1;padding:4rem;text-align:center;
+}
+.empty-state p{
+  font-family:'Fira Code',monospace;font-size:.75rem;
+  color:var(--txd);letter-spacing:.1em;
+}
+
+/* REVEAL */
+.rev{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.rev.vis{opacity:1;transform:translateY(0)}
+
+/* MODAL */
+.mov{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);
+  z-index:800;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;padding:1.5rem;
+}
+.mov.open{opacity:1;pointer-events:all}
+.mo{
+  background:var(--bg2);border:1px solid var(--border);max-width:600px;width:100%;
+  border-radius:12px;padding:2.5rem;position:relative;
+  transform:translateY(20px);transition:transform .3s;max-height:90vh;overflow-y:auto;
+}
+.mov.open .mo{transform:translateY(0)}
+.mo::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--A),var(--E));border-radius:12px 12px 0 0;
+}
+.mx{
+  position:absolute;top:1rem;right:1rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  color:var(--txm);cursor:pointer;border-radius:6px;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;
+  transition:all .2s;
+}
+.mx:hover{background:rgba(255,255,255,.1);color:var(--tx)}
+.mo-tag{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--A);margin-bottom:.7rem;display:block;
+}
+.mo-title{
+  font-family:'Fira Code',monospace;font-size:1.1rem;font-weight:500;
+  margin-bottom:1rem;color:var(--tx);
+}
+.mo-desc{font-size:.88rem;color:var(--txm);line-height:1.85;margin-bottom:1.4rem}
+.mo-tags{display:flex;flex-wrap:wrap;gap:.32rem;margin-bottom:1.4rem}
+.mo-links{display:flex;gap:.6rem;flex-wrap:wrap}
+
+/* STATS ROW */
+.stats-row{
+  display:flex;gap:0;background:var(--surface);border:1px solid var(--border);
+  margin-bottom:1px;
+}
+.stat-item{
+  flex:1;padding:1.8rem 2rem;border-right:1px solid var(--border);
+  position:relative;
+}
+.stat-item:last-child{border-right:none}
+.stat-n{
+  font-family:'Fira Code',monospace;font-size:2rem;font-weight:700;
+  color:var(--A);line-height:1;display:block;margin-bottom:.3rem;
+}
+.stat-l{font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--txd)}
+
+/* RESPONSIVE */
+@media(max-width:820px){
+  .pc.featured{grid-template-columns:1fr;gap:1.5rem}
+  .pc.featured .pc-featured-right{border-left:none;border-top:1px solid var(--border);padding-left:0;padding-top:1.5rem}
+  .stats-row{flex-wrap:wrap}
+  .stat-item{flex:1 0 50%;border-right:1px solid var(--border)}
+}
+@media(max-width:540px){
+  .pg{grid-template-columns:1fr}
+  .stats-row{flex-direction:column}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<div class="prog"><div class="prog-fill" id="progFill"></div></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">
+    Tapish<span class="sep">.</span><span class="sep">/</span><span class="page">projects</span>
+  </a>
+  <a href="index.html#projects" class="nav-back">← back to portfolio</a>
+</nav>
+
+<!-- HERO BANNER -->
+<section class="page-hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="page-eyebrow">Projects</div>
+    <h1 class="page-title">Things I've <em>built.</em></h1>
+    <p class="page-sub">A full archive of projects — side experiments, shipped products, and works in progress. Each one taught me something.</p>
+    <div class="page-meta">
+      <span><div class="meta-dot"></div>actively maintained</span>
+      <span>// sorted by status</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS ROW -->
+<div class="stats-row rev" id="statsRow">
+  <div class="stat-item">
+    <span class="stat-n" id="sTotal">0</span>
+    <span class="stat-l">Total Projects</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-n" id="sLive">0</span>
+    <span class="stat-l">Live / Shipped</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-n" id="sWip">0</span>
+    <span class="stat-l">In Progress</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-n" id="sPlanned">0</span>
+    <span class="stat-l">Planned</span>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <span class="filter-label">filter //</span>
+  <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn" data-filter="live" onclick="setFilter('live',this)">Live</button>
+  <button class="filter-btn" data-filter="wip" onclick="setFilter('wip',this)">In Progress</button>
+  <button class="filter-btn" data-filter="planned" onclick="setFilter('planned',this)">Planned</button>
+  <span class="filter-count" id="filterCount"><span id="visibleCount">0</span> projects</span>
+</div>
+
+<!-- PROJECTS GRID -->
+<section class="proj-section">
+  <div class="pg" id="pg"></div>
+</section>
+
+<!-- MODAL -->
+<div class="mov" id="mov" onclick="if(event.target.id==='mov')closeMd()">
+  <div class="mo">
+    <button class="mx" onclick="closeMd()">✕</button>
+    <span class="mo-tag" id="mTag"></span>
+    <div class="mo-title" id="mTitle"></div>
+    <div class="mo-desc" id="mDesc"></div>
+    <div class="mo-tags" id="mTags"></div>
+    <div class="mo-links" id="mLinks"></div>
+  </div>
+</div>
+
+<script>
+/* ══ PROJECT DATA ══
+   Reads from localStorage (same key as index.html admin panel)
+   so any project you add in the admin panel also appears here.
+   Falls back to built-in defaults if nothing is stored.
+*/
+
+const DEFAULT_PROJ = [
+  {
+    n:'01',t:'Dev Tracker',
+    d:'Track learning goals and celebrate milestones.',
+    fd:'A clean accountability tool built with vanilla JS. Daily check-ins, streak tracking, and milestone celebrations — built to keep me honest.',
+    tags:['JavaScript','CSS','localStorage'],s:'live',
+    demo:'#',code:'#',icon:'📊',featured:true
+  },
+  {
+    n:'02',t:'Portfolio v1',
+    d:'First portfolio — humble HTML/CSS.',
+    fd:'Two pages, zero frameworks, infinite motivation. My entry point into actually shipping something.',
+    tags:['HTML','CSS'],s:'live',
+    demo:'#',code:'#',icon:'🌐'
+  },
+  {
+    n:'03',t:'Weather Dashboard',
+    d:'React app pulling live weather data.',
+    fd:'5-day forecasts and city search. Built while learning React by building something real rather than following tutorials.',
+    tags:['React','API','OpenWeather'],s:'wip',
+    demo:'#',code:'#',icon:'🌤️'
+  },
+  {
+    n:'04',t:'CLI Task Manager',
+    d:'Command-line productivity tool in Node.js.',
+    fd:'Lightweight, fast, with priorities and due dates. The kind of tool I actually use every day.',
+    tags:['Node.js','CLI','JSON'],s:'live',
+    demo:'#',code:'#',icon:'⚡'
+  },
+  {
+    n:'05',t:'Static Blog Engine',
+    d:'Markdown-to-HTML generator. No frameworks.',
+    fd:'Write markdown, get a beautiful site. Planned to reduce friction between writing and publishing.',
+    tags:['Node.js','Markdown','Build Tool'],s:'planned',
+    demo:null,code:null,icon:'📝'
+  },
+  {
+    n:'06',t:'AI Writing Companion',
+    d:'AI-assisted writing and ideation workflows.',
+    fd:'Anthropic APIs to help brainstorm and break creative blocks. Currently exploring the right UX model.',
+    tags:['AI/LLM','React','Claude API'],s:'wip',
+    demo:null,code:'#',icon:'🤖'
+  }
+];
+
+function getProjects() {
+  try {
+    const raw = localStorage.getItem('Tapish_data');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.proj && parsed.proj.length) {
+        // merge icon/featured from defaults by index
+        return parsed.proj.map((p,i) => ({
+          icon: DEFAULT_PROJ[i]?.icon || '📁',
+          featured: i === 0,
+          ...p
+        }));
+      }
+    }
+  } catch(e){}
+  return DEFAULT_PROJ;
+}
+
+let allProjects = getProjects();
+let currentFilter = 'all';
+
+/* ── STATS ── */
+function renderStats(projs) {
+  const live   = projs.filter(p => p.s === 'live').length;
+  const wip    = projs.filter(p => p.s === 'wip').length;
+  const plan   = projs.filter(p => p.s === 'planned').length;
+
+  animCount(document.getElementById('sTotal'),  projs.length, 900);
+  animCount(document.getElementById('sLive'),   live,  900);
+  animCount(document.getElementById('sWip'),    wip,   900);
+  animCount(document.getElementById('sPlanned'),plan,  900);
+}
+
+function animCount(el, target, dur) {
+  if(!el) return;
+  let start = null;
+  function step(ts) {
+    if(!start) start = ts;
+    const progress = Math.min((ts - start) / dur, 1);
+    el.textContent = Math.floor(progress * target);
+    if(progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── RENDER CARDS ── */
+function statusLabel(s) {
+  if(s === 'live')    return '<span class="pc-status s-live"><span class="sdot"></span>live</span>';
+  if(s === 'wip')     return '<span class="pc-status s-wip"><span class="sdot"></span>in progress</span>';
+  if(s === 'planned') return '<span class="pc-status s-plan"><span class="sdot"></span>planned</span>';
+  return '';
+}
+
+function renderGrid(filter) {
+  const pg = document.getElementById('pg');
+  const visible = allProjects.filter(p => filter === 'all' || p.s === filter);
+  document.getElementById('visibleCount').textContent = visible.length;
+
+  pg.innerHTML = '';
+
+  if(!visible.length) {
+    pg.innerHTML = `<div class="empty-state"><p>// no_projects_match_filter("${filter}")</p></div>`;
+    return;
+  }
+
+  visible.forEach((p, idx) => {
+    const isFeatured = p.featured && filter === 'all' && idx === 0;
+    const card = document.createElement('div');
+    card.className = 'pc rev' + (isFeatured ? ' featured' : '');
+    card.onclick = () => openModal(p);
+
+    const demoBtn = p.demo
+      ? `<a href="${p.demo}" target="_blank" rel="noopener" class="pcl pcl-demo" onclick="event.stopPropagation()">Demo ↗</a>`
+      : `<span class="pcl pcl-none">No Demo</span>`;
+    const codeBtn = p.code
+      ? `<a href="${p.code}" target="_blank" rel="noopener" class="pcl pcl-code" onclick="event.stopPropagation()">Code ↗</a>`
+      : '';
+
+    const tags = (p.tags||[]).map(t=>`<span class="pct">${t}</span>`).join('');
+
+    if(isFeatured) {
+      card.innerHTML = `
+        <div class="pc-corner"></div>
+        <div>
+          <div class="pc-top">
+            <span class="pc-num">${p.n}</span>
+            ${statusLabel(p.s)}
+          </div>
+          <div class="pc-icon">${p.icon||'📁'}</div>
+          <div class="pc-title">${p.t}</div>
+          <div class="pc-desc">${p.d}</div>
+          <div class="pc-tags">${tags}</div>
+          <div class="pc-links">${demoBtn}${codeBtn}</div>
+        </div>
+        <div class="pc-featured-right">
+          <span class="featured-badge">Featured Project</span>
+          <div class="pc-long-desc">${p.fd||p.d}</div>
+          <div class="pc-links">${demoBtn}${codeBtn}</div>
+        </div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="pc-corner"></div>
+        <div class="pc-top">
+          <span class="pc-num">${p.n}</span>
+          ${statusLabel(p.s)}
+        </div>
+        <div class="pc-icon">${p.icon||'📁'}</div>
+        <div class="pc-title">${p.t}</div>
+        <div class="pc-desc">${p.d}</div>
+        <div class="pc-tags">${tags}</div>
+        <div class="pc-links">${demoBtn}${codeBtn}</div>
+      `;
+    }
+
+    pg.appendChild(card);
+  });
+
+  // trigger reveal
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#pg .rev').forEach((el,i) => {
+      setTimeout(() => el.classList.add('vis'), i * 60);
+    });
+  });
+}
+
+/* ── FILTER ── */
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(f);
+}
+
+/* ── MODAL ── */
+function openModal(p) {
+  const tags = (p.tags||[]).map(t=>`<span class="pct">${t}</span>`).join('');
+  document.getElementById('mTag').textContent = `project_${p.n}`;
+  document.getElementById('mTitle').textContent = p.t;
+  document.getElementById('mDesc').textContent = p.fd || p.d;
+  document.getElementById('mTags').innerHTML = tags;
+
+  const links = [];
+  if(p.demo) links.push(`<a href="${p.demo}" target="_blank" rel="noopener" class="pcl pcl-demo">Live Demo ↗</a>`);
+  if(p.code) links.push(`<a href="${p.code}" target="_blank" rel="noopener" class="pcl pcl-code">Source Code ↗</a>`);
+  document.getElementById('mLinks').innerHTML = links.join('') || '<span style="font-family:\'Fira Code\',monospace;font-size:.56rem;color:var(--txd)">// no links available yet</span>';
+
+  document.getElementById('mov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMd() {
+  document.getElementById('mov').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeMd(); });
+
+/* ── SCROLL & NAV HIDE ── */
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  const nav = document.getElementById('nav');
+  if(y > lastY && y > 120) nav.classList.add('hide');
+  else nav.classList.remove('hide');
+  lastY = y;
+
+  const total = document.body.scrollHeight - window.innerHeight;
+  document.getElementById('progFill').style.width = (y / total * 100) + '%';
+
+  const fb = document.getElementById('filterBar');
+  fb.classList.toggle('scrolled', y > 80);
+}, {passive:true});
+
+/* ── REVEAL OBSERVER ── */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold:.1});
+document.querySelectorAll('.rev').forEach(el => ro.observe(el));
+
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+const ring = document.getElementById('curRing');
+document.addEventListener('mousemove', e => {
+  cur.style.left  = e.clientX + 'px';
+  cur.style.top   = e.clientY + 'px';
+  ring.style.left = e.clientX + 'px';
+  ring.style.top  = e.clientY + 'px';
+}, {passive:true});
+
+/* ── INIT ── */
+renderStats(allProjects);
+renderGrid('all');
+
+// observe stats row
+setTimeout(() => {
+  document.querySelectorAll('.rev').forEach(el => ro.observe(el));
+}, 50);
+</script>
+</body>
+</html>
