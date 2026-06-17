@@ -426,30 +426,30 @@ section::before{
   perspective:1400px;
   perspective-origin:50% 40%;
   display:flex;justify-content:stretch;align-items:center;
-  gap:6px;
-  padding:3rem 5vw 4rem;
+  gap:10px;
+  padding:2.5rem 5vw 3.5rem;
   position:relative;
   width:100%;
   overflow:hidden;
 }
 
-/* shared skew — both panels fill available width */
+/* shared skew — both panels share the exact same tilt + size so they line up at rest */
 .book-left,.book-right{
   flex:1;
   min-width:0;
-  height:clamp(260px,36vw,420px);
+  aspect-ratio:8/16;
   border:1px solid var(--border);
-  border-radius:6px;
+  border-radius:8px;
   overflow:hidden;
   position:relative;
-  transform:skewY(-6deg) skewX(2deg);
+  transform:skewY(-4deg) skewX(1.5deg);
   box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);
 }
 
 /* ── LEFT: RESUME — static, just the rhombus tilt ── */
 .book-left{
   background:var(--bg2);
-  transform:skewY(-6deg) skewX(2deg);
+  transform:skewY(-4deg) skewX(1.5deg);
 }
 .book-left::before{
   content:'';position:absolute;inset:0;
@@ -473,7 +473,7 @@ section::before{
 .resume-overlay{
   position:absolute;inset:0;z-index:5;
   display:flex;align-items:flex-end;justify-content:flex-start;
-  padding:.75rem 1rem;
+  padding:.85rem 1.1rem;
 }
 .resume-overlay-btn{
   font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.1em;
@@ -494,35 +494,35 @@ section::before{
   Animation: photo panel pops out from top-left corner (translateZ positive,
   rotateX negative = tip toward viewer from top, rotateY positive = tip left edge toward viewer)
   then sinks into bottom-right corner (translateZ negative, rotates reverse).
-  The skewY(-6deg) base stays so the rhombus shape is always maintained.
+  The skewY(-4deg) base stays so the rhombus shape always matches the resume panel at rest (0%/100%).
 */
 @keyframes photoCornerFloat{
   0%{
-    transform:skewY(-6deg) skewX(2deg)
+    transform:skewY(-4deg) skewX(1.5deg)
               rotateX(0deg) rotateY(0deg)
               translateZ(0px);
     box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);
   }
   30%{
-    transform:skewY(-6deg) skewX(2deg)
-              rotateX(-18deg) rotateY(14deg)
-              translateZ(60px) translate(-8px,-12px);
+    transform:skewY(-4deg) skewX(1.5deg)
+              rotateX(-14deg) rotateY(11deg)
+              translateZ(45px) translate(-6px,-9px);
     box-shadow:0 50px 120px rgba(0,0,0,.75),0 0 50px var(--glow1),0 0 0 1px rgba(96,165,250,.2);
   }
   50%{
-    transform:skewY(-6deg) skewX(2deg)
-              rotateX(-22deg) rotateY(16deg)
-              translateZ(80px) translate(-10px,-16px);
+    transform:skewY(-4deg) skewX(1.5deg)
+              rotateX(-17deg) rotateY(12deg)
+              translateZ(60px) translate(-8px,-12px);
     box-shadow:0 60px 140px rgba(0,0,0,.8),0 0 70px var(--glow1),0 0 0 1px rgba(96,165,250,.3);
   }
   80%{
-    transform:skewY(-6deg) skewX(2deg)
-              rotateX(16deg) rotateY(-12deg)
-              translateZ(-40px) translate(8px,10px);
+    transform:skewY(-4deg) skewX(1.5deg)
+              rotateX(12deg) rotateY(-9deg)
+              translateZ(-30px) translate(6px,8px);
     box-shadow:0 10px 40px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.02);
   }
   100%{
-    transform:skewY(-6deg) skewX(2deg)
+    transform:skewY(-4deg) skewX(1.5deg)
               rotateX(0deg) rotateY(0deg)
               translateZ(0px);
     box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);
@@ -551,11 +551,11 @@ section::before{
 
 /* divider spine between panels */
 .book-spine{
-  width:4px;height:clamp(260px,36vw,420px);
-  flex-shrink:0;align-self:center;
+  width:4px;
+  flex-shrink:0;align-self:stretch;
   background:linear-gradient(180deg,transparent,var(--A),var(--E),transparent);
   opacity:.35;border-radius:2px;
-  transform:skewY(-6deg);
+  transform:skewY(-4deg);
 }
 
 /* ambient glow behind the whole thing */
@@ -570,9 +570,7 @@ section::before{
 
 /* responsive */
 @media(max-width:640px){
-  .book-panel-wrap{perspective:900px;gap:4px;padding:2rem 3vw 3rem}
-  .book-left,.book-right{height:clamp(190px,56vw,300px)}
-  .book-spine{height:clamp(190px,56vw,300px)}
+  .book-panel-wrap{perspective:900px;gap:6px;padding:2rem 4vw 3rem}
 }
 
 /* ══ PROJECTS ══ */
