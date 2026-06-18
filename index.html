@@ -462,13 +462,20 @@ section::before{
   background:linear-gradient(225deg,var(--bg) 45%,transparent 46%);
   z-index:4;pointer-events:none;
 }
-.resume-inner{width:100%;height:100%;overflow:hidden;position:relative}
+.resume-inner{
+  position:absolute;
+  top:-8%;left:-4%;
+  width:108%;height:116%;
+  overflow:hidden;
+}
 .resume-inner iframe{
-  width:150%;height:150%;border:none;
-  transform:scale(.667) translateX(-25%) translateY(-25%);
-  transform-origin:top left;
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  border:none;
   pointer-events:none;
   filter:brightness(.88) contrast(1.05);
+  transform:skewY(4deg) skewX(-1.5deg);
+  transform-origin:center center;
 }
 .resume-overlay{
   position:absolute;inset:0;z-index:5;
@@ -534,8 +541,14 @@ section::before{
   pointer-events:none;z-index:2;
 }
 .book-right img{
-  width:100%;height:100%;object-fit:cover;object-position:center top;
-  display:block;filter:brightness(.9) saturate(1.1);
+  position:absolute;
+  top:-8%;left:-4%;
+  width:108%;height:116%;
+  object-fit:cover;object-position:center top;
+  display:block;
+  filter:brightness(.9) saturate(1.1);
+  transform:skewY(4deg) skewX(-1.5deg);
+  transform-origin:center center;
   transition:filter .4s;
 }
 
@@ -2513,7 +2526,16 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   <div class="book-panel-wrap rev" style="margin-top:4rem;position:relative">
     <div class="book-panel-glow"></div>
 
-    <!-- LEFT: RESUME — static rhombus -->
+    <!-- LEFT: PHOTO — 3D corner animation -->
+    <div class="book-right">
+      <img src="Tapish_Resume_Photo.jpg" alt="Tapish">
+      <div class="book-label">// tapish</div>
+    </div>
+
+    <!-- SPINE -->
+    <div class="book-spine"></div>
+
+    <!-- RIGHT: RESUME — static rhombus -->
     <div class="book-left">
       <div class="resume-inner">
         <iframe
@@ -2526,15 +2548,6 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
         <a href="Tapish_Resume.pdf" download class="resume-overlay-btn">↓ download resume</a>
       </div>
       <div class="book-label">// resume</div>
-    </div>
-
-    <!-- SPINE -->
-    <div class="book-spine"></div>
-
-    <!-- RIGHT: PHOTO — 3D corner animation -->
-    <div class="book-right">
-      <img src="Tapish_Resume_Photo.jpg" alt="Tapish">
-      <div class="book-label">// tapish</div>
     </div>
 
   </div>
