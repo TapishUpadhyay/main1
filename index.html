@@ -2951,7 +2951,7 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
 </section>
 
 <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
-<script src="https://unpkg.com/chess.js@0.13.4/chess.js"></script>
+<script src="https://unpkg.com/chess.js@0.11.0/chess.js"></script>
 <script src="https://unpkg.com/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
 <script>
@@ -2963,6 +2963,21 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   const watchLink = document.getElementById('chessWatchLink');
   let board = null;
   let lastPgn = null;
+
+  // Guard: if chess.js or chessboard.js failed to load (e.g. CDN issue, version
+  // mismatch shipping ES module syntax to a classic script tag), fail loudly
+  // and visibly instead of leaving the card silently stuck.
+  if(typeof window.Chess !== 'function' || typeof window.Chessboard !== 'function'){
+    console.error('Chess.com widget: required library (chess.js or chessboard.js) failed to load.');
+    if(labelEl) labelEl.textContent = 'UNAVAILABLE';
+    if(noteEl) noteEl.textContent = "Couldn't load chess board library. Check back on my profile.";
+    if(watchLink){
+      watchLink.style.display = 'inline-flex';
+      watchLink.href = `https://www.chess.com/member/${CHESS_USERNAME}`;
+    }
+    return;
+  }
+
 
   function setState(state, note, gameUrl){
     const box = document.getElementById('chessLiveBox');
