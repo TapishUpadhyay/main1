@@ -1607,6 +1607,227 @@ html:not([data-mode="personal"]) body #spotify.spotify-section{
   display:none !important;
 }
 
+/* ══ CHESS.COM SECTION — personal mode only ══ */
+.chess-nav-item{display:none}
+[data-mode="personal"] .chess-nav-item{display:list-item}
+
+#chess.chess-section{
+  display:none;
+  position:relative;
+  z-index:60;
+  background:transparent;
+  padding:60px 24px 90px;
+}
+[data-mode="personal"] #chess.chess-section{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+
+#chess .chess-wrap{
+  width:min(100%,1180px);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  align-items:stretch;
+  gap:1.2rem;
+}
+
+#chess .chess-container{
+  position:relative;
+  width:100%;
+  text-align:center;
+  padding:2.4rem 2rem;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 50% 0%,rgba(244,196,48,.16),transparent 45%),
+    linear-gradient(135deg,rgba(18,18,18,.96),rgba(13,10,4,.94));
+  box-shadow:0 34px 95px rgba(0,0,0,.58),0 0 60px rgba(244,196,48,.08),inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter:blur(22px) saturate(1.25);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#chess .chess-container::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 38%);
+  z-index:-1;
+}
+#chess .chess-label{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.55rem;
+  font-family:'Fira Code',monospace;
+  font-size:.64rem;
+  letter-spacing:.2em;
+  color:#f4c430;
+  font-weight:700;
+  text-transform:uppercase;
+  margin-bottom:.6rem;
+}
+#chess .chess-label::before{
+  content:'';
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#f4c430;
+  box-shadow:0 0 16px #f4c430;
+}
+#chess .chess-container h2{
+  font-family:'Nunito',sans-serif;
+  color:#f5f5f5;
+  font-size:clamp(1.5rem,4vw,2.5rem);
+  line-height:1.1;
+  letter-spacing:-.04em;
+  margin-bottom:.7rem;
+  font-weight:900;
+}
+#chess .chess-note{
+  color:rgba(245,245,245,.62);
+  font-size:.92rem;
+  line-height:1.65;
+  max-width:480px;
+  margin:0 auto 1.6rem;
+}
+#chess .chess-challenge-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.95rem 1.8rem;
+  border-radius:50px;
+  background:linear-gradient(135deg,#f4c430,#d9a521);
+  color:#1a1305;
+  font-family:'Fira Code',monospace;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  text-decoration:none;
+  box-shadow:0 18px 45px rgba(244,196,48,.3);
+  transition:transform .25s ease,box-shadow .25s ease;
+  margin:0 auto;
+}
+#chess .chess-challenge-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 22px 55px rgba(244,196,48,.42);
+}
+#chess .chess-profile-link{
+  display:block;
+  margin-top:1.1rem;
+  color:#f4c430;
+  text-decoration:none;
+  font-family:'Fira Code',monospace;
+  font-size:.65rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:transform .25s ease,color .25s ease;
+}
+#chess .chess-profile-link:hover{color:#fff}
+
+/* ══ Live board card ══ */
+#chess .chess-live-box{
+  position:relative;
+  width:100%;
+  padding:1.6rem;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.075);
+  background:
+    radial-gradient(circle at top left,rgba(76,201,141,.13),transparent 40%),
+    linear-gradient(145deg,rgba(18,18,18,.96),rgba(7,14,10,.92));
+  box-shadow:0 34px 95px rgba(0,0,0,.5);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+#chess .chess-live-box[data-state="offline"]{
+  background:
+    radial-gradient(circle at top left,rgba(150,150,150,.08),transparent 40%),
+    linear-gradient(145deg,rgba(18,18,18,.96),rgba(10,10,10,.92));
+}
+#chess .chess-live-box[data-state="live-fast"],
+#chess .chess-live-box[data-state="live-daily"]{
+  background:
+    radial-gradient(circle at top left,rgba(76,201,141,.18),transparent 40%),
+    linear-gradient(145deg,rgba(18,18,18,.96),rgba(7,14,10,.92));
+}
+#chess .chess-live-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.55rem;
+  font-family:'Fira Code',monospace;
+  font-size:.64rem;
+  letter-spacing:.2em;
+  color:#4ac98d;
+  font-weight:700;
+  text-transform:uppercase;
+  margin-bottom:.55rem;
+}
+#chess .chess-live-box[data-state="offline"] .chess-live-label{color:rgba(245,245,245,.4)}
+#chess .chess-live-label::before{
+  content:'';
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:currentColor;
+  box-shadow:0 0 16px currentColor;
+}
+#chess .chess-live-box[data-state="live-fast"] .chess-live-label::before,
+#chess .chess-live-box[data-state="live-daily"] .chess-live-label::before{
+  animation:chessPulse 1.6s ease-in-out infinite;
+}
+@keyframes chessPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.48}}
+#chess .chess-live-box h2{
+  font-family:'Nunito',sans-serif;
+  color:#f5f5f5;
+  font-size:clamp(1.35rem,3vw,2.1rem);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  margin-bottom:.55rem;
+  font-weight:900;
+}
+#chess .chess-live-note{
+  color:rgba(245,245,245,.62);
+  font-size:.85rem;
+  line-height:1.6;
+  margin-bottom:1rem;
+}
+#chess .chess-board-wrap{
+  width:100%;
+  max-width:360px;
+  margin:0 auto 1rem;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+#chess .chess-watch-link{
+  display:inline-flex;
+  margin-top:auto;
+  color:#4ac98d;
+  text-decoration:none;
+  font-family:'Fira Code',monospace;
+  font-size:.65rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:transform .25s ease,color .25s ease;
+}
+#chess .chess-watch-link:hover{color:#fff;transform:translateX(5px)}
+
+@media(max-width:900px){
+  #chess .chess-wrap{grid-template-columns:1fr}
+}
+@media(max-width:820px){
+  #chess.chess-section{padding:40px 16px 60px}
+  #chess .chess-container,
+  #chess .chess-live-box{padding:1.8rem 1.3rem;border-radius:22px}
+}
+
 /* ══ IDEA CANVAS NAV ITEM — personal only ══ */
 .canvas-nav-item{display:none}
 html[data-mode="personal"] body .canvas-nav-item{display:list-item !important}
@@ -2533,6 +2754,7 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   <ul class="nav-links" id="navLinks">
     <li><a href="#about" data-num="01">About</a></li>
     <li class="spotify-nav-item"><a href="#spotify" data-num="02">Live</a></li>
+    <li class="chess-nav-item"><a href="#chess" data-num="02">Chess</a></li>
     <li class="canvas-nav-item"><a href="#idea-canvas" data-num="02">Ideas</a></li>
     <li><a href="#projects" data-num="03">Work</a></li>
     <li><a href="#future" data-num="04">Roadmap</a></li>
@@ -2672,6 +2894,163 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
 
   </div>
 </section>
+
+<!-- ════ CHESS.COM CHALLENGE + LIVE BOARD (personal mode only) ════ -->
+<section id="chess" class="chess-section rev">
+  <div class="chess-wrap">
+
+    <div class="chess-container">
+      <p class="chess-label">CHESS.COM</p>
+      <h2>Think You Can Beat Me?</h2>
+      <p class="chess-note">One click sends you straight to a new game against me on chess.com — pick your time control and fire away.</p>
+
+      <a
+        href="https://www.chess.com/play/online/new?opponent=TapishU"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="chess-challenge-btn"
+        aria-label="Challenge Tapish to a game on chess.com"
+      >
+        ♞ Challenge Me on Chess.com
+      </a>
+
+      <a
+        href="https://www.chess.com/member/TapishU"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="chess-profile-link"
+      >
+        View My Chess.com Profile →
+      </a>
+    </div>
+
+    <div class="chess-live-box" id="chessLiveBox">
+      <p class="chess-live-label" id="chessLiveLabel">CHECKING…</p>
+      <h2>Live Board</h2>
+      <p class="chess-live-note" id="chessLiveNote">Checking for an active game…</p>
+
+      <div class="chess-board-wrap" id="chessBoardWrap" style="display:none">
+        <div id="chessBoard"></div>
+      </div>
+
+      <a
+        href="https://www.chess.com/member/TapishU"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="chess-watch-link"
+        id="chessWatchLink"
+        style="display:none"
+      >
+        Watch Live on Chess.com →
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+<script src="https://unpkg.com/chess.js@0.13.4/chess.js"></script>
+<script src="https://unpkg.com/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<script>
+(function(){
+  const CHESS_USERNAME = "TapishU";
+  const labelEl = document.getElementById('chessLiveLabel');
+  const noteEl = document.getElementById('chessLiveNote');
+  const boardWrap = document.getElementById('chessBoardWrap');
+  const watchLink = document.getElementById('chessWatchLink');
+  let board = null;
+  let lastPgn = null;
+
+  function setState(state, note, gameUrl){
+    const box = document.getElementById('chessLiveBox');
+    box.dataset.state = state;
+
+    if(state === 'live-daily'){
+      labelEl.textContent = 'LIVE NOW';
+      noteEl.textContent = note || 'Active daily game in progress — board updates automatically.';
+      boardWrap.style.display = 'block';
+      watchLink.style.display = 'inline-flex';
+      if(gameUrl) watchLink.href = gameUrl;
+    } else if(state === 'live-fast'){
+      labelEl.textContent = 'PLAYING NOW';
+      noteEl.textContent = note || "I'm in a live game right now (rapid/blitz/bullet) — chess.com doesn't allow embedding those mid-game, but you can watch live on my profile.";
+      boardWrap.style.display = 'none';
+      watchLink.style.display = 'inline-flex';
+      watchLink.href = `https://www.chess.com/member/${CHESS_USERNAME}`;
+    } else if(state === 'offline'){
+      labelEl.textContent = 'OFFLINE';
+      noteEl.textContent = note || "Not playing right now — be the first to challenge me.";
+      boardWrap.style.display = 'none';
+      watchLink.style.display = 'none';
+    } else {
+      labelEl.textContent = 'CHECKING…';
+      noteEl.textContent = 'Checking for an active game…';
+      boardWrap.style.display = 'none';
+      watchLink.style.display = 'none';
+    }
+  }
+
+  function pgnToFen(pgn){
+    try{
+      const game = new Chess();
+      game.load_pgn(pgn, { sloppy: true });
+      return game.fen();
+    }catch(e){
+      return null;
+    }
+  }
+
+  function renderBoard(fen){
+    if(!board){
+      board = Chessboard('chessBoard', {
+        position: fen,
+        pieceTheme: 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/img/chesspieces/wikipedia/{piece}.png'
+      });
+    } else {
+      board.position(fen);
+    }
+  }
+
+  async function checkChessStatus(){
+    try{
+      const res = await fetch(`https://api.chess.com/pub/player/${CHESS_USERNAME}/games`);
+      if(!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      const games = data.games || [];
+
+      if(games.length === 0){
+        setState('offline');
+        return;
+      }
+
+      const dailyGame = games.find(g => g.time_class === 'daily' && g.pgn);
+
+      if(dailyGame){
+        if(dailyGame.pgn !== lastPgn){
+          lastPgn = dailyGame.pgn;
+          const fen = pgnToFen(dailyGame.pgn);
+          if(fen){
+            renderBoard(fen);
+            setState('live-daily', null, dailyGame.url);
+          } else {
+            setState('live-fast');
+          }
+        } else {
+          setState('live-daily', null, dailyGame.url);
+        }
+      } else {
+        setState('live-fast');
+      }
+    }catch(e){
+      setState('offline', 'Could not reach chess.com right now.');
+    }
+  }
+
+  checkChessStatus();
+  setInterval(checkChessStatus, 15000);
+})();
+</script>
 
 <!-- ════ IDEA CANVAS (personal mode only) ════ -->
 <section id="idea-canvas">
