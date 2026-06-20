@@ -1745,7 +1745,8 @@ html:not([data-mode="personal"]) body #spotify.spotify-section{
   display:flex;
   flex-direction:column;
 }
-#chess .chess-live-box[data-state="offline"]{
+#chess .chess-live-box[data-state="offline"],
+#chess .chess-live-box[data-state="error"]{
   background:
     radial-gradient(circle at top left,rgba(150,150,150,.08),transparent 40%),
     linear-gradient(145deg,rgba(18,18,18,.96),rgba(10,10,10,.92));
@@ -1768,7 +1769,8 @@ html:not([data-mode="personal"]) body #spotify.spotify-section{
   text-transform:uppercase;
   margin-bottom:.55rem;
 }
-#chess .chess-live-box[data-state="offline"] .chess-live-label{color:rgba(245,245,245,.4)}
+#chess .chess-live-box[data-state="offline"] .chess-live-label,
+#chess .chess-live-box[data-state="error"] .chess-live-label{color:rgba(245,245,245,.4)}
 #chess .chess-live-label::before{
   content:'';
   width:8px;
@@ -2983,6 +2985,12 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
       noteEl.textContent = note || "Not playing right now — be the first to challenge me.";
       boardWrap.style.display = 'none';
       watchLink.style.display = 'none';
+    } else if(state === 'error'){
+      labelEl.textContent = 'UNAVAILABLE';
+      noteEl.textContent = note || "Couldn't load live status right now. Check back on my profile.";
+      boardWrap.style.display = 'none';
+      watchLink.style.display = 'inline-flex';
+      watchLink.href = `https://www.chess.com/member/${CHESS_USERNAME}`;
     } else {
       labelEl.textContent = 'CHECKING…';
       noteEl.textContent = 'Checking for an active game…';
@@ -3012,11 +3020,31 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
     }
   }
 
+  async function fetchWithRetry(url, attempts){
+    let lastErr = null;
+    for(let i = 0; i < attempts; i++){
+      try{
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return await res.json();
+      }catch(e){
+        lastErr = e;
+        if(i < attempts - 1){
+          await new Promise(r => setTimeout(r, 600 * (i + 1)));
+        }
+      }
+    }
+    throw lastErr;
+  }
+
   async function checkChessStatus(){
     try{
-      const res = await fetch(`https://api.chess.com/pub/player/${CHESS_USERNAME}/games`);
-      if(!res.ok) throw new Error('bad response');
-      const data = await res.json();
+      // Correct endpoint: current in-progress games (Daily only — chess.com's
+      // PubAPI does not expose Rapid/Blitz/Bullet games while they're in progress)
+      const data = await fetchWithRetry(
+        `https://api.chess.com/pub/player/${CHESS_USERNAME}/games`,
+        3
+      );
       const games = data.games || [];
 
       if(games.length === 0){
@@ -3043,7 +3071,8 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
         setState('live-fast');
       }
     }catch(e){
-      setState('offline', 'Could not reach chess.com right now.');
+      console.warn('Chess.com status check failed:', e);
+      setState('error');
     }
   }
 
