@@ -3109,15 +3109,27 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
     if(!isLive && board) board.start();
   }
 
+  var pendingFen = null;
+  var rafId = null;
   function renderBoard(fen, orientation){
     if(!board){
       board = Chessboard('chessBoard', {
         position    : fen,
         orientation : orientation || 'white',
-        pieceTheme  : 'https://lichess1.org/assets/piece/cburnett/{piece}.svg'
+        pieceTheme  : 'https://lichess1.org/assets/piece/cburnett/{piece}.svg',
+        draggable   : false,
+        showNotation: true
       });
-    } else {
-      board.position(fen, true);
+      return;
+    }
+    // Throttle to one DOM update per animation frame
+    pendingFen = fen;
+    if(!rafId){
+      rafId = requestAnimationFrame(function(){
+        if(pendingFen) board.position(pendingFen, false);
+        pendingFen = null;
+        rafId = null;
+      });
     }
   }
 
@@ -3129,30 +3141,25 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
     if(playerB) playerB.textContent = black || 'Black';
     setState('live');
 
-    fetch('https://lichess.org/api/stream/game/' + gameId, {
-      headers : { 'Accept': 'application/x-ndjson' },
-      signal  : activeAbort.signal
-    }).then(function(res){
-      if(!res.ok) throw new Error('Stream ' + res.status);
-      var reader  = res.body.getReader();
-      var decoder = new TextDecoder();
-      var buf     = '';
-
-      function read(){
-        reader.read().then(function(chunk){
-          if(chunk.done){
-            // stream ended — game over, restart poll
-            currentGameId = null;
-            clearTimeout(pollTimer);
-            pollTimer = setTimeout(pollStatus, 4000);
-            return;
-          }
+    (async function(){
+      try{
+        var res = await fetch('https://lichess.org/api/stream/game/' + gameId, {
+          headers : { 'Accept': 'application/x-ndjson' },
+          signal  : activeAbort.signal
+        });
+        if(!res.ok) throw new Error('Stream ' + res.status);
+        var reader  = res.body.getReader();
+        var decoder = new TextDecoder();
+        var buf     = '';
+        while(true){
+          var chunk = await reader.read();
+          if(chunk.done) break;
           buf += decoder.decode(chunk.value, { stream:true });
           var lines = buf.split('\n');
           buf = lines.pop();
-          lines.forEach(function(line){
-            var trimmed = line.trim();
-            if(!trimmed) return;
+          for(var i=0; i<lines.length; i++){
+            var trimmed = lines[i].trim();
+            if(!trimmed) continue;
             try{
               var data = JSON.parse(trimmed);
               if(data.fen){
@@ -3166,24 +3173,21 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
                 pollTimer = setTimeout(pollStatus, 4000);
               }
             }catch(e){}
-          });
-          read();
-        }).catch(function(e){
-          if(e.name !== 'AbortError'){
-            console.warn('Lichess read error:', e);
-            setState('error');
-            pollTimer = setTimeout(pollStatus, 10000);
           }
-        });
+        }
+        // stream closed cleanly — game ended
+        currentGameId = null;
+        clearTimeout(pollTimer);
+        pollTimer = setTimeout(pollStatus, 4000);
+      }catch(e){
+        if(e.name !== 'AbortError'){
+          console.warn('Lichess stream error:', e);
+          setState('error');
+          clearTimeout(pollTimer);
+          pollTimer = setTimeout(pollStatus, 10000);
+        }
       }
-      read();
-    }).catch(function(e){
-      if(e.name !== 'AbortError'){
-        console.warn('Lichess stream error:', e);
-        setState('error');
-        pollTimer = setTimeout(pollStatus, 10000);
-      }
-    });
+    })();
   }
 
   function loadRecentGames(){
