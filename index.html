@@ -1929,6 +1929,179 @@ html:not([data-mode="personal"]) body #spotify.spotify-section{
 .canvas-nav-item{display:none}
 html[data-mode="personal"] body .canvas-nav-item{display:list-item !important}
 
+/* ══ READ NAV ITEM — personal only ══ */
+.read-nav-item{display:none}
+html[data-mode="personal"] body .read-nav-item{display:list-item !important}
+
+/* ══ READ SECTION ══ */
+#read{
+  display:none;
+  padding:clamp(48px,6vw,90px) 5vw clamp(60px,7vw,100px);
+  position:relative;z-index:2;
+  background:var(--bg);
+  transition:background .7s;
+}
+html[data-mode="personal"] #read{display:block}
+
+#read .read-header{margin-bottom:2.4rem}
+#read .read-tag{
+  font-family:'Fira Code',monospace;font-size:.58rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--A);margin-bottom:.55rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+#read .read-tag::before{content:'';display:inline-block;width:28px;height:1px;background:var(--A)}
+#read .read-title{
+  font-family:'Nunito',sans-serif;font-weight:900;
+  font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.04em;
+  color:var(--tx);line-height:1.1;margin-bottom:.65rem;
+}
+#read .read-title span{color:var(--A)}
+#read .read-sub{font-size:.93rem;color:var(--txm);line-height:1.8;max-width:540px}
+
+/* Grid of read cards */
+.read-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1.2rem;
+  margin-top:2.4rem;
+}
+.read-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:1.4rem 1.6rem;
+  position:relative;overflow:hidden;
+  transition:all .3s cubic-bezier(.23,1,.32,1);
+  cursor:default;
+}
+.read-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 15% 20%,var(--glow1),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.read-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--A);
+  box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 24px var(--glow1);
+}
+.read-card:hover::before{opacity:1}
+.read-card-type{
+  font-family:'Fira Code',monospace;font-size:.5rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--A);margin-bottom:.6rem;
+  display:flex;align-items:center;gap:.4rem;
+}
+.read-card-type::before{content:'📖';font-size:.75rem}
+.read-card-type.type-article::before{content:'📰'}
+.read-card-type.type-book::before{content:'📚'}
+.read-card-type.type-paper::before{content:'🔬'}
+.read-card-type.type-thread::before{content:'🧵'}
+.read-card-type.type-video::before{content:'🎥'}
+.read-card-title{
+  font-family:'Nunito',sans-serif;font-weight:800;
+  font-size:1.05rem;letter-spacing:-.02em;
+  color:var(--tx);margin-bottom:.45rem;line-height:1.3;
+}
+.read-card-note{
+  font-size:.85rem;color:var(--txm);line-height:1.65;margin-bottom:.9rem;
+}
+.read-card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:.4rem;
+  border-top:1px solid var(--border);padding-top:.7rem;margin-top:.1rem;
+}
+.read-card-date{
+  font-family:'Fira Code',monospace;font-size:.5rem;
+  letter-spacing:.1em;color:var(--txd);text-transform:uppercase;
+}
+.read-card-link{
+  font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--A);text-decoration:none;
+  display:flex;align-items:center;gap:.3rem;
+  transition:gap .2s,opacity .2s;opacity:.7;
+}
+.read-card-link:hover{gap:.5rem;opacity:1}
+.read-card-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.7rem}
+.read-card-tag{
+  font-family:'Fira Code',monospace;font-size:.46rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:.18rem .55rem;
+  border:1px solid rgba(74,222,128,.25);color:var(--A);border-radius:20px;
+  background:rgba(74,222,128,.06);
+}
+
+/* Empty state */
+.read-empty{
+  text-align:center;padding:4rem 2rem;
+  font-family:'Fira Code',monospace;font-size:.65rem;
+  letter-spacing:.1em;color:var(--txd);text-transform:uppercase;
+}
+.read-empty-icon{font-size:2.5rem;margin-bottom:1rem;display:block;
+  filter:drop-shadow(0 0 16px rgba(74,222,128,.3));
+  animation:phFloat 4s ease-in-out infinite}
+
+/* ══ READ: ADD BUTTON ══ */
+.read-add-btn{
+  display:none;
+  align-items:center;gap:.5rem;
+  font-family:'Fira Code',monospace;font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;
+  background:rgba(74,222,128,.1);
+  border:1px solid rgba(74,222,128,.3);
+  color:var(--A);
+  padding:.5rem 1.1rem;border-radius:8px;
+  cursor:pointer;transition:all .25s;
+}
+.read-add-btn::before{content:'+ ';font-size:.95rem;font-weight:700;line-height:1}
+.read-add-btn:hover{background:rgba(74,222,128,.2);border-color:var(--A);box-shadow:0 0 14px rgba(74,222,128,.2)}
+html[data-mode="personal"] .read-add-btn.read-authed{display:inline-flex}
+.read-header-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.4rem}
+
+/* ══ READ: PASSWORD PROMPT ══ */
+#readPwdOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);z-index:800;
+  display:none;align-items:center;justify-content:center;
+}
+#readPwdOverlay.show{display:flex}
+.read-pwd-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:2rem 2.2rem;width:320px;max-width:90vw;
+  position:relative;
+  box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 40px rgba(74,222,128,.08);
+}
+.read-pwd-close{position:absolute;top:.9rem;right:1rem;background:none;border:none;color:var(--txd);font-size:1rem;cursor:pointer;transition:color .2s}
+.read-pwd-close:hover{color:var(--tx)}
+.read-pwd-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.15rem;color:var(--tx);margin-bottom:.25rem}
+.read-pwd-sub{font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.08em;color:var(--txd);text-transform:uppercase;margin-bottom:1.2rem}
+.read-pwd-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.65rem .9rem;font-family:'Fira Code',monospace;font-size:.8rem;color:var(--tx);outline:none;transition:border-color .2s;margin-bottom:.65rem}
+.read-pwd-input:focus{border-color:var(--A)}
+.read-pwd-btn{width:100%;background:var(--A);color:var(--bg);border:none;border-radius:8px;padding:.65rem;font-family:'Fira Code',monospace;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.read-pwd-btn:hover{box-shadow:0 0 18px var(--A);opacity:.9}
+.read-pwd-err{font-family:'Fira Code',monospace;font-size:.52rem;color:#f87171;min-height:1rem;margin-top:.4rem;text-align:center}
+
+/* ══ READ: ADD ENTRY MODAL ══ */
+#readModal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:810;display:none;align-items:center;justify-content:center;padding:1rem}
+#readModal.show{display:flex}
+.read-modal-box{background:var(--surface);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:2rem 2.2rem;width:500px;max-width:96vw;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 50px rgba(74,222,128,.08)}
+.read-modal-box::-webkit-scrollbar{width:3px}
+.read-modal-box::-webkit-scrollbar-thumb{background:rgba(74,222,128,.25);border-radius:3px}
+.read-modal-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.3rem;letter-spacing:-.03em;color:var(--tx);margin-bottom:.2rem}
+.read-modal-sub{font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);margin-bottom:1.5rem}
+.read-modal-close{position:absolute;top:1rem;right:1.1rem;background:none;border:none;color:var(--txd);font-size:1.1rem;cursor:pointer;transition:color .2s}
+.read-modal-close:hover{color:var(--tx)}
+.rmfg{margin-bottom:.9rem}
+.rmfl{display:block;font-family:'Fira Code',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);margin-bottom:.35rem}
+.rmfi,.rmfs,.rmfta{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.6rem .85rem;font-family:'Space Grotesk',sans-serif;font-size:.88rem;color:var(--tx);outline:none;transition:border-color .2s}
+.rmfs{font-family:'Fira Code',monospace;font-size:.75rem;appearance:none;cursor:pointer}
+.rmfta{resize:vertical;min-height:80px;line-height:1.6}
+.rmfi:focus,.rmfs:focus,.rmfta:focus{border-color:var(--A)}
+.rmfrow{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.read-modal-submit{width:100%;background:var(--A);color:var(--bg);border:none;border-radius:10px;padding:.75rem;font-family:'Fira Code',monospace;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:.5rem;transition:all .22s}
+.read-modal-submit:hover{box-shadow:0 0 22px var(--A);opacity:.9;transform:translateY(-1px)}
+.read-modal-del{width:100%;background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:.6rem;font-family:'Fira Code',monospace;font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:.5rem;transition:all .22s;display:none}
+.read-modal-del:hover{background:rgba(248,113,113,.2);border-color:#f87171}
+.read-card{cursor:pointer}
+.read-card-edit-hint{position:absolute;top:.65rem;right:.7rem;font-family:'Fira Code',monospace;font-size:.44rem;letter-spacing:.08em;text-transform:uppercase;color:var(--A);opacity:0;transition:opacity .2s}
+.read-card:hover .read-card-edit-hint{opacity:.6}
+.read-card-author{font-family:'Fira Code',monospace;font-size:.52rem;color:var(--txd);letter-spacing:.06em;margin-bottom:.55rem}
+
 /* ══ IDEA CANVAS SECTION ══ */
 #idea-canvas{
   display:none;
@@ -2853,6 +3026,7 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
     <li class="spotify-nav-item"><a href="#spotify" data-num="02">Live</a></li>
     <li class="chess-nav-item"><a href="#chess" data-num="02">Chess</a></li>
     <li class="canvas-nav-item"><a href="#idea-canvas" data-num="02">Ideas</a></li>
+    <li class="read-nav-item"><a href="#read" data-num="02">Read</a></li>
     <li><a href="#projects" data-num="03">Work</a></li>
     <li><a href="#future" data-num="04">Roadmap</a></li>
     <li><a href="#blog" data-num="05">Blog</a></li>
@@ -3375,6 +3549,85 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   </div>
 </section>
 
+<!-- ════ READ (personal mode only) ════ -->
+<section id="read">
+  <div class="read-header-row rev">
+    <div>
+      <div class="read-tag">What I've Been Reading</div>
+      <h2 class="read-title">Things worth <span>reading.</span></h2>
+      <p class="read-sub">Books, articles, papers, threads — whatever stopped me mid-scroll and made me think.</p>
+    </div>
+    <button class="read-add-btn" id="readAddBtn" onclick="openReadModal()">Post something</button>
+  </div>
+  <div class="read-grid" id="readGrid">
+    <div class="read-empty" id="readEmpty">
+      <span class="read-empty-icon">📚</span>
+      Nothing posted yet — check back soon.
+    </div>
+  </div>
+</section>
+
+<!-- READ: password gate -->
+<div id="readPwdOverlay">
+  <div class="read-pwd-box">
+    <button class="read-pwd-close" onclick="closeReadPwd()">&#x2715;</button>
+    <div class="read-pwd-title">&#x1F33F; Read section</div>
+    <div class="read-pwd-sub">enter password to post</div>
+    <input class="read-pwd-input" type="password" id="readPwdInput" placeholder="password" onkeydown="if(event.key==='Enter')tryReadPwd()">
+    <button class="read-pwd-btn" onclick="tryReadPwd()">Unlock &rarr;</button>
+    <div class="read-pwd-err" id="readPwdErr"></div>
+  </div>
+</div>
+
+<!-- READ: add / edit entry modal -->
+<div id="readModal">
+  <div class="read-modal-box">
+    <button class="read-modal-close" onclick="closeReadModal()">&#x2715;</button>
+    <div class="read-modal-title">&#x1F4D6; New entry</div>
+    <div class="read-modal-sub" id="readModalSub">add something you read</div>
+    <div class="rmfg">
+      <label class="rmfl">Title *</label>
+      <input class="rmfi" id="rmTitle" placeholder="Name of the book / article / thread...">
+    </div>
+    <div class="rmfrow">
+      <div class="rmfg">
+        <label class="rmfl">Type</label>
+        <select class="rmfs" id="rmType">
+          <option value="article">Article</option>
+          <option value="book">Book</option>
+          <option value="paper">Paper</option>
+          <option value="thread">Thread</option>
+          <option value="video">Video</option>
+        </select>
+      </div>
+      <div class="rmfg">
+        <label class="rmfl">Date read</label>
+        <input class="rmfi" id="rmDate" placeholder="Jun 2025">
+      </div>
+    </div>
+    <div class="rmfg">
+      <label class="rmfl">Author / Source</label>
+      <input class="rmfi" id="rmAuthor" placeholder="Paul Graham, Substack...">
+    </div>
+    <div class="rmfg">
+      <label class="rmfl">Your note</label>
+      <textarea class="rmfta" id="rmNote" placeholder="What stuck with you?"></textarea>
+    </div>
+    <div class="rmfrow">
+      <div class="rmfg">
+        <label class="rmfl">Link (optional)</label>
+        <input class="rmfi" id="rmUrl" placeholder="https://...">
+      </div>
+      <div class="rmfg">
+        <label class="rmfl">Tags (comma-separated)</label>
+        <input class="rmfi" id="rmTags" placeholder="philosophy, ux, code">
+      </div>
+    </div>
+    <button class="read-modal-submit" onclick="saveReadEntry()">Post it &rarr;</button>
+    <button class="read-modal-del" id="readModalDel" onclick="deleteReadEntry()">&#x2715; Delete this entry</button>
+  </div>
+</div>
+
 <!-- ════ ABOUT ════ -->
 <section id="about">
   <div class="sh rev">
@@ -3729,12 +3982,14 @@ const DEF={
     {i:'📍',l:'Location',v:'India 🇮🇳'},
     {i:'✅',l:'Status',v:'Open to work & collabs'}
   ],
+  reads:[],
   contact:{email:'Tapish@example.com',gh:'https://github.com/Tapish',tw:'https://twitter.com/Tapish',li:'https://linkedin.com/in/Tapish'},
   canvasUrl:'',
   canvasLink:''
 };
 
 let D=JSON.parse(localStorage.getItem('Tapish_data')||'null')||JSON.parse(JSON.stringify(DEF));
+if(!D.reads)D.reads=[];
 
 /* ══ PARTICLES ══ */
 (function initParticles(){
@@ -3812,8 +4067,8 @@ function renderAll(){
     <div class="ti rev"><div class="ti-i">${t.i}</div><div class="ti-n">${t.n}</div></div>`).join('');
   document.getElementById('ng').innerHTML=D.now.map(n=>`
     <div class="nc rev"><div class="nc-i">${n.i}</div><div class="nc-l">${n.l}</div><div class="nc-v">${n.v}</div></div>`).join('');
-  const c=D.contact;
-  document.getElementById('emailTxt').textContent=c.email;
+  renderReadSection();
+  const c=D.contact;  document.getElementById('emailTxt').textContent=c.email;
   document.getElementById('sEmail').href='mailto:'+c.email;
   document.getElementById('ghTxt').textContent=c.gh.replace('https://','');
   document.getElementById('sGh').href=c.gh;
@@ -4019,6 +4274,159 @@ function renderBlogCards(){
     </div>`).join('');
 }
 function addBlog(){D.posts.push({dt:'May 2025',t:'New Post',e:'Short excerpt.',h:'#'});renderBlogCards()}
+
+/* ══ READ: AUTH STATE ══ */
+let readAuthed=false;
+let readEditIdx=-1; // -1 = new entry
+
+function initReadAuth(){
+  // Show add button only if already authed in this session
+  if(readAuthed) document.getElementById('readAddBtn').classList.add('read-authed');
+}
+
+function openReadModal(editIdx){
+  if(!readAuthed){
+    // show password gate first, queue modal after
+    readEditIdx = (editIdx!==undefined) ? editIdx : -1;
+    document.getElementById('readPwdErr').textContent='';
+    document.getElementById('readPwdInput').value='';
+    document.getElementById('readPwdOverlay').classList.add('show');
+    setTimeout(()=>document.getElementById('readPwdInput').focus(),80);
+    return;
+  }
+  _openReadModalAuthed(editIdx);
+}
+
+function _openReadModalAuthed(editIdx){
+  readEditIdx = (editIdx!==undefined) ? editIdx : -1;
+  const modal = document.getElementById('readModal');
+  const sub   = document.getElementById('readModalSub');
+  const del   = document.getElementById('readModalDel');
+  const title = modal.querySelector('.read-modal-title');
+
+  if(readEditIdx >= 0 && D.reads[readEditIdx]){
+    const r = D.reads[readEditIdx];
+    document.getElementById('rmTitle').value  = r.t||'';
+    document.getElementById('rmType').value   = r.type||'article';
+    document.getElementById('rmDate').value   = r.dt||'';
+    document.getElementById('rmAuthor').value = r.author||'';
+    document.getElementById('rmNote').value   = r.note||'';
+    document.getElementById('rmUrl').value    = r.url||'';
+    document.getElementById('rmTags').value   = (r.tags||[]).join(', ');
+    title.textContent = '&#x270F;&#xFE0F; Edit entry';
+    sub.textContent   = 'editing existing entry';
+    del.style.display = 'block';
+  } else {
+    document.getElementById('rmTitle').value  = '';
+    document.getElementById('rmType').value   = 'article';
+    document.getElementById('rmDate').value   = new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'});
+    document.getElementById('rmAuthor').value = '';
+    document.getElementById('rmNote').value   = '';
+    document.getElementById('rmUrl').value    = '';
+    document.getElementById('rmTags').value   = '';
+    title.textContent = '&#x1F4D6; New entry';
+    sub.textContent   = 'add something you read';
+    del.style.display = 'none';
+  }
+  modal.classList.add('show');
+  setTimeout(()=>document.getElementById('rmTitle').focus(),80);
+}
+
+function closeReadModal(){
+  document.getElementById('readModal').classList.remove('show');
+}
+
+function closeReadPwd(){
+  document.getElementById('readPwdOverlay').classList.remove('show');
+}
+
+function tryReadPwd(){
+  const val = document.getElementById('readPwdInput').value;
+  if(val === D.pwd){
+    readAuthed = true;
+    document.getElementById('readAddBtn').classList.add('read-authed');
+    closeReadPwd();
+    _openReadModalAuthed(readEditIdx);
+  } else {
+    document.getElementById('readPwdErr').textContent = 'wrong password';
+    document.getElementById('readPwdInput').value='';
+    document.getElementById('readPwdInput').focus();
+  }
+}
+
+function saveReadEntry(){
+  const title = document.getElementById('rmTitle').value.trim();
+  if(!title){ document.getElementById('rmTitle').focus(); return; }
+  if(!D.reads)D.reads=[];
+  const entry={
+    t:     title,
+    type:  document.getElementById('rmType').value,
+    dt:    document.getElementById('rmDate').value.trim(),
+    author:document.getElementById('rmAuthor').value.trim(),
+    note:  document.getElementById('rmNote').value.trim(),
+    url:   document.getElementById('rmUrl').value.trim(),
+    tags:  document.getElementById('rmTags').value.split(',').map(t=>t.trim()).filter(Boolean)
+  };
+  if(readEditIdx >= 0 && D.reads[readEditIdx]){
+    D.reads[readEditIdx] = entry;
+  } else {
+    D.reads.unshift(entry);
+  }
+  localStorage.setItem('Tapish_data',JSON.stringify(D));
+  closeReadModal();
+  renderReadSection();
+}
+
+function deleteReadEntry(){
+  if(readEditIdx < 0)return;
+  if(!confirm('Delete this entry?'))return;
+  D.reads.splice(readEditIdx,1);
+  localStorage.setItem('Tapish_data',JSON.stringify(D));
+  closeReadModal();
+  renderReadSection();
+}
+
+/* ══ RENDER READ SECTION (public) ══ */
+function renderReadSection(){
+  if(!D.reads)D.reads=[];
+  const grid=document.getElementById('readGrid');
+  const empty=document.getElementById('readEmpty');
+  if(!grid)return;
+  if(D.reads.length===0){
+    if(empty)empty.style.display='';
+    grid.querySelectorAll('.read-card').forEach(c=>c.remove());
+    return;
+  }
+  if(empty)empty.style.display='none';
+  grid.innerHTML='';
+  const typeIcon={article:'📰',book:'📚',paper:'🔬',thread:'🧵',video:'🎥'};
+  const typeLabel={article:'Article',book:'Book',paper:'Paper',thread:'Thread',video:'Video'};
+  D.reads.forEach((r,i)=>{
+    const t=r.type||'article';
+    const card=document.createElement('div');
+    card.className='read-card rev';
+    card.style.position='relative';
+    card.onclick=()=>{if(readAuthed)openReadModal(i)};
+    card.innerHTML=
+      '<div class="read-card-edit-hint">edit</div>'+
+      '<div class="read-card-type type-'+t+'">'+typeLabel[t]+'</div>'+
+      '<div class="read-card-title">'+(r.t||'Untitled')+'</div>'+
+      (r.author?'<div class="read-card-author">'+r.author+'</div>':'')+
+      (r.note?'<div class="read-card-note">'+r.note+'</div>':'')+
+      ((r.tags&&r.tags.length)?'<div class="read-card-tags">'+r.tags.map(t=>'<span class="read-card-tag">'+t+'</span>').join('')+'</div>':'')+
+      '<div class="read-card-footer">'+
+        '<span class="read-card-date">'+(r.dt||'')+'</span>'+
+        (r.url?'<a href="'+r.url+'" target="_blank" rel="noopener" class="read-card-link" onclick="event.stopPropagation()">Read it →</a>':'')+
+      '</div>';
+    grid.appendChild(card);
+  });
+  doReveal();
+}
+
+// close modals on Escape / backdrop click
+document.getElementById('readPwdOverlay').addEventListener('click',function(e){if(e.target===this)closeReadPwd()});
+document.getElementById('readModal').addEventListener('click',function(e){if(e.target===this)closeReadModal()});
+
 function renderToolRows(){
   document.getElementById('aToolRows').innerHTML=D.tools.map((t,i)=>`
     <div class="sk-row">
@@ -4075,6 +4483,7 @@ function saveAll(){
   if(cu)D.canvasUrl=cu.value.trim();
   if(cl)D.canvasLink=cl.value.trim();
   if(D.canvasUrl&&window.canvasSetImage)window.canvasSetImage(D.canvasUrl,D.canvasLink);
+  if(!D.reads)D.reads=[];
   localStorage.setItem('Tapish_data',JSON.stringify(D));
   renderAll();applyMode(curMode,false);
   const btn=document.getElementById('apSave');
@@ -4462,6 +4871,7 @@ function loadYouTubeLive(videoId){
 })();
 
 renderAll();
+initReadAuth();
 (function(){
   const savedMode=localStorage.getItem('Tapish_mode')||'engineer';
   const savedScroll=parseInt(localStorage.getItem('Tapish_scroll')||'0',10);
