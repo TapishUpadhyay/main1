@@ -3080,6 +3080,9 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   var activeAbort   = null;
   var currentGameId = null;
   var pollTimer     = null;
+  var refreshTimer  = null;
+  var lastFen       = null;
+  var lastOrient    = 'white';
 
   if(typeof window.Chess !== 'function' || typeof window.Chessboard !== 'function'){
     console.error('Lichess widget: chess.js or chessboard.js failed to load.');
@@ -3112,14 +3115,19 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   var pendingFen = null;
   var rafId = null;
   function renderBoard(fen, orientation){
+    // Always track the latest known position
+    lastFen    = fen;
+    if(orientation) lastOrient = orientation;
+
     if(!board){
       board = Chessboard('chessBoard', {
         position    : fen,
-        orientation : orientation || 'white',
+        orientation : lastOrient,
         pieceTheme  : 'https://lichess1.org/assets/piece/cburnett/{piece}.svg',
         draggable   : false,
         showNotation: true
       });
+      startRefreshClock();
       return;
     }
     // Throttle to one DOM update per animation frame
@@ -3131,6 +3139,23 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
         rafId = null;
       });
     }
+  }
+
+  // 1-second refresh: re-applies the last known FEN without recreating the board
+  // so pieces update even if a stream packet was missed — no blink because
+  // board.position() only moves pieces that actually changed position
+  function startRefreshClock(){
+    clearInterval(refreshTimer);
+    refreshTimer = setInterval(function(){
+      if(board && lastFen){
+        board.position(lastFen, false);
+      }
+    }, 1000);
+  }
+
+  function stopRefreshClock(){
+    clearInterval(refreshTimer);
+    refreshTimer = null;
   }
 
   function streamGame(gameId, orientation, white, black){
@@ -3169,6 +3194,8 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
               if(data.status && data.status.name && data.status.name !== 'started'){
                 if(noteEl) noteEl.textContent = 'Game over — ' + data.status.name;
                 currentGameId = null;
+                stopRefreshClock();
+                lastFen = null;
                 clearTimeout(pollTimer);
                 pollTimer = setTimeout(pollStatus, 4000);
               }
@@ -3177,6 +3204,8 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
         }
         // stream closed cleanly — game ended
         currentGameId = null;
+        stopRefreshClock();
+        lastFen = null;
         clearTimeout(pollTimer);
         pollTimer = setTimeout(pollStatus, 4000);
       }catch(e){
