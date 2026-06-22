@@ -1821,6 +1821,101 @@ html:not([data-mode="personal"]) body #spotify.spotify-section{
 }
 #chess .chess-watch-link:hover{color:#fff;transform:translateX(5px)}
 
+/* ══ Lichess live header + players ══ */
+#chess .chess-live-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.5rem;
+  margin-bottom:.2rem;
+}
+#chess .chess-players{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  font-family:'Fira Code',monospace;
+  font-size:.68rem;
+}
+#chess .chess-player-name{
+  color:#f5f5f5;
+  font-weight:700;
+  font-size:.68rem;
+  letter-spacing:.04em;
+  max-width:110px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#chess .chess-vs{
+  color:rgba(245,245,245,.35);
+  font-size:.6rem;
+  letter-spacing:.1em;
+}
+#chess .chess-move-info{
+  text-align:center;
+  font-family:'Fira Code',monospace;
+  font-size:.62rem;
+  color:rgba(245,245,245,.45);
+  letter-spacing:.06em;
+  margin-top:.5rem;
+  min-height:1em;
+}
+
+/* ══ Recent games list ══ */
+#chess .chess-recent{
+  margin-top:1.4rem;
+  text-align:left;
+}
+#chess .chess-recent-title{
+  font-family:'Fira Code',monospace;
+  font-size:.58rem;
+  letter-spacing:.18em;
+  color:rgba(245,245,245,.38);
+  font-weight:700;
+  margin-bottom:.55rem;
+}
+#chess .chess-recent-item{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  padding:.45rem .5rem;
+  border-radius:10px;
+  margin-bottom:.3rem;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.05);
+  background:rgba(255,255,255,.03);
+  transition:background .2s ease;
+}
+#chess .chess-recent-item:hover{background:rgba(255,255,255,.07)}
+#chess .chess-recent-result{
+  font-family:'Fira Code',monospace;
+  font-size:.7rem;
+  font-weight:700;
+  width:1.1rem;
+  text-align:center;
+  flex-shrink:0;
+}
+#chess .chess-recent-win  .chess-recent-result{color:#4ac98d}
+#chess .chess-recent-loss .chess-recent-result{color:#f87171}
+#chess .chess-recent-draw .chess-recent-result{color:rgba(245,245,245,.5)}
+#chess .chess-recent-opp{
+  color:#f5f5f5;
+  font-size:.75rem;
+  font-weight:600;
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#chess .chess-recent-meta{
+  font-family:'Fira Code',monospace;
+  font-size:.6rem;
+  color:rgba(245,245,245,.38);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
 @media(max-width:900px){
   #chess .chess-wrap{grid-template-columns:1fr}
 }
@@ -2897,53 +2992,66 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
   </div>
 </section>
 
-<!-- ════ CHESS.COM CHALLENGE + LIVE BOARD (personal mode only) ════ -->
+<!-- ════ LICHESS LIVE BOARD (personal mode only) ════ -->
 <section id="chess" class="chess-section rev">
   <div class="chess-wrap">
 
     <div class="chess-container">
-      <p class="chess-label">CHESS.COM</p>
+      <p class="chess-label">LICHESS</p>
       <h2>Think You Can Beat Me?</h2>
-      <p class="chess-note">One click sends you straight to a new game against me on chess.com — pick your time control and fire away.</p>
+      <p class="chess-note">One click sends you straight to a challenge on Lichess — free, open platform, pick any time control.</p>
 
       <a
-        href="https://www.chess.com/play/online/new?opponent=TapishU"
+        href="https://lichess.org/?user=TapishU#friend"
         target="_blank"
         rel="noopener noreferrer"
         class="chess-challenge-btn"
-        aria-label="Challenge Tapish to a game on chess.com"
+        aria-label="Challenge Tapish on Lichess"
       >
-        ♞ Challenge Me on Chess.com
+        ♞ Challenge Me on Lichess
       </a>
 
       <a
-        href="https://www.chess.com/member/TapishU"
+        href="https://lichess.org/@/TapishU"
         target="_blank"
         rel="noopener noreferrer"
         class="chess-profile-link"
       >
-        View My Chess.com Profile →
+        View My Lichess Profile →
       </a>
+
+      <div class="chess-recent" id="chessRecent" style="display:none">
+        <p class="chess-recent-title">RECENT GAMES</p>
+        <div id="chessRecentList"></div>
+      </div>
     </div>
 
     <div class="chess-live-box" id="chessLiveBox">
-      <p class="chess-live-label" id="chessLiveLabel">CHECKING…</p>
+      <div class="chess-live-header">
+        <p class="chess-live-label" id="chessLiveLabel">CHECKING…</p>
+        <div class="chess-players" id="chessPlayers" style="display:none">
+          <span class="chess-player-name" id="chessPlayerBlack"></span>
+          <span class="chess-vs">vs</span>
+          <span class="chess-player-name" id="chessPlayerWhite"></span>
+        </div>
+      </div>
       <h2>Live Board</h2>
-      <p class="chess-live-note" id="chessLiveNote">Checking for an active game…</p>
+      <p class="chess-live-note" id="chessLiveNote">Checking for an active Lichess game…</p>
 
       <div class="chess-board-wrap" id="chessBoardWrap" style="display:none">
         <div id="chessBoard"></div>
+        <div class="chess-move-info" id="chessMoveInfo"></div>
       </div>
 
       <a
-        href="https://www.chess.com/member/TapishU"
+        href="https://lichess.org/@/TapishU/tv"
         target="_blank"
         rel="noopener noreferrer"
         class="chess-watch-link"
         id="chessWatchLink"
         style="display:none"
       >
-        Watch Live on Chess.com →
+        Watch Live on Lichess →
       </a>
     </div>
 
@@ -2956,164 +3064,207 @@ html[data-mode="personal"] body #spotify.layout-spotify-big .youtube-live-box if
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
 <script>
 (function(){
-  const CHESS_USERNAME = "TapishU";
-  const labelEl = document.getElementById('chessLiveLabel');
-  const noteEl = document.getElementById('chessLiveNote');
-  const boardWrap = document.getElementById('chessBoardWrap');
-  const watchLink = document.getElementById('chessWatchLink');
-  let board = null;
-  let lastPgn = null;
+  var USERNAME   = 'TapishU';
+  var labelEl    = document.getElementById('chessLiveLabel');
+  var noteEl     = document.getElementById('chessLiveNote');
+  var boardWrap  = document.getElementById('chessBoardWrap');
+  var watchLink  = document.getElementById('chessWatchLink');
+  var playersEl  = document.getElementById('chessPlayers');
+  var playerW    = document.getElementById('chessPlayerWhite');
+  var playerB    = document.getElementById('chessPlayerBlack');
+  var moveInfoEl = document.getElementById('chessMoveInfo');
+  var recentEl   = document.getElementById('chessRecent');
+  var recentList = document.getElementById('chessRecentList');
 
-  // Guard: if chess.js or chessboard.js failed to load (e.g. CDN issue, version
-  // mismatch shipping ES module syntax to a classic script tag), fail loudly
-  // and visibly instead of leaving the card silently stuck.
+  var board         = null;
+  var activeAbort   = null;
+  var currentGameId = null;
+  var pollTimer     = null;
+
   if(typeof window.Chess !== 'function' || typeof window.Chessboard !== 'function'){
-    console.error('Chess.com widget: required library (chess.js or chessboard.js) failed to load.');
+    console.error('Lichess widget: chess.js or chessboard.js failed to load.');
     if(labelEl) labelEl.textContent = 'UNAVAILABLE';
-    if(noteEl) noteEl.textContent = "Couldn't load chess board library. Check back on my profile.";
-    if(watchLink){
-      watchLink.style.display = 'inline-flex';
-      watchLink.href = `https://www.chess.com/member/${CHESS_USERNAME}`;
-    }
+    if(noteEl)  noteEl.textContent  = 'Board library failed to load.';
     return;
   }
 
-
-  function setState(state, note, gameUrl){
-    const box = document.getElementById('chessLiveBox');
-    box.dataset.state = state;
-
-    if(state === 'live-daily'){
-      labelEl.textContent = 'LIVE NOW';
-      noteEl.textContent = note || 'Active daily game in progress — board updates automatically.';
-      boardWrap.style.display = 'block';
-      watchLink.style.display = 'inline-flex';
-      if(gameUrl) watchLink.href = gameUrl;
-    } else if(state === 'live-fast'){
-      labelEl.textContent = 'ACTIVE NOW';
-      noteEl.textContent = note || "I've been active on chess.com in the last few minutes — likely mid-game. The public API can't show a live Rapid/Blitz/Bullet board, but you can watch live on my profile.";
-      boardWrap.style.display = 'none';
-      watchLink.style.display = 'inline-flex';
-      watchLink.href = `https://www.chess.com/member/${CHESS_USERNAME}`;
-    } else if(state === 'offline'){
-      labelEl.textContent = 'OFFLINE';
-      noteEl.textContent = note || "Not playing right now — be the first to challenge me.";
-      boardWrap.style.display = 'none';
-      watchLink.style.display = 'none';
-    } else if(state === 'error'){
-      labelEl.textContent = 'UNAVAILABLE';
-      noteEl.textContent = note || "Couldn't load live status right now. Check back on my profile.";
-      boardWrap.style.display = 'none';
-      watchLink.style.display = 'inline-flex';
-      watchLink.href = `https://www.chess.com/member/${CHESS_USERNAME}`;
-    } else {
-      labelEl.textContent = 'CHECKING…';
-      noteEl.textContent = 'Checking for an active game…';
-      boardWrap.style.display = 'none';
-      watchLink.style.display = 'none';
-    }
+  function setState(state){
+    var box = document.getElementById('chessLiveBox');
+    if(box) box.dataset.state = state;
+    var isLive    = state === 'live';
+    var isOffline = state === 'offline';
+    var labels = { checking:'CHECKING…', live:'LIVE NOW', offline:'OFFLINE', error:'UNAVAILABLE' };
+    var notes  = {
+      checking : 'Checking for an active Lichess game…',
+      live     : 'Move-by-move live board — updates on every move.',
+      offline  : 'Not playing right now — challenge me to start a game.',
+      error    : "Couldn't reach Lichess right now."
+    };
+    if(labelEl) labelEl.textContent = labels[state] || 'CHECKING…';
+    if(noteEl && !isLive) noteEl.textContent = notes[state] || '';
+    if(boardWrap)  boardWrap.style.display  = isLive ? 'block'        : 'none';
+    if(watchLink)  watchLink.style.display  = (isLive||isOffline) ? 'inline-flex' : 'none';
+    if(playersEl)  playersEl.style.display  = isLive ? 'flex'         : 'none';
+    if(recentEl)   recentEl.style.display   = isOffline ? 'block'     : 'none';
+    if(!isLive && board) board.start();
   }
 
-  function pgnToFen(pgn){
-    try{
-      const game = new Chess();
-      game.load_pgn(pgn, { sloppy: true });
-      return game.fen();
-    }catch(e){
-      return null;
-    }
-  }
-
-  function renderBoard(fen){
+  function renderBoard(fen, orientation){
     if(!board){
       board = Chessboard('chessBoard', {
-        position: fen,
-        pieceTheme: 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/img/chesspieces/wikipedia/{piece}.png'
+        position    : fen,
+        orientation : orientation || 'white',
+        pieceTheme  : 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/img/chesspieces/wikipedia/{piece}.png'
       });
     } else {
-      board.position(fen);
+      board.position(fen, true);
     }
   }
 
-  async function fetchWithRetry(url, attempts){
-    let lastErr = null;
-    for(let i = 0; i < attempts; i++){
-      try{
-        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-        if(!res.ok) throw new Error('HTTP ' + res.status);
-        return await res.json();
-      }catch(e){
-        lastErr = e;
-        if(i < attempts - 1){
-          await new Promise(r => setTimeout(r, 600 * (i + 1)));
-        }
+  function streamGame(gameId, orientation, white, black){
+    if(activeAbort){ activeAbort.abort(); }
+    activeAbort = new AbortController();
+    watchLink.href = 'https://lichess.org/' + gameId;
+    if(playerW) playerW.textContent = white || 'White';
+    if(playerB) playerB.textContent = black || 'Black';
+    setState('live');
+
+    fetch('https://lichess.org/api/stream/game/' + gameId, {
+      headers : { 'Accept': 'application/x-ndjson' },
+      signal  : activeAbort.signal
+    }).then(function(res){
+      if(!res.ok) throw new Error('Stream ' + res.status);
+      var reader  = res.body.getReader();
+      var decoder = new TextDecoder();
+      var buf     = '';
+
+      function read(){
+        reader.read().then(function(chunk){
+          if(chunk.done){
+            // stream ended — game over, restart poll
+            currentGameId = null;
+            clearTimeout(pollTimer);
+            pollTimer = setTimeout(pollStatus, 4000);
+            return;
+          }
+          buf += decoder.decode(chunk.value, { stream:true });
+          var lines = buf.split('\n');
+          buf = lines.pop();
+          lines.forEach(function(line){
+            var trimmed = line.trim();
+            if(!trimmed) return;
+            try{
+              var data = JSON.parse(trimmed);
+              if(data.fen){
+                renderBoard(data.fen, orientation);
+                if(data.lm && moveInfoEl) moveInfoEl.textContent = 'Last move: ' + data.lm;
+              }
+              if(data.status && data.status.name && data.status.name !== 'started'){
+                if(noteEl) noteEl.textContent = 'Game over — ' + data.status.name;
+                currentGameId = null;
+                clearTimeout(pollTimer);
+                pollTimer = setTimeout(pollStatus, 4000);
+              }
+            }catch(e){}
+          });
+          read();
+        }).catch(function(e){
+          if(e.name !== 'AbortError'){
+            console.warn('Lichess read error:', e);
+            setState('error');
+            pollTimer = setTimeout(pollStatus, 10000);
+          }
+        });
       }
-    }
-    throw lastErr;
+      read();
+    }).catch(function(e){
+      if(e.name !== 'AbortError'){
+        console.warn('Lichess stream error:', e);
+        setState('error');
+        pollTimer = setTimeout(pollStatus, 10000);
+      }
+    });
   }
 
-  async function checkChessStatus(){
-    // The /games endpoint only ever returns Daily (correspondence) games —
-    // it cannot tell us about an in-progress Rapid/Blitz/Bullet game at all.
-    // The old /is-online endpoint was removed by chess.com in 2021; the
-    // documented replacement is the "last_online" timestamp on the profile.
-    // We treat "active in the last 5 minutes" as a live-presence signal.
-    const RECENT_WINDOW_SECONDS = 5 * 60;
+  function loadRecentGames(){
+    fetch('https://lichess.org/api/games/user/' + USERNAME + '?max=5&clocks=false&evals=false&opening=true', {
+      headers: { 'Accept': 'application/x-ndjson' }
+    }).then(function(res){
+      if(!res.ok) return;
+      return res.text();
+    }).then(function(text){
+      if(!text) return;
+      var games = text.trim().split('\n').filter(Boolean).map(function(l){
+        try{ return JSON.parse(l); }catch(e){ return null; }
+      }).filter(Boolean);
+      if(!games.length || !recentList) return;
+      recentList.innerHTML = games.map(function(g){
+        var isWhite = (g.players && g.players.white && g.players.white.user &&
+          g.players.white.user.name.toLowerCase() === USERNAME.toLowerCase());
+        var opp    = isWhite ? (g.players.black && g.players.black.user && g.players.black.user.name) :
+                               (g.players.white && g.players.white.user && g.players.white.user.name);
+        var result = g.winner ? (g.winner === (isWhite?'white':'black') ? '✓' : '✗') : '½';
+        var cls    = result==='✓' ? 'win' : result==='✗' ? 'loss' : 'draw';
+        var tc     = g.clock ? (g.clock.initial/60) + '+' + g.clock.increment : (g.speed||'');
+        var op     = g.opening ? g.opening.name.split(':')[0] : '';
+        return '<a href="https://lichess.org/'+g.id+'" target="_blank" class="chess-recent-item chess-recent-'+cls+'">' +
+          '<span class="chess-recent-result">'+result+'</span>' +
+          '<span class="chess-recent-opp">vs '+(opp||'?')+'</span>' +
+          '<span class="chess-recent-meta">'+tc+(op?' · '+op:'')+'</span>' +
+          '</a>';
+      }).join('');
+    }).catch(function(){});
+  }
 
-    let dailyGame = null;
-    let recentlyOnline = false;
-    let bothFailed = true;
-
-    try{
-      const gamesData = await fetchWithRetry(`https://api.chess.com/pub/player/${CHESS_USERNAME}/games`, 3);
-      const games = gamesData.games || [];
-      dailyGame = games.find(g => g.time_class === 'daily' && g.pgn) || null;
-      bothFailed = false;
-    }catch(e){
-      console.warn('Chess.com games check failed:', e);
-    }
-
-    try{
-      const profileData = await fetchWithRetry(`https://api.chess.com/pub/player/${CHESS_USERNAME}`, 3);
-      const lastOnline = profileData.last_online || 0;
-      const nowSeconds = Math.floor(Date.now() / 1000);
-      recentlyOnline = (nowSeconds - lastOnline) <= RECENT_WINDOW_SECONDS;
-      bothFailed = false;
-    }catch(e){
-      console.warn('Chess.com profile check failed:', e);
-    }
-
-    if(bothFailed){
-      setState('error');
-      return;
-    }
-
-    if(dailyGame){
-      if(dailyGame.pgn !== lastPgn){
-        lastPgn = dailyGame.pgn;
-        const fen = pgnToFen(dailyGame.pgn);
-        if(fen){
-          renderBoard(fen);
-          setState('live-daily', null, dailyGame.url);
-        } else {
-          setState('live-fast');
+  function pollStatus(){
+    fetch('https://lichess.org/api/user/' + USERNAME, {
+      headers: { 'Accept': 'application/json' }
+    }).then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }).then(function(data){
+      if(data.playing){
+        var parts       = data.playing.replace('https://lichess.org/','').split('/');
+        var gameId      = parts[0];
+        var colorSuffix = parts[1] || 'white';
+        var orientation = colorSuffix === 'black' ? 'black' : 'white';
+        if(gameId !== currentGameId){
+          currentGameId = gameId;
+          // fetch game details for player names
+          fetch('https://lichess.org/api/game/' + gameId + '?literate=false', {
+            headers: { 'Accept': 'application/json' }
+          }).then(function(r){ return r.json(); }).then(function(game){
+            var white = (game.players && game.players.white && game.players.white.user && game.players.white.user.name) || 'White';
+            var black = (game.players && game.players.black && game.players.black.user && game.players.black.user.name) || 'Black';
+            streamGame(gameId, orientation, white, black);
+          }).catch(function(){
+            streamGame(gameId, orientation, 'White', 'Black');
+          });
         }
+        clearTimeout(pollTimer);
+        pollTimer = setTimeout(pollStatus, 8000);
       } else {
-        setState('live-daily', null, dailyGame.url);
+        if(currentGameId){
+          currentGameId = null;
+          if(activeAbort){ activeAbort.abort(); activeAbort = null; }
+        }
+        setState('offline');
+        loadRecentGames();
+        clearTimeout(pollTimer);
+        pollTimer = setTimeout(pollStatus, 20000);
       }
-    } else if(recentlyOnline){
-      // Active on chess.com in the last 5 minutes — likely mid-game, but the
-      // public API has no way to confirm or show the board for Rapid/Blitz/Bullet.
-      setState('live-fast');
-    } else {
-      setState('offline');
-    }
+    }).catch(function(e){
+      console.warn('Lichess poll error:', e);
+      setState('error');
+      clearTimeout(pollTimer);
+      pollTimer = setTimeout(pollStatus, 15000);
+    });
   }
 
-  checkChessStatus();
-  setInterval(checkChessStatus, 15000);
+  pollStatus();
 })();
 </script>
+
 
 <!-- ════ IDEA CANVAS (personal mode only) ════ -->
 <section id="idea-canvas">
