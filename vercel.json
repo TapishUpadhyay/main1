@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/os",
-      "destination": "https://tapish-os.vercel.app"
+      "destination": "https://tapish-os.vercel.app/os"
     },
     {
       "source": "/os/:path*",
-      "destination": "https://tapish-os.vercel.app/:path*"
+      "destination": "https://tapish-os.vercel.app/os/:path*"
     }
   ]
 }
