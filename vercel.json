@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/os", "destination": "/os.html" },
+    { "source": "/os/", "destination": "/os.html" },
     { "source": "/os-proxy", "destination": "https://tapish-os.vercel.app/" },
     { "source": "/os-proxy/:path*", "destination": "https://tapish-os.vercel.app/:path*" }
   ]
