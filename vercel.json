@@ -8,6 +8,8 @@
     { "source": "/projectevs/", "destination": "/projectevs.html" },
     { "source": "/attendance-tracker", "destination": "/attendance-tracker.html" },
     { "source": "/attendance-tracker/", "destination": "/attendance-tracker.html" },
+    { "source": "/linkedmanager", "destination": "/linkedmanager.html" },
+    { "source": "/linkedmanager/", "destination": "/linkedmanager.html" },
     { "source": "/os-proxy", "destination": "https://tapish-os.vercel.app/" },
     { "source": "/os-proxy/:path*", "destination": "https://tapish-os.vercel.app/:path*" }
   ]
